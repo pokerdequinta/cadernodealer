@@ -9,8 +9,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@300;400;700&display=swap');
-        
         * {
             margin: 0;
             padding: 0;
@@ -24,6 +22,7 @@
             min-height: 100vh;
         }
         
+        /* Tela de Seleção */
         .tela-selecao {
             display: flex;
             flex-direction: column;
@@ -33,9 +32,7 @@
             position: relative;
         }
         
-        .tela-selecao.hidden {
-            display: none;
-        }
+        .tela-selecao.hidden { display: none; }
         
         .btn-admin-topo {
             position: absolute;
@@ -49,7 +46,6 @@
             font-weight: bold;
             cursor: pointer;
             font-size: 1em;
-            transition: all 0.3s;
             z-index: 100;
         }
         
@@ -74,7 +70,7 @@
         }
         
         .selecao-titulo {
-            font-family: 'Anton';
+            font-family: 'Anton', sans-serif;
             color: #d4a121;
             font-size: 2em;
             margin-bottom: 30px;
@@ -89,7 +85,7 @@
         }
         
         .selecao-etapa label {
-            font-family: 'Anton';
+            font-family: 'Anton', sans-serif;
             color: #d4a121;
             font-size: 1.2em;
             display: block;
@@ -116,7 +112,7 @@
         
         .selecao-btn {
             padding: 25px;
-            font-family: 'Anton';
+            font-family: 'Anton', sans-serif;
             font-size: 1.8em;
             border: 4px solid #d4a121;
             border-radius: 20px;
@@ -124,76 +120,21 @@
             transition: all 0.3s;
         }
         
-        .selecao-btn.preta {
-            background: #1a1a1a;
-            color: #fff;
-        }
-        
-        .selecao-btn.amarela {
-            background: #d4a121;
-            color: #000;
-        }
-        
+        .selecao-btn.preta { background: #1a1a1a; color: #fff; }
+        .selecao-btn.amarela { background: #d4a121; color: #000; }
         .selecao-btn:hover {
             transform: scale(1.05);
             box-shadow: 0 0 30px rgba(212, 161, 33, 0.5);
         }
         
+        /* App Container (Dealer) */
         .app-container, .mesa-final-app {
             display: flex;
             height: 100vh;
             overflow: hidden;
         }
         
-        .app-container.hidden, .mesa-final-app.hidden {
-            display: none;
-        }
-        
-        .tela-admin {
-            min-height: 100vh;
-            padding: 20px;
-            background: #0d1b0d;
-        }
-        
-        .tela-admin.hidden {
-            display: none;
-        }
-        
-        .tela-classificacao {
-            min-height: 100vh;
-            padding: 20px;
-            background: #0d1b0d;
-        }
-        
-        .tela-classificacao.hidden {
-            display: none;
-        }
-        
-        .admin-container, .classificacao-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .admin-header, .classificacao-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #d4a121;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .voltar-btn, .voltar-inicio-btn {
-            padding: 12px 25px;
-            background: #c72c48;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+        .app-container.hidden, .mesa-final-app.hidden { display: none; }
         
         .left-panel {
             width: 60%;
@@ -223,12 +164,9 @@
             gap: 10px;
         }
         
-        .logo-top img {
-            max-width: 100px;
-        }
-        
+        .logo-top img { max-width: 100px; }
         .logo-top h2 {
-            font-family: 'Anton';
+            font-family: 'Anton', sans-serif;
             color: #d4a121;
             font-size: 1.1em;
             margin: 0;
@@ -264,16 +202,6 @@
             50% { transform: scale(1.05); }
         }
         
-        h1, h2, h3 {
-            font-family: 'Anton';
-            color: #d4a121;
-            letter-spacing: 2px;
-        }
-        
-        h1 { font-size: 1.5em; }
-        h2 { font-size: 1.3em; margin-bottom: 10px; }
-        h3 { font-size: 1.1em; margin-bottom: 8px; }
-        
         .mesa-indicator {
             background: #102810;
             border: 3px solid #d4a121;
@@ -283,18 +211,11 @@
             text-align: center;
         }
         
-        .mesa-indicator.preta {
-            border-color: #fff;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-        }
-        
-        .mesa-indicator.amarela {
-            border-color: #FFD700;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-        }
+        .mesa-indicator.preta { border-color: #fff; }
+        .mesa-indicator.amarela { border-color: #FFD700; }
         
         .mesa-indicator-text {
-            font-family: 'Anton';
+            font-family: 'Anton', sans-serif;
             font-size: 1.5em;
             text-transform: uppercase;
         }
@@ -307,26 +228,10 @@
             font-size: 0.9em;
         }
         
-        .btn {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 0.9em;
-        }
-        
-        .btn-primary { background: #d4a121; color: #000; }
-        .btn-secondary { background: #2d5016; color: #fff; }
-        .btn-danger { background: #c72c48; color: #fff; }
-        .btn-success { background: #4CAF50; color: #fff; }
-        .btn-warning { background: #FF6600; color: #fff; }
-        .btn-info { background: #2196F3; color: #fff; }
-        
         .jogadores-grid {
             display: grid;
             gap: 8px;
-            max-height: calc(100vh - 300px);
+            max-height: calc(100vh - 280px);
             overflow-y: auto;
         }
         
@@ -347,7 +252,7 @@
         }
         
         .jogador-posicao-numero {
-            font-family: 'Anton';
+            font-family: 'Anton', sans-serif;
             font-size: 1.2em;
             color: #d4a121;
             min-width: 40px;
@@ -362,14 +267,8 @@
             border: 2px solid #d4a121;
         }
         
-        .jogador-info {
-            flex: 1;
-        }
-        
-        .jogador-nome {
-            font-weight: bold;
-            font-size: 1em;
-        }
+        .jogador-info { flex: 1; }
+        .jogador-nome { font-weight: bold; font-size: 1em; }
         
         .jogador-valores {
             display: flex;
@@ -384,7 +283,6 @@
             font-size: 0.7em;
             font-weight: bold;
         }
-        
         .badge-rebuy { background: #FF6600; color: #fff; }
         .badge-addon { background: #4CAF50; color: #fff; }
         .badge-eliminado { background: #c72c48; color: #fff; }
@@ -405,7 +303,6 @@
             font-size: 0.7em;
             white-space: nowrap;
         }
-        
         .btn-rebuy { background: #FF6600; color: #fff; }
         .btn-rebuy-duplo { background: #FF4500; color: #fff; }
         .btn-addon { background: #4CAF50; color: #fff; }
@@ -431,19 +328,14 @@
         }
         
         .timebank-title {
-            font-family: 'Anton';
+            font-family: 'Anton', sans-serif;
             color: #d4a121;
             font-size: 1.2em;
             margin-bottom: 5px;
         }
         
-        .timebank-subtitle {
-            font-size: 0.8em;
-            opacity: 0.8;
-        }
-        
         .cronometro-display {
-            font-family: 'Anton';
+            font-family: 'Anton', sans-serif;
             font-size: 6em;
             color: #FFD700;
             text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
@@ -453,18 +345,16 @@
             border: 3px solid #d4a121;
             margin-bottom: 30px;
             cursor: pointer;
-            transition: all 0.3s;
+            text-align: center;
         }
         
         .cronometro-display.warning {
             color: #FF6600;
-            text-shadow: 0 0 30px rgba(255, 102, 0, 0.7);
             border-color: #FF6600;
         }
         
         .cronometro-display.finished {
             color: #FF0000;
-            text-shadow: 0 0 30px rgba(255, 0, 0, 0.7);
             border-color: #FF0000;
             animation: pulse 1s infinite;
         }
@@ -476,22 +366,63 @@
         
         .cronometro-btn {
             padding: 15px 30px;
-            font-family: 'Anton';
+            font-family: 'Anton', sans-serif;
             font-size: 1.2em;
             border: none;
             border-radius: 10px;
             cursor: pointer;
         }
+        .cronometro-btn.iniciar { background: #4CAF50; color: #fff; }
+        .cronometro-btn.zerar { background: #c72c48; color: #fff; }
         
-        .cronometro-btn.iniciar {
-            background: #4CAF50;
-            color: #fff;
+        /* Tela Admin */
+        .tela-admin {
+            min-height: 100vh;
+            padding: 20px;
+            background: #0d1b0d;
+        }
+        .tela-admin.hidden { display: none; }
+        
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
-        .cronometro-btn.zerar {
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #d4a121;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .voltar-btn {
+            padding: 12px 25px;
             background: #c72c48;
             color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
         }
+        
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .btn-primary { background: #d4a121; color: #000; }
+        .btn-secondary { background: #2d5016; color: #fff; }
+        .btn-danger { background: #c72c48; color: #fff; }
+        .btn-success { background: #4CAF50; color: #fff; }
+        .btn-warning { background: #FF6600; color: #fff; }
+        .btn-info { background: #2196F3; color: #fff; }
         
         .resumo-table {
             width: 100%;
@@ -499,14 +430,12 @@
             margin-top: 10px;
             font-size: 0.85em;
         }
-        
         .resumo-table th {
             background: #1a3d1a;
             color: #d4a121;
             padding: 8px;
             text-align: left;
         }
-        
         .resumo-table td {
             padding: 6px 8px;
             border-bottom: 1px solid #2d5016;
@@ -536,74 +465,10 @@
             padding: 15px;
             text-align: center;
         }
-        
-        .stats-mesa-card.preta { border-color: #fff; }
-        .stats-mesa-card.amarela { border-color: #FFD700; }
-        
         .stats-value {
-            font-family: 'Anton';
+            font-family: 'Anton', sans-serif;
             font-size: 2em;
             color: #d4a121;
-        }
-        
-        .status-indicator {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background: #2d5016;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.75em;
-            z-index: 999;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.9);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        
-        .modal.active {
-            display: flex;
-        }
-        
-        .modal-content {
-            background: #102810;
-            border: 2px solid #d4a121;
-            border-radius: 15px;
-            padding: 25px;
-            width: 90%;
-            max-width: 400px;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-group label {
-            color: #d4a121;
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #2d5016;
-            background: #1a3d1a;
-            color: #fff;
-        }
-        
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
         }
         
         .import-section {
@@ -613,17 +478,6 @@
             padding: 20px;
             margin-bottom: 30px;
         }
-        
-        .import-result {
-            margin-top: 15px;
-            padding: 15px;
-            background: rgba(76, 175, 80, 0.2);
-            border: 1px solid #4CAF50;
-            border-radius: 6px;
-            display: none;
-        }
-        
-        .import-result.show { display: block; }
         
         .preview-mesas {
             display: grid;
@@ -645,64 +499,50 @@
             flex-wrap: wrap;
         }
         
-        .hidden {
-            display: none !important;
+        .nav-tab-admin {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 8px 8px 0 0;
         }
+        .nav-tab-admin.active {
+            background: #d4a121;
+            color: #000;
+        }
+        
+        .admin-tab-content.hidden { display: none; }
         
         .classificacao-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
-        
         .classificacao-table th {
             background: #1a3d1a;
             color: #d4a121;
             padding: 12px;
             text-align: center;
         }
-        
         .classificacao-table td {
             padding: 10px;
             text-align: center;
             border-bottom: 1px solid #2d5016;
         }
-        
-        .classificacao-table tr:hover {
-            background: rgba(212, 161, 33, 0.1);
-        }
-        
         .top-1 { background: rgba(255, 215, 0, 0.2); }
         .top-2 { background: rgba(192, 192, 192, 0.2); }
         .top-3 { background: rgba(205, 127, 50, 0.2); }
-        
-        .btn-copiar {
-            margin-left: 10px;
-            background: #2196F3;
-        }
         
         .ko-input {
             width: 60px;
             padding: 5px;
             text-align: center;
-        }
-        
-        .btn-apagar-dados {
-            background: #c72c48;
-            margin-left: 10px;
-        }
-        
-        .btn-apagar-dados:hover {
-            background: #ff0000;
-        }
-        
-        .btn-apagar-etapas {
-            background: #c72c48;
-            margin-left: 10px;
-        }
-        
-        .btn-apagar-etapas:hover {
-            background: #ff0000;
+            background: #1a3d1a;
+            color: #fff;
+            border: 1px solid #d4a121;
+            border-radius: 4px;
         }
         
         .etapas-list {
@@ -739,41 +579,84 @@
             display: none;
             margin-top: 10px;
         }
-        
-        .etapa-classificacao.show {
-            display: block;
-        }
+        .etapa-classificacao.show { display: block; }
         
         .etapa-table {
             width: 100%;
             font-size: 0.8em;
             border-collapse: collapse;
         }
-        
         .etapa-table th {
             background: #1a3d1a;
             padding: 6px;
             text-align: center;
         }
-        
         .etapa-table td {
             padding: 5px;
             text-align: center;
             border-bottom: 1px solid #2d5016;
         }
         
-        ::-webkit-scrollbar {
-            width: 6px;
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal.active { display: flex; }
+        
+        .modal-content {
+            background: #102810;
+            border: 2px solid #d4a121;
+            border-radius: 15px;
+            padding: 25px;
+            width: 90%;
+            max-width: 400px;
         }
         
-        ::-webkit-scrollbar-track {
-            background: #0d1b0d;
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            color: #d4a121;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #2d5016;
+            background: #1a3d1a;
+            color: #fff;
         }
         
-        ::-webkit-scrollbar-thumb {
-            background: #d4a121;
-            border-radius: 3px;
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
         }
+        
+        .status-indicator {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: #2d5016;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            z-index: 999;
+        }
+        
+        .hidden { display: none !important; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0d1b0d; }
+        ::-webkit-scrollbar-thumb { background: #d4a121; border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -834,54 +717,49 @@
         <div class="admin-header">
             <h1>🔐 ADMINISTRAÇÃO</h1>
             <div>
-                <button class="btn btn-danger btn-apagar-dados" id="btnApagarDados" style="margin-right: 10px;">🗑️ APAGAR TODOS OS DADOS</button>
+                <button class="btn btn-danger" id="btnApagarDados" style="margin-right: 10px;">🗑️ APAGAR TODOS OS DADOS</button>
                 <button class="voltar-btn" id="btnVoltarAdmin">← VOLTAR</button>
             </div>
         </div>
         
         <div class="import-section">
             <h3>📂 IMPORTAR LAYOUT DAS MESAS</h3>
-            <p style="margin-bottom: 15px; opacity: 0.8;">
-                Selecione o arquivo HTML exportado do Tournament Director.
-            </p>
+            <p style="margin-bottom: 15px; opacity: 0.8;">Selecione o arquivo HTML exportado do Tournament Director.</p>
             <div class="flex-row">
                 <button class="btn btn-primary" id="btnEscolherArquivo">📁 ESCOLHER ARQUIVO HTML</button>
                 <input type="file" id="fileInput" accept=".html,.htm" style="display: none;" />
                 <button class="btn btn-success" id="btnProcessarLayout" style="display: none;">✅ PROCESSAR</button>
             </div>
-            <div class="import-result" id="importResult"></div>
-            
+            <div class="import-result" id="importResult" style="display: none;"></div>
             <div class="preview-mesas" id="previewMesas" style="display: none;">
                 <div class="mesa-preview">
                     <h4>♠️ MESA PRETA (<span id="previewCountPreta">0</span>)</h4>
-                    <div id="previewPreta" style="max-height: 300px; overflow-y: auto;"></div>
+                    <div id="previewPreta"></div>
                 </div>
                 <div class="mesa-preview">
                     <h4>♦️ MESA AMARELA (<span id="previewCountAmarela">0</span>)</h4>
-                    <div id="previewAmarela" style="max-height: 300px; overflow-y: auto;"></div>
+                    <div id="previewAmarela"></div>
                 </div>
             </div>
         </div>
         
         <div style="margin-top: 30px;">
             <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #d4a121; flex-wrap: wrap;">
-                <button class="nav-tab-admin active" data-admin-tab="resumo" style="padding: 10px 20px; background: #d4a121; border: none; color: #000; cursor: pointer; font-weight: bold; border-radius: 8px 8px 0 0;">📋 RESUMO FINANCEIRO</button>
-                <button class="nav-tab-admin" data-admin-tab="estatisticas" style="padding: 10px 20px; background: transparent; border: none; color: #fff; cursor: pointer; font-weight: bold; border-radius: 8px 8px 0 0;">📈 ESTATÍSTICAS</button>
-                <button class="nav-tab-admin" data-admin-tab="historico" style="padding: 10px 20px; background: transparent; border: none; color: #fff; cursor: pointer; font-weight: bold; border-radius: 8px 8px 0 0;">📜 HISTÓRICO DE ETAPAS</button>
+                <button class="nav-tab-admin active" data-admin-tab="resumo">📋 RESUMO FINANCEIRO</button>
+                <button class="nav-tab-admin" data-admin-tab="estatisticas">📈 ESTATÍSTICAS</button>
+                <button class="nav-tab-admin" data-admin-tab="historico">📜 HISTÓRICO DE ETAPAS</button>
             </div>
             
             <div id="admin-resumo" class="admin-tab-content">
                 <div style="max-height: 400px; overflow-y: auto;">
                     <table class="resumo-table" id="adminResumoFinanceiro">
-                        <thead>
-                            <tr><th>Jogador</th><th>Mesa</th><th>Pos.</th><th>Buy-in</th><th>Rebuys</th><th>Addon</th><th>Total</th></tr>
-                        </thead>
+                        <thead><tr><th>Jogador</th><th>Mesa</th><th>Pos.</th><th>Buy-in</th><th>Rebuys</th><th>Addon</th><th>Total</th></tr></thead>
                         <tbody id="adminResumoBody"></tbody>
                     </table>
                 </div>
                 <div class="total-geral" id="adminTotalGeral">TOTAL GERAL: R$ 0,00</div>
-                <button class="btn btn-secondary" id="btnAdminExportarCSV" style="margin-top: 15px; width: 100%;">📊 EXPORTAR CSV (Nome, Rebuys, Addons)</button>
-                <button class="btn btn-info btn-copiar" id="btnCopiarCSV" style="margin-top: 10px; width: 100%;">📋 COPIAR PARA ÁREA DE TRANSFERÊNCIA</button>
+                <button class="btn btn-secondary" id="btnAdminExportarCSV" style="margin-top: 15px; width: 100%;">📊 EXPORTAR CSV</button>
+                <button class="btn btn-info" id="btnCopiarCSV" style="margin-top: 10px; width: 100%;">📋 COPIAR</button>
             </div>
             
             <div id="admin-estatisticas" class="admin-tab-content hidden">
@@ -901,7 +779,6 @@
                         <div>Total: <span id="adminStatAmarelaTotal">R$ 0</span></div>
                     </div>
                 </div>
-                
                 <div class="stats-mesas" style="grid-template-columns: 1fr 1fr;">
                     <div class="stats-mesa-card">
                         <h4>🔄 TOTAL REBUYS</h4>
@@ -912,25 +789,21 @@
                         <div class="stats-value" id="adminStatTotalAddons">0</div>
                     </div>
                 </div>
-                
                 <h4>🏆 RANKING DE REBUYS</h4>
                 <table class="resumo-table">
-                    <thead>
-                        <tr><th>#</th><th>Jogador</th><th>Mesa</th><th>Rebuys</th></tr>
-                    </thead>
+                    <thead><tr><th>#</th><th>Jogador</th><th>Mesa</th><th>Rebuys</th></tr></thead>
                     <tbody id="adminRankingBody"></tbody>
-                追赶
-                
-                <button class="btn btn-secondary" id="btnAdminExportarCompleto" style="margin-top: 20px; width: 100%;">📊 EXPORTAR CSV COMPLETO</button>
+                </table>
+                <button class="btn btn-secondary" id="btnAdminExportarCompleto" style="margin-top: 20px; width: 100%;">📊 EXPORTAR COMPLETO</button>
             </div>
             
             <div id="admin-historico" class="admin-tab-content hidden">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                     <h3>📜 HISTÓRICO DE ETAPAS</h3>
-                    <button class="btn btn-danger btn-apagar-etapas" id="btnApagarHistorico">🗑️ APAGAR HISTÓRICO</button>
+                    <button class="btn btn-danger" id="btnApagarHistorico">🗑️ APAGAR HISTÓRICO</button>
                 </div>
                 <div id="etapasList" class="etapas-list"></div>
-                <button class="btn btn-secondary" id="btnExportarHistorico" style="margin-top: 15px; width: 100%;">📊 EXPORTAR HISTÓRICO COMPLETO</button>
+                <button class="btn btn-secondary" id="btnExportarHistorico" style="margin-top: 15px; width: 100%;">📊 EXPORTAR HISTÓRICO</button>
                 <button class="btn btn-warning" id="btnNovaEtapa" style="margin-top: 10px; width: 100%;">🔄 INICIAR NOVA ETAPA</button>
             </div>
         </div>
@@ -939,28 +812,17 @@
 
 <!-- TELA DE CLASSIFICAÇÃO -->
 <div class="tela-classificacao hidden" id="telaClassificacao">
-    <div class="classificacao-container">
-        <div class="classificacao-header">
+    <div class="classificacao-container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+        <div class="classificacao-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #d4a121; padding-bottom: 20px;">
             <h1>🏆 CLASSIFICAÇÃO GERAL</h1>
             <div>
                 <button class="btn btn-secondary" id="btnExportarClassificacao" style="margin-right: 10px;">📊 EXPORTAR CSV</button>
-                <button class="voltar-inicio-btn" id="btnVoltarInicio">← VOLTAR AO INÍCIO</button>
+                <button class="voltar-inicio-btn" id="btnVoltarInicio" style="padding: 12px 25px; background: #c72c48; color: #fff; border: none; border-radius: 8px; cursor: pointer;">← VOLTAR</button>
             </div>
         </div>
-        
         <div style="overflow-x: auto;">
             <table class="classificacao-table" id="classificacaoTable">
-                <thead>
-                    <tr>
-                        <th>Posição</th>
-                        <th>Jogador</th>
-                        <th>Mesa</th>
-                        <th>Pontos Por Posição</th>
-                        <th>KO's</th>
-                        <th>Pontos KO's (1 por KO)</th>
-                        <th>Pontuação Total</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>Posição</th><th>Jogador</th><th>Mesa</th><th>Pontos Por Posição</th><th>KO's</th><th>Pontos KO's</th><th>Pontuação Total</th></tr></thead>
                 <tbody id="classificacaoBody"></tbody>
             </table>
         </div>
@@ -978,33 +840,24 @@
                 <button class="btn-ir-mesa-final" id="btnIrMesaFinal" style="display: none;">🏆 IR PARA MESA FINAL</button>
             </div>
         </div>
-        
         <div class="mesa-indicator" id="mesaIndicator">
             <div class="mesa-indicator-text" id="mesaIndicatorText">♠️ MESA PRETA ♠️</div>
             <div style="font-size: 0.9em; opacity: 0.8;">Você está atuando nesta mesa</div>
             <div class="contador-outra-mesa" id="contadorOutraMesa"></div>
         </div>
-        
-        <div class="jogadores-grid" id="jogadoresGrid">
-            <div class="empty-state" style="text-align: center; padding: 20px; opacity: 0.7;">
-                Nenhum jogador na mesa. Importe pelo modo Administração.
-            </div>
-        </div>
+        <div class="jogadores-grid" id="jogadoresGrid"></div>
     </div>
-    
     <div class="right-panel">
         <div class="timebank-card">
             <div class="timebank-title">⏱️ TIMEBANK</div>
-            <div class="timebank-subtitle">Tempo para decisão</div>
+            <div class="timebank-subtitle" style="font-size: 0.8em; opacity: 0.8;">Tempo para decisão</div>
         </div>
-        
         <div class="cronometro-container">
             <div class="cronometro-display" id="cronometroDisplay">00:30</div>
             <div class="cronometro-controls">
                 <button class="cronometro-btn iniciar" id="btnIniciarCronometro">▶ INICIAR</button>
                 <button class="cronometro-btn zerar" id="btnZerarCronometro">↺ ZERAR</button>
             </div>
-            <p style="margin-top: 20px; opacity: 0.7; font-size: 0.9em;">Toque no cronômetro para iniciar/pausar</p>
         </div>
     </div>
 </div>
@@ -1019,117 +872,74 @@
                 <button class="btn-voltar-mesa-final" id="btnVoltarMesaFinalSelecao">↩️ VOLTAR</button>
             </div>
         </div>
-        
         <div class="mesa-indicator" style="border-color: #d4a121; background: linear-gradient(135deg, #d4a12120, #00000040);">
-            <div class="mesa-indicator-text" id="mesaFinalIndicatorText">🏆 MESA FINAL - CARREGANDO 🏆</div>
+            <div class="mesa-indicator-text" id="mesaFinalIndicatorText">🏆 MESA FINAL</div>
             <div style="font-size: 0.9em; opacity: 0.8;">Elimine os jogadores para definir o campeão</div>
         </div>
-        
-        <div class="jogadores-grid" id="jogadoresMesaFinalGrid">
-            <div class="empty-state" style="text-align: center; padding: 20px; opacity: 0.7;">
-                Carregando...
-            </div>
-        </div>
+        <div class="jogadores-grid" id="jogadoresMesaFinalGrid"></div>
     </div>
-    
     <div class="right-panel">
         <div class="timebank-card">
             <div class="timebank-title">⏱️ TIMEBANK</div>
-            <div class="timebank-subtitle">Tempo para decisão</div>
+            <div class="timebank-subtitle" style="font-size: 0.8em; opacity: 0.8;">Tempo para decisão</div>
         </div>
-        
         <div class="cronometro-container">
             <div class="cronometro-display" id="cronometroDisplayMesaFinal">00:30</div>
             <div class="cronometro-controls">
                 <button class="cronometro-btn iniciar" id="btnIniciarCronometroMesaFinal">▶ INICIAR</button>
                 <button class="cronometro-btn zerar" id="btnZerarCronometroMesaFinal">↺ ZERAR</button>
             </div>
-            <p style="margin-top: 20px; opacity: 0.7; font-size: 0.9em;">Toque no cronômetro para iniciar/pausar</p>
         </div>
     </div>
 </div>
 
-<!-- Modal Corrigir -->
+<!-- Modais -->
 <div class="modal" id="modalCorrigir">
     <div class="modal-content">
         <h3>🔧 Corrigir valores</h3>
         <p id="corrigirJogadorNome"></p>
-        <div class="form-group">
-            <label>Quantidade de Rebuys</label>
-            <input type="number" id="corrigirRebuys" min="0" value="0">
-        </div>
-        <div class="form-group">
-            <label>
-                <input type="checkbox" id="corrigirAddon"> Addon (R$ 50)
-            </label>
-        </div>
-        <div class="modal-buttons">
-            <button class="btn btn-danger" id="btnCancelarCorrigir">Cancelar</button>
-            <button class="btn btn-success" id="btnSalvarCorrigir">Salvar</button>
-        </div>
+        <div class="form-group"><label>Rebuys</label><input type="number" id="corrigirRebuys" min="0" value="0"></div>
+        <div class="form-group"><label><input type="checkbox" id="corrigirAddon"> Addon (R$ 50)</label></div>
+        <div class="modal-buttons"><button class="btn btn-danger" id="btnCancelarCorrigir">Cancelar</button><button class="btn btn-success" id="btnSalvarCorrigir">Salvar</button></div>
     </div>
 </div>
 
-<!-- Modal Eliminar -->
 <div class="modal" id="modalEliminar">
     <div class="modal-content">
         <h3>⚠️ ELIMINAR JOGADOR</h3>
         <p id="eliminarJogadorNome"></p>
-        <div class="form-group">
-            <label>Quantidade de KO's que o jogador fez</label>
-            <input type="number" id="quantidadeKOs" min="0" value="0">
-        </div>
-        <div class="modal-buttons">
-            <button class="btn btn-danger" id="btnCancelarEliminar">Cancelar</button>
-            <button class="btn btn-warning" id="btnConfirmarEliminar">Confirmar Eliminação</button>
-        </div>
+        <div class="form-group"><label>Quantidade de KO's</label><input type="number" id="quantidadeKOs" min="0" value="0"></div>
+        <div class="modal-buttons"><button class="btn btn-danger" id="btnCancelarEliminar">Cancelar</button><button class="btn btn-warning" id="btnConfirmarEliminar">Confirmar</button></div>
     </div>
 </div>
 
-<!-- Modal Senha Apagar -->
 <div class="modal" id="modalSenhaApagar">
     <div class="modal-content">
         <h3>🔐 SENHA NECESSÁRIA</h3>
         <p>Digite a senha para apagar todos os dados:</p>
-        <div class="form-group">
-            <label>Senha</label>
-            <input type="password" id="senhaApagar" placeholder="Digite a senha">
-        </div>
-        <div class="modal-buttons">
-            <button class="btn btn-danger" id="btnCancelarSenhaApagar">Cancelar</button>
-            <button class="btn btn-success" id="btnConfirmarSenhaApagar">Confirmar</button>
-        </div>
+        <div class="form-group"><label>Senha</label><input type="password" id="senhaApagar" placeholder="Digite a senha"></div>
+        <div class="modal-buttons"><button class="btn btn-danger" id="btnCancelarSenhaApagar">Cancelar</button><button class="btn btn-success" id="btnConfirmarSenhaApagar">Confirmar</button></div>
     </div>
 </div>
 
-<!-- Modal Nova Etapa -->
 <div class="modal" id="modalNovaEtapa">
     <div class="modal-content">
         <h3>🔄 INICIAR NOVA ETAPA</h3>
-        <p>Tem certeza que deseja iniciar uma nova etapa?</p>
-        <p style="font-size: 0.9em; opacity: 0.8; margin-top: 10px;">A classificação atual será salva no histórico e os dados serão resetados.</p>
-        <div class="modal-buttons">
-            <button class="btn btn-danger" id="btnCancelarNovaEtapa">Cancelar</button>
-            <button class="btn btn-success" id="btnConfirmarNovaEtapa">Confirmar Nova Etapa</button>
-        </div>
+        <p>A classificação atual será salva no histórico e os dados serão resetados.</p>
+        <div class="modal-buttons"><button class="btn btn-danger" id="btnCancelarNovaEtapa">Cancelar</button><button class="btn btn-success" id="btnConfirmarNovaEtapa">Confirmar</button></div>
     </div>
 </div>
 
-<!-- Modal Apagar Historico -->
 <div class="modal" id="modalApagarHistorico">
     <div class="modal-content">
         <h3>🗑️ APAGAR HISTÓRICO</h3>
-        <p>Tem certeza que deseja apagar TODO o histórico de etapas?</p>
-        <p style="font-size: 0.9em; opacity: 0.8; margin-top: 10px;">Esta ação não pode ser desfeita!</p>
-        <div class="modal-buttons">
-            <button class="btn btn-danger" id="btnCancelarApagarHistorico">Cancelar</button>
-            <button class="btn btn-warning" id="btnConfirmarApagarHistorico">Confirmar</button>
-        </div>
+        <p>Esta ação não pode ser desfeita!</p>
+        <div class="modal-buttons"><button class="btn btn-danger" id="btnCancelarApagarHistorico">Cancelar</button><button class="btn btn-warning" id="btnConfirmarApagarHistorico">Confirmar</button></div>
     </div>
 </div>
 
 <script>
-// Configuração do Firebase
+// FIREBASE CONFIG
 const firebaseConfig = {
     apiKey: "AIzaSyD_XXjcjJYM73wLTTzpDgzKCOZnztcJhjE",
     authDomain: "poker-de-quinta.firebaseapp.com",
@@ -1143,12 +953,12 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+// CONSTANTES
 const VALOR_BUYIN = 100;
 const VALOR_REBUY = 30;
 const VALOR_ADDON = 50;
 const TEMPO_INICIAL = 30;
 
-// Tabela de pontuação por posição (1º = 27, 2º = 25, 3º = 23, etc)
 const PONTOS_POSICAO = {
     1: 27, 2: 25, 3: 23, 4: 21, 5: 19,
     6: 17, 7: 15, 8: 13, 9: 11, 10: 9,
@@ -1156,10 +966,11 @@ const PONTOS_POSICAO = {
     16: 5, 17: 5, 18: 5, 19: 5, 20: 5
 };
 
-function calcularPontosPorPosicao(posicao) {
+function getPontosPosicao(posicao) {
     return PONTOS_POSICAO[posicao] || 5;
 }
 
+// VARIÁVEIS GLOBAIS
 let mesaAtual = 'preta';
 let config = { etapa: 4 };
 let mesasData = { preta: [], amarela: [] };
@@ -1171,37 +982,33 @@ let jogadorCorrigindo = null;
 let jogadorEliminando = null;
 let contadorEliminados = 0;
 let totalJogadoresIniciais = 0;
-
 let mesaFinalAtiva = false;
 let jogadoresMesaFinal = [];
 
+// CRONÔMETROS
 let cronometroTempo = TEMPO_INICIAL;
 let cronometroAtivo = false;
 let cronometroInterval = null;
-let cronometroTempoMesaFinal = TEMPO_INICIAL;
-let cronometroAtivoMesaFinal = false;
-let cronometroIntervalMesaFinal = null;
-let alarmeTocando = false;
+let cronometroTempoMF = TEMPO_INICIAL;
+let cronometroAtivoMF = false;
+let cronometroIntervalMF = null;
 let audioContext = null;
+
+// FOTOS
 let fotosJogadores = {};
 
+// ========== FUNÇÕES DE INICIALIZAÇÃO ==========
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('statusIndicator').textContent = '✅ Conectado';
     
-    const selectEtapa = document.getElementById('selectEtapa');
-    selectEtapa.addEventListener('change', function() {
-        config.etapa = parseInt(this.value);
-        db.ref('config').set(config);
+    // Carregar etapa
+    db.ref('config').on('value', (snapshot) => {
+        if (snapshot.exists()) config = snapshot.val();
+        const selectEtapa = document.getElementById('selectEtapa');
+        if (selectEtapa) selectEtapa.value = config.etapa || 4;
     });
     
-    db.ref('config').on('value', (snapshot) => { 
-        if (snapshot.exists()) {
-            config = snapshot.val();
-            const selectEtapa = document.getElementById('selectEtapa');
-            if (selectEtapa) selectEtapa.value = config.etapa || 4;
-        }
-    });
-    
+    // Carregar mesas
     db.ref('mesas').on('value', (snapshot) => {
         if (snapshot.exists()) mesasData = snapshot.val();
         else mesasData = { preta: [], amarela: [] };
@@ -1211,22 +1018,21 @@ document.addEventListener('DOMContentLoaded', function() {
             totalJogadoresIniciais = todosJogadores.filter(j => !j.eliminado).length;
         }
         
-        atualizarInterface();
+        atualizarGridJogadores();
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
         atualizarContadorOutraMesa();
-        
-        contadorEliminados = todosJogadores.filter(j => j.eliminado).length;
         verificarMesaFinal();
-        atualizarBotaoMesaFinal();
     });
     
+    // Carregar classificação
     db.ref('classificacao').on('value', (snapshot) => {
         if (snapshot.exists()) classificacaoData = snapshot.val();
         else classificacaoData = [];
         atualizarClassificacao();
     });
     
+    // Carregar histórico
     db.ref('historicoEtapas').on('value', (snapshot) => {
         if (snapshot.exists()) historicoEtapas = snapshot.val();
         else historicoEtapas = [];
@@ -1236,71 +1042,138 @@ document.addEventListener('DOMContentLoaded', function() {
     inicializarEventos();
 });
 
-function atualizarContadorOutraMesa() {
-    const container = document.getElementById('contadorOutraMesa');
-    if (!container) return;
-    
-    const outraMesa = mesaAtual === 'preta' ? 'amarela' : 'preta';
-    const jogadoresOutraMesa = mesasData[outraMesa] || [];
-    const vivosOutraMesa = jogadoresOutraMesa.filter(j => !j.eliminado);
-    const eliminadosOutraMesa = jogadoresOutraMesa.filter(j => j.eliminado);
-    
-    const nomeOutraMesa = outraMesa === 'preta' ? 'MESA PRETA' : 'MESA AMARELA';
-    const iconeOutraMesa = outraMesa === 'preta' ? '♠️' : '♦️';
-    
-    container.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span>${iconeOutraMesa} ${nomeOutraMesa}</span>
-            <span>🟢 VIVOS: ${vivosOutraMesa.length} | ❌ ELIMINADOS: ${eliminadosOutraMesa.length}</span>
-        </div>
-    `;
-}
-
-function atualizarBotaoMesaFinal() {
-    const btnIrMesaFinal = document.getElementById('btnIrMesaFinal');
-    
-    if (mesaFinalAtiva) {
-        if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'inline-block';
-    } else {
-        if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'none';
-    }
-}
-
+// ========== MESA FINAL ==========
 function verificarMesaFinal() {
     const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
-    const jogadoresVivos = todosJogadores.filter(j => !j.eliminado);
+    const vivos = todosJogadores.filter(j => !j.eliminado);
     
-    if (jogadoresVivos.length === 9 && !mesaFinalAtiva) {
-        ativarMesaFinal(jogadoresVivos);
+    if (vivos.length === 9 && !mesaFinalAtiva) {
+        mesaFinalAtiva = true;
+        jogadoresMesaFinal = [...vivos];
+        jogadoresMesaFinal.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
+        document.getElementById('btnIrMesaFinal').style.display = 'inline-block';
+        renderizarMesaFinal();
+        alert('🎉 MESA FINAL! Restam 9 jogadores! 🎉');
     }
     
     if (mesaFinalAtiva) {
         const vivosAtualizados = todosJogadores.filter(j => !j.eliminado);
         if (vivosAtualizados.length < 9) {
-            atualizarMesaFinal(vivosAtualizados);
-        } else if (vivosAtualizados.length > 9) {
-            mesaFinalAtiva = false;
-            jogadoresMesaFinal = [];
-            document.getElementById('mesaFinalApp').classList.add('hidden');
-            atualizarBotaoMesaFinal();
+            jogadoresMesaFinal = [...vivosAtualizados];
+            jogadoresMesaFinal.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
+            renderizarMesaFinal();
+            if (jogadoresMesaFinal.length === 0) finalizarTorneio();
+            else if (jogadoresMesaFinal.length === 1) finalizarComCampeao(jogadoresMesaFinal[0]);
         }
     }
 }
 
-function ativarMesaFinal(jogadoresVivos) {
-    mesaFinalAtiva = true;
-    jogadoresMesaFinal = [...jogadoresVivos];
-    jogadoresMesaFinal.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
-    atualizarBotaoMesaFinal();
-    renderizarMesaFinalGrid();
-    mostrarNotificacao('🎉 MESA FINAL! Restam 9 jogadores! 🎉');
+function renderizarMesaFinal() {
+    const grid = document.getElementById('jogadoresMesaFinalGrid');
+    const indicator = document.getElementById('mesaFinalIndicatorText');
+    if (indicator) indicator.textContent = `🏆 MESA FINAL - ${jogadoresMesaFinal.length} JOGADORES 🏆`;
+    
+    if (jogadoresMesaFinal.length === 0) {
+        grid.innerHTML = '<div style="text-align:center;padding:40px;">🏆 TORNEIO FINALIZADO! 🏆</div>';
+        return;
+    }
+    
+    grid.innerHTML = jogadoresMesaFinal.map((j, idx) => {
+        const foto = fotosJogadores[j.nome] || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nome)}&background=d4a121&color=000&size=45`;
+        return `
+            <div class="jogador-card">
+                <div class="jogador-posicao-numero">${idx + 1}</div>
+                <img class="jogador-foto" src="${foto}">
+                <div class="jogador-info">
+                    <div class="jogador-nome">${j.nome}</div>
+                    <div class="jogador-valores">
+                        ${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}
+                        ${j.addon ? '<span class="badge badge-addon">💎 Addon</span>' : ''}
+                    </div>
+                </div>
+                <div class="jogador-actions">
+                    <button class="action-btn btn-eliminar" onclick="eliminarDaMesaFinal('${j.nome}')">❌ ELIMINAR (${jogadoresMesaFinal.length}º)</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function eliminarDaMesaFinal(nome) {
+    const jogador = jogadoresMesaFinal.find(j => j.nome === nome);
+    if (!jogador) return;
+    
+    const posicao = jogadoresMesaFinal.length;
+    const kos = prompt(`Quantos KO's ${nome} fez?`, "0");
+    const qtdKos = parseInt(kos) || 0;
+    
+    const item = {
+        nome: jogador.nome,
+        mesa: mesasData.preta?.some(m => m.nome === nome) ? 'Preta' : 'Amarela',
+        posicao: posicao,
+        pontosPosicao: getPontosPosicao(posicao),
+        kos: qtdKos,
+        pontosKOs: qtdKos,
+        pontosTotal: getPontosPosicao(posicao) + qtdKos,
+        dataEliminacao: new Date().toISOString(),
+        etapa: config.etapa
+    };
+    
+    classificacaoData.push(item);
+    db.ref('classificacao').set(classificacaoData);
+    
+    // Marcar eliminado nos dados originais
+    const original = [...(mesasData.preta || []), ...(mesasData.amarela || [])].find(j => j.nome === nome);
+    if (original) {
+        original.eliminado = true;
+        original.posicaoFinal = posicao;
+        original.kos = qtdKos;
+        db.ref('mesas').set(mesasData);
+    }
+    
+    jogadoresMesaFinal = jogadoresMesaFinal.filter(j => j.nome !== nome);
+    renderizarMesaFinal();
+    
+    if (jogadoresMesaFinal.length === 0) finalizarTorneio();
+    else if (jogadoresMesaFinal.length === 1) finalizarComCampeao(jogadoresMesaFinal[0]);
+}
+
+function finalizarComCampeao(campeao) {
+    const item = {
+        nome: campeao.nome,
+        mesa: mesasData.preta?.find(j => j.nome === campeao.nome) ? 'Preta' : 'Amarela',
+        posicao: 1,
+        pontosPosicao: getPontosPosicao(1),
+        kos: campeao.kos || 0,
+        pontosKOs: campeao.kos || 0,
+        pontosTotal: getPontosPosicao(1) + (campeao.kos || 0),
+        dataEliminacao: new Date().toISOString(),
+        etapa: config.etapa
+    };
+    classificacaoData.push(item);
+    db.ref('classificacao').set(classificacaoData);
+    alert(`🏆 CAMPEÃO: ${campeao.nome} 🏆`);
+    setTimeout(() => fecharMesaFinal(), 2000);
+}
+
+function finalizarTorneio() {
+    alert('🏆 TORNEIO FINALIZADO! 🏆');
+    setTimeout(() => fecharMesaFinal(), 2000);
+}
+
+function fecharMesaFinal() {
+    mesaFinalAtiva = false;
+    jogadoresMesaFinal = [];
+    document.getElementById('mesaFinalApp').classList.add('hidden');
+    document.getElementById('btnIrMesaFinal').style.display = 'none';
+    document.getElementById('telaSelecao').classList.remove('hidden');
 }
 
 function irParaMesaFinal() {
     if (mesaFinalAtiva) {
         document.getElementById('appContainer').classList.add('hidden');
         document.getElementById('mesaFinalApp').classList.remove('hidden');
-        renderizarMesaFinalGrid();
+        renderizarMesaFinal();
         pausarCronometro();
     }
 }
@@ -1312,398 +1185,7 @@ function voltarDaMesaFinal() {
     atualizarContadorOutraMesa();
 }
 
-function renderizarMesaFinalGrid() {
-    const grid = document.getElementById('jogadoresMesaFinalGrid');
-    const indicator = document.getElementById('mesaFinalIndicatorText');
-    
-    if (indicator) {
-        indicator.textContent = `🏆 MESA FINAL - ${jogadoresMesaFinal.length} JOGADORES 🏆`;
-    }
-    
-    if (jogadoresMesaFinal.length === 0) {
-        grid.innerHTML = '<div style="text-align: center; padding: 40px; font-size: 1.2em;">🏆 TORNEIO FINALIZADO! 🏆</div>';
-        return;
-    }
-    
-    grid.innerHTML = jogadoresMesaFinal.map((jogador, index) => {
-        const foto = getFotoJogador(jogador.nome);
-        const posicaoAtualNaMesaFinal = index + 1;
-        return `
-            <div class="jogador-card">
-                <div class="jogador-posicao-numero">${posicaoAtualNaMesaFinal}</div>
-                <img class="jogador-foto" src="${foto}" alt="${jogador.nome}">
-                <div class="jogador-info">
-                    <div class="jogador-nome">${jogador.nome}</div>
-                    <div class="jogador-valores">
-                        ${jogador.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${jogador.rebuys}</span>` : ''}
-                        ${jogador.addon ? '<span class="badge badge-addon">💎 Addon</span>' : ''}
-                    </div>
-                </div>
-                <div class="jogador-actions">
-                    <button class="action-btn btn-eliminar" onclick="eliminarDaMesaFinal('${jogador.nome}')">
-                        ❌ ELIMINAR (${jogadoresMesaFinal.length}º lugar)
-                    </button>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function atualizarMesaFinal(jogadoresVivos) {
-    jogadoresMesaFinal = [...jogadoresVivos];
-    jogadoresMesaFinal.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
-    renderizarMesaFinalGrid();
-    
-    if (jogadoresMesaFinal.length === 0) {
-        finalizarTorneio();
-    } else if (jogadoresMesaFinal.length === 1) {
-        finalizarComCampeao(jogadoresMesaFinal[0]);
-    }
-}
-
-function eliminarDaMesaFinal(jogadorNome) {
-    const jogador = jogadoresMesaFinal.find(j => j.nome === jogadorNome);
-    if (!jogador) return;
-    
-    const posicaoEliminacao = jogadoresMesaFinal.length;
-    const kos = prompt(`Eliminando ${jogadorNome} (${posicaoEliminacao}º lugar)\nQuantos KO's ele fez neste torneio?`, "0");
-    const quantidadeKOsFinal = parseInt(kos) || 0;
-    const pontosPosicao = calcularPontosPorPosicao(posicaoEliminacao);
-    
-    const classificacaoItem = {
-        nome: jogador.nome,
-        mesa: jogadoresMesaFinal.some(j => mesasData.preta?.some(m => m.nome === j.nome)) ? 'Preta' : 'Amarela',
-        posicao: posicaoEliminacao,
-        pontosPosicao: pontosPosicao,
-        kos: quantidadeKOsFinal,
-        pontosKOs: quantidadeKOsFinal,
-        pontosTotal: pontosPosicao + quantidadeKOsFinal,
-        dataEliminacao: new Date().toISOString(),
-        etapa: config.etapa
-    };
-    
-    classificacaoData.push(classificacaoItem);
-    salvarClassificacao();
-    
-    const jogadorOriginal = [...(mesasData.preta || []), ...(mesasData.amarela || [])]
-        .find(j => j.nome === jogadorNome);
-    if (jogadorOriginal) {
-        jogadorOriginal.eliminado = true;
-        jogadorOriginal.posicaoFinal = posicaoEliminacao;
-        jogadorOriginal.kos = quantidadeKOsFinal;
-        salvarMesas();
-    }
-    
-    jogadoresMesaFinal = jogadoresMesaFinal.filter(j => j.nome !== jogadorNome);
-    
-    if (jogadoresMesaFinal.length === 0) {
-        finalizarTorneio();
-    } else if (jogadoresMesaFinal.length === 1) {
-        finalizarComCampeao(jogadoresMesaFinal[0]);
-    }
-    
-    renderizarMesaFinalGrid();
-    mostrarNotificacao(`✅ ${jogadorNome} eliminado na ${posicaoEliminacao}ª posição!`);
-}
-
-function finalizarComCampeao(campeao) {
-    const pontosPosicao = calcularPontosPorPosicao(1);
-    const classificacaoItem = {
-        nome: campeao.nome,
-        mesa: mesasData.preta?.find(j => j.nome === campeao.nome) ? 'Preta' : 'Amarela',
-        posicao: 1,
-        pontosPosicao: pontosPosicao,
-        kos: campeao.kos || 0,
-        pontosKOs: campeao.kos || 0,
-        pontosTotal: pontosPosicao + (campeao.kos || 0),
-        dataEliminacao: new Date().toISOString(),
-        etapa: config.etapa
-    };
-    classificacaoData.push(classificacaoItem);
-    salvarClassificacao();
-    mostrarNotificacao(`🏆 CAMPEÃO: ${campeao.nome} 🏆`);
-    
-    jogadoresMesaFinal = [];
-    renderizarMesaFinalGrid();
-    
-    setTimeout(() => {
-        alert(`🏆 TORNEIO FINALIZADO! 🏆\n\nCAMPEÃO: ${campeao.nome}\n\nA classificação foi salva!`);
-        fecharMesaFinal();
-    }, 500);
-}
-
-function finalizarTorneio() {
-    mostrarNotificacao('🏆 TORNEIO FINALIZADO! 🏆');
-    setTimeout(() => {
-        alert('🏆 PARABÉNS! O torneio foi finalizado!\n\nTodas as pontuações foram registradas na classificação.');
-        fecharMesaFinal();
-    }, 500);
-}
-
-function fecharMesaFinal() {
-    mesaFinalAtiva = false;
-    jogadoresMesaFinal = [];
-    pausarCronometroMesaFinal();
-    document.getElementById('mesaFinalApp').classList.add('hidden');
-    document.getElementById('appContainer').classList.add('hidden');
-    document.getElementById('telaSelecao').classList.remove('hidden');
-    atualizarBotaoMesaFinal();
-}
-
-function mostrarNotificacao(mensagem) {
-    const notificacao = document.createElement('div');
-    notificacao.textContent = mensagem;
-    notificacao.style.cssText = `
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #d4a121;
-        color: #000;
-        padding: 12px 24px;
-        border-radius: 50px;
-        font-weight: bold;
-        z-index: 3000;
-        animation: fadeInOut 3s ease;
-        white-space: nowrap;
-    `;
-    document.body.appendChild(notificacao);
-    setTimeout(() => notificacao.remove(), 3000);
-}
-
-function inicializarEventos() {
-    document.getElementById('btnSelecionarPreta').onclick = () => {
-        if (mesaFinalAtiva) return;
-        mesaAtual = 'preta';
-        iniciarApp();
-    };
-    document.getElementById('btnSelecionarAmarela').onclick = () => {
-        if (mesaFinalAtiva) return;
-        mesaAtual = 'amarela';
-        iniciarApp();
-    };
-    document.getElementById('btnVoltarParaSelecao').onclick = () => {
-        if (mesaFinalAtiva) return;
-        pausarCronometro();
-        document.getElementById('appContainer').classList.add('hidden');
-        document.getElementById('telaSelecao').classList.remove('hidden');
-    };
-    document.getElementById('btnIrMesaFinal').onclick = () => irParaMesaFinal();
-    document.getElementById('btnVoltarMesaFinalSelecao').onclick = () => voltarDaMesaFinal();
-    
-    document.getElementById('btnAbrirAdminTopo').onclick = () => {
-        if (mesaFinalAtiva) return;
-        document.getElementById('modalSenhaAdmin').classList.add('active');
-    };
-    document.getElementById('btnCancelarSenhaAdmin').onclick = () => {
-        document.getElementById('modalSenhaAdmin').classList.remove('active');
-        document.getElementById('senhaAdmin').value = '';
-    };
-    document.getElementById('btnConfirmarSenhaAdmin').onclick = () => {
-        const senha = document.getElementById('senhaAdmin').value;
-        if (senha === 'poker2026') {
-            document.getElementById('modalSenhaAdmin').classList.remove('active');
-            document.getElementById('senhaAdmin').value = '';
-            document.getElementById('telaSelecao').classList.add('hidden');
-            document.getElementById('telaAdmin').classList.remove('hidden');
-            atualizarAdminResumo();
-            atualizarAdminEstatisticas();
-            atualizarHistoricoEtapas();
-        } else {
-            alert('❌ Senha incorreta!');
-            document.getElementById('senhaAdmin').value = '';
-        }
-    };
-    document.getElementById('btnVoltarAdmin').onclick = () => {
-        document.getElementById('telaAdmin').classList.add('hidden');
-        document.getElementById('telaSelecao').classList.remove('hidden');
-    };
-    
-    document.getElementById('btnVoltarInicio').onclick = () => {
-        document.getElementById('telaClassificacao').classList.add('hidden');
-        document.getElementById('telaSelecao').classList.remove('hidden');
-    };
-    document.getElementById('btnExportarClassificacao').onclick = exportarClassificacaoCSV;
-    document.getElementById('btnCopiarCSV').onclick = copiarCSVAreaTransferencia;
-    document.getElementById('btnExportarHistorico').onclick = exportarHistoricoCSV;
-    document.getElementById('btnNovaEtapa').onclick = () => {
-        document.getElementById('modalNovaEtapa').classList.add('active');
-    };
-    document.getElementById('btnCancelarNovaEtapa').onclick = () => {
-        document.getElementById('modalNovaEtapa').classList.remove('active');
-    };
-    document.getElementById('btnConfirmarNovaEtapa').onclick = iniciarNovaEtapa;
-    document.getElementById('btnApagarHistorico').onclick = () => {
-        document.getElementById('modalApagarHistorico').classList.add('active');
-    };
-    document.getElementById('btnCancelarApagarHistorico').onclick = () => {
-        document.getElementById('modalApagarHistorico').classList.remove('active');
-    };
-    document.getElementById('btnConfirmarApagarHistorico').onclick = () => {
-        historicoEtapas = [];
-        db.ref('historicoEtapas').set([]);
-        document.getElementById('modalApagarHistorico').classList.remove('active');
-        alert('✅ Histórico apagado com sucesso!');
-        atualizarHistoricoEtapas();
-    };
-    
-    document.getElementById('btnIniciarCronometro').onclick = toggleCronometro;
-    document.getElementById('btnZerarCronometro').onclick = zerarCronometro;
-    document.getElementById('cronometroDisplay').onclick = toggleCronometro;
-    
-    document.getElementById('btnIniciarCronometroMesaFinal').onclick = toggleCronometroMesaFinal;
-    document.getElementById('btnZerarCronometroMesaFinal').onclick = zerarCronometroMesaFinal;
-    document.getElementById('cronometroDisplayMesaFinal').onclick = toggleCronometroMesaFinal;
-    
-    document.getElementById('btnCancelarCorrigir').onclick = () => {
-        document.getElementById('modalCorrigir').classList.remove('active');
-    };
-    document.getElementById('btnSalvarCorrigir').onclick = salvarCorrecao;
-    document.getElementById('btnCancelarEliminar').onclick = () => {
-        document.getElementById('modalEliminar').classList.remove('active');
-        jogadorEliminando = null;
-    };
-    document.getElementById('btnConfirmarEliminar').onclick = confirmarEliminacao;
-    document.getElementById('btnCancelarSenhaApagar').onclick = () => {
-        document.getElementById('modalSenhaApagar').classList.remove('active');
-        document.getElementById('senhaApagar').value = '';
-    };
-    document.getElementById('btnConfirmarSenhaApagar').onclick = () => {
-        const senha = document.getElementById('senhaApagar').value;
-        if (senha === 'poker2026') {
-            apagarTodosDados();
-            document.getElementById('modalSenhaApagar').classList.remove('active');
-            document.getElementById('senhaApagar').value = '';
-        } else {
-            alert('❌ Senha incorreta!');
-            document.getElementById('senhaApagar').value = '';
-        }
-    };
-    document.getElementById('btnApagarDados').onclick = () => {
-        document.getElementById('modalSenhaApagar').classList.add('active');
-    };
-    
-    document.querySelectorAll('.nav-tab-admin').forEach(tab => {
-        tab.onclick = () => {
-            document.querySelectorAll('.nav-tab-admin').forEach(t => {
-                t.style.background = 'transparent';
-                t.style.color = '#fff';
-            });
-            document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.add('hidden'));
-            tab.style.background = '#d4a121';
-            tab.style.color = '#000';
-            const tabId = tab.getAttribute('data-admin-tab');
-            document.getElementById(`admin-${tabId}`).classList.remove('hidden');
-            if (tabId === 'resumo') atualizarAdminResumo();
-            if (tabId === 'estatisticas') atualizarAdminEstatisticas();
-            if (tabId === 'historico') atualizarHistoricoEtapas();
-        };
-    });
-    
-    document.getElementById('btnEscolherArquivo').onclick = () => {
-        document.getElementById('fileInput').click();
-    };
-    const fileInput = document.getElementById('fileInput');
-    const btnProcessarLayout = document.getElementById('btnProcessarLayout');
-    fileInput.onchange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            arquivoSelecionado = file;
-            btnProcessarLayout.style.display = 'inline-block';
-            document.getElementById('importResult').classList.add('show');
-            document.getElementById('importResult').innerHTML = `📄 ${file.name}`;
-        }
-    };
-    btnProcessarLayout.onclick = processarLayout;
-    document.getElementById('btnAdminExportarCSV').onclick = exportarCSVSimples;
-    document.getElementById('btnAdminExportarCompleto').onclick = exportarCSVCompleto;
-}
-
-function iniciarNovaEtapa() {
-    if (classificacaoData.length > 0) {
-        const novaEtapa = {
-            data: new Date().toISOString(),
-            classificacao: [...classificacaoData],
-            totalJogadores: totalJogadoresIniciais,
-            totalClassificados: classificacaoData.length,
-            etapaNumero: config.etapa
-        };
-        historicoEtapas.unshift(novaEtapa);
-        db.ref('historicoEtapas').set(historicoEtapas);
-    }
-    
-    mesasData = { preta: [], amarela: [] };
-    classificacaoData = [];
-    contadorEliminados = 0;
-    mesaFinalAtiva = false;
-    jogadoresMesaFinal = [];
-    totalJogadoresIniciais = 0;
-    salvarMesas();
-    salvarClassificacao();
-    
-    document.getElementById('modalNovaEtapa').classList.remove('active');
-    document.getElementById('telaAdmin').classList.add('hidden');
-    document.getElementById('telaSelecao').classList.remove('hidden');
-    document.getElementById('mesaFinalApp').classList.add('hidden');
-    document.getElementById('appContainer').classList.add('hidden');
-    atualizarBotaoMesaFinal();
-    
-    alert('✅ Nova etapa iniciada! Todos os dados foram resetados.');
-}
-
-function atualizarHistoricoEtapas() {
-    const container = document.getElementById('etapasList');
-    if (historicoEtapas.length === 0) {
-        container.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.7;">Nenhuma etapa finalizada ainda.</div>';
-        return;
-    }
-    container.innerHTML = historicoEtapas.map((etapa, index) => {
-        const data = new Date(etapa.data).toLocaleString('pt-BR');
-        const classificacaoOrdenada = [...etapa.classificacao].sort((a, b) => a.posicao - b.posicao);
-        const numeroEtapa = historicoEtapas.length - index;
-        return `
-            <div class="etapa-card">
-                <div class="etapa-header" onclick="toggleEtapa(${index})">
-                    <div><strong>📅 ${numeroEtapa}ª ETAPA</strong><div class="etapa-data">${data}</div></div>
-                    <div>🏆 ${etapa.totalJogadores} jogadores | ${etapa.totalClassificados} classificados</div>
-                </div>
-                <div class="etapa-classificacao" id="etapa-${index}">
-                    <table class="etapa-table"><thead><tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th></tr></thead>
-                    <tbody>${classificacaoOrdenada.map(j => `<tr><td><strong>${j.posicao}º</strong></td><td>${j.nome}</td><td>${j.mesa}</td><td>${j.pontosPosicao}</td><td>${j.kos || 0}</td><td><strong>${j.pontosTotal || j.pontosPosicao}</strong></td></tr>`).join('')}</tbody></table>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function toggleEtapa(index) {
-    const elemento = document.getElementById(`etapa-${index}`);
-    if (elemento) elemento.classList.toggle('show');
-}
-
-function apagarTodosDados() {
-    if (confirm('⚠️ ATENÇÃO! Isso irá apagar TODOS os dados das mesas, classificação e histórico. Confirma?')) {
-        mesasData = { preta: [], amarela: [] };
-        classificacaoData = [];
-        historicoEtapas = [];
-        contadorEliminados = 0;
-        mesaFinalAtiva = false;
-        jogadoresMesaFinal = [];
-        totalJogadoresIniciais = 0;
-        salvarMesas();
-        salvarClassificacao();
-        db.ref('historicoEtapas').set([]);
-        document.getElementById('mesaFinalApp').classList.add('hidden');
-        document.getElementById('appContainer').classList.add('hidden');
-        alert('✅ Todos os dados foram apagados!');
-        atualizarAdminResumo();
-        atualizarAdminEstatisticas();
-        atualizarClassificacao();
-        atualizarHistoricoEtapas();
-        atualizarBotaoMesaFinal();
-    }
-}
-
+// ========== FUNÇÕES DO DEALER ==========
 function iniciarApp() {
     if (mesaFinalAtiva) return;
     document.getElementById('telaSelecao').classList.add('hidden');
@@ -1715,951 +1197,139 @@ function iniciarApp() {
 
 function atualizarIndicadorMesa() {
     const indicator = document.getElementById('mesaIndicator');
-    const indicatorText = document.getElementById('mesaIndicatorText');
+    const text = document.getElementById('mesaIndicatorText');
     indicator.className = `mesa-indicator ${mesaAtual}`;
-    const texto = mesaAtual === 'preta' ? '♠️ MESA PRETA ♠️' : '♦️ MESA AMARELA ♦️';
-    indicatorText.textContent = texto;
+    text.textContent = mesaAtual === 'preta' ? '♠️ MESA PRETA ♠️' : '♦️ MESA AMARELA ♦️';
 }
-
-function toggleCronometro() { initAudio(); if (cronometroAtivo) pausarCronometro(); else iniciarCronometro(); }
-function iniciarCronometro() {
-    if (!cronometroAtivo && cronometroTempo > 0) {
-        cronometroAtivo = true;
-        document.getElementById('btnIniciarCronometro').textContent = '⏸ PAUSAR';
-        document.getElementById('cronometroDisplay').classList.remove('finished', 'warning');
-        cronometroInterval = setInterval(() => {
-            if (cronometroTempo > 0) {
-                cronometroTempo--;
-                atualizarCronometroDisplay();
-                if (cronometroTempo === 0) { tocarAlarme(); pausarCronometro(); }
-            }
-        }, 1000);
-    }
-}
-function pausarCronometro() {
-    cronometroAtivo = false;
-    document.getElementById('btnIniciarCronometro').textContent = '▶ INICIAR';
-    if (cronometroInterval) { clearInterval(cronometroInterval); cronometroInterval = null; }
-}
-function zerarCronometro() { pausarCronometro(); cronometroTempo = TEMPO_INICIAL; atualizarCronometroDisplay(); document.getElementById('cronometroDisplay').classList.remove('finished', 'warning'); }
-function atualizarCronometroDisplay() {
-    const minutos = Math.floor(cronometroTempo / 60);
-    const segundos = cronometroTempo % 60;
-    const display = document.getElementById('cronometroDisplay');
-    display.textContent = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
-    display.classList.remove('warning', 'finished');
-    if (cronometroTempo === 0) display.classList.add('finished');
-    else if (cronometroTempo <= 5) display.classList.add('warning');
-}
-function toggleCronometroMesaFinal() { initAudio(); if (cronometroAtivoMesaFinal) pausarCronometroMesaFinal(); else iniciarCronometroMesaFinal(); }
-function iniciarCronometroMesaFinal() {
-    if (!cronometroAtivoMesaFinal && cronometroTempoMesaFinal > 0) {
-        cronometroAtivoMesaFinal = true;
-        document.getElementById('btnIniciarCronometroMesaFinal').textContent = '⏸ PAUSAR';
-        document.getElementById('cronometroDisplayMesaFinal').classList.remove('finished', 'warning');
-        cronometroIntervalMesaFinal = setInterval(() => {
-            if (cronometroTempoMesaFinal > 0) {
-                cronometroTempoMesaFinal--;
-                atualizarCronometroDisplayMesaFinal();
-                if (cronometroTempoMesaFinal === 0) { tocarAlarme(); pausarCronometroMesaFinal(); }
-            }
-        }, 1000);
-    }
-}
-function pausarCronometroMesaFinal() {
-    cronometroAtivoMesaFinal = false;
-    document.getElementById('btnIniciarCronometroMesaFinal').textContent = '▶ INICIAR';
-    if (cronometroIntervalMesaFinal) { clearInterval(cronometroIntervalMesaFinal); cronometroIntervalMesaFinal = null; }
-}
-function zerarCronometroMesaFinal() { pausarCronometroMesaFinal(); cronometroTempoMesaFinal = TEMPO_INICIAL; atualizarCronometroDisplayMesaFinal(); document.getElementById('cronometroDisplayMesaFinal').classList.remove('finished', 'warning'); }
-function atualizarCronometroDisplayMesaFinal() {
-    const minutos = Math.floor(cronometroTempoMesaFinal / 60);
-    const segundos = cronometroTempoMesaFinal % 60;
-    const display = document.getElementById('cronometroDisplayMesaFinal');
-    display.textContent = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
-    display.classList.remove('warning', 'finished');
-    if (cronometroTempoMesaFinal === 0) display.classList.add('finished');
-    else if (cronometroTempoMesaFinal <= 5) display.classList.add('warning');
-}
-function tocarAlarme() {
-    if (!alarmeTocando) {
-        alarmeTocando = true;
-        if (audioContext) { const oscillator = audioContext.createOscillator(); const gainNode = audioContext.createGain(); oscillator.connect(gainNode); gainNode.connect(audioContext.destination); oscillator.frequency.value = 800; oscillator.type = 'square'; gainNode.gain.value = 0.3; oscillator.start(); setTimeout(() => oscillator.stop(), 500); }
-        if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
-        setTimeout(() => alarmeTocando = false, 1000);
-    }
-}
-function initAudio() { if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)(); }
-
-window.adicionarRebuy = function(jogadorNome, tipo) {
-    if (mesaFinalAtiva) return;
-    const quantidade = tipo === 'simples' ? 1 : 2;
-    if (confirm(`Confirmar REBUY ${tipo === 'simples' ? 'SIMPLES' : 'DUPLO'} para ${jogadorNome}?`)) {
-        const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorNome);
-        if (jogador) { jogador.rebuys = (jogador.rebuys || 0) + quantidade; salvarMesas(); }
-    }
-};
-window.adicionarAddon = function(jogadorNome) {
-    if (mesaFinalAtiva) return;
-    if (confirm(`Confirmar ADDON para ${jogadorNome}?`)) {
-        const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorNome);
-        if (jogador) { jogador.addon = true; salvarMesas(); }
-    }
-};
-window.abrirCorrecao = function(jogadorNome) {
-    if (mesaFinalAtiva) return;
-    const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorNome);
-    if (jogador) {
-        jogadorCorrigindo = jogadorNome;
-        document.getElementById('corrigirJogadorNome').textContent = jogadorNome;
-        document.getElementById('corrigirRebuys').value = jogador.rebuys || 0;
-        document.getElementById('corrigirAddon').checked = jogador.addon || false;
-        document.getElementById('modalCorrigir').classList.add('active');
-    }
-};
-window.eliminarJogador = function(jogadorNome) {
-    if (mesaFinalAtiva) return;
-    const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorNome);
-    if (jogador && !jogador.eliminado) {
-        jogadorEliminando = jogadorNome;
-        document.getElementById('eliminarJogadorNome').textContent = jogadorNome;
-        document.getElementById('quantidadeKOs').value = 0;
-        document.getElementById('modalEliminar').classList.add('active');
-    }
-};
-function confirmarEliminacao() {
-    if (jogadorEliminando) {
-        const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorEliminando);
-        if (jogador && !jogador.eliminado) {
-            contadorEliminados++;
-            const posicao = totalJogadoresIniciais - (contadorEliminados - 1);
-            const quantidadeKOs = parseInt(document.getElementById('quantidadeKOs').value) || 0;
-            const pontosPosicao = calcularPontosPorPosicao(posicao);
-            const classificacaoItem = { 
-                nome: jogador.nome, 
-                mesa: mesaAtual === 'preta' ? 'Preta' : 'Amarela', 
-                posicao: posicao, 
-                pontosPosicao: pontosPosicao, 
-                kos: quantidadeKOs, 
-                pontosKOs: quantidadeKOs, 
-                pontosTotal: pontosPosicao + quantidadeKOs, 
-                dataEliminacao: new Date().toISOString(),
-                etapa: config.etapa
-            };
-            classificacaoData.push(classificacaoItem);
-            salvarClassificacao();
-            jogador.eliminado = true;
-            jogador.posicaoFinal = posicao;
-            jogador.kos = quantidadeKOs;
-            salvarMesas();
-            alert(`✅ ${jogador.nome} eliminado na ${posicao}ª posição!`);
-            atualizarGridJogadores();
-            atualizarContadorOutraMesa();
-            verificarMesaFinal();
-        }
-    }
-    document.getElementById('modalEliminar').classList.remove('active');
-    jogadorEliminando = null;
-}
-function salvarCorrecao() {
-    if (jogadorCorrigindo) {
-        const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorCorrigindo);
-        if (jogador) {
-            jogador.rebuys = parseInt(document.getElementById('corrigirRebuys').value) || 0;
-            jogador.addon = document.getElementById('corrigirAddon').checked;
-            salvarMesas();
-        }
-    }
-    document.getElementById('modalCorrigir').classList.remove('active');
-    jogadorCorrigindo = null;
-}
-window.atualizarKOs = function(jogadorNome, inputElement) {
-    const kos = parseInt(inputElement.value) || 0;
-    const jogadorClassif = classificacaoData.find(j => j.nome === jogadorNome);
-    if (jogadorClassif) {
-        jogadorClassif.kos = kos;
-        jogadorClassif.pontosKOs = kos;
-        jogadorClassif.pontosTotal = jogadorClassif.pontosPosicao + kos;
-        salvarClassificacao();
-        atualizarClassificacao();
-    }
-};
-function salvarMesas() { db.ref('mesas').set(mesasData); }
-function salvarClassificacao() { db.ref('classificacao').set(classificacaoData); }
-function getFotoJogador(nome) { return fotosJogadores[nome] || `https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=d4a121&color=000&size=45`; }
-function atualizarInterface() { atualizarGridJogadores(); }
-function atualizarGridJogadores() {
-    const grid = document.getElementById('jogadoresGrid');
-    const jogadores = mesasData[mesaAtual] || [];
-    if (jogadores.length === 0) { grid.innerHTML = '<div class="empty-state" style="text-align: center; padding: 20px; opacity: 0.7;">Nenhum jogador na mesa. Importe pelo modo Administração.</div>'; return; }
-    grid.innerHTML = jogadores.sort((a, b) => (a.posicao || 999) - (b.posicao || 999)).map(j => {
-        const foto = getFotoJogador(j.nome);
-        const eliminadoClass = j.eliminado ? 'eliminado' : '';
-        return `<div class="jogador-card ${eliminadoClass}"><div class="jogador-posicao-numero">${j.posicao || '?'}</div><img class="jogador-foto" src="${foto}"><div class="jogador-info"><div class="jogador-nome">${j.nome}</div><div class="jogador-valores">${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}${j.addon ? '<span class="badge badge-addon">💎 Addon</span>' : ''}${j.eliminado ? `<span class="badge badge-eliminado">❌ Eliminado (${j.posicaoFinal}º)</span>` : ''}</div></div><div class="jogador-actions">${!j.eliminado ? `<button class="action-btn btn-rebuy" onclick="window.adicionarRebuy('${j.nome}', 'simples')">REBUY</button><button class="action-btn btn-rebuy-duplo" onclick="window.adicionarRebuy('${j.nome}', 'duplo')">REBUY 2x</button>${!j.addon ? `<button class="action-btn btn-addon" onclick="window.adicionarAddon('${j.nome}')">ADDON</button>` : ''}<button class="action-btn btn-corrigir" onclick="window.abrirCorrecao('${j.nome}')">✏️</button><button class="action-btn btn-eliminar" onclick="window.eliminarJogador('${j.nome}')">❌ ELIMINAR</button>` : ''}</div></div>`;
-    }).join('');
-}
-function atualizarClassificacao() {
-    const tbody = document.getElementById('classificacaoBody');
-    const classificacaoOrdenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
-    if (classificacaoOrdenada.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">Nenhum jogador eliminado ainda neuq
-                </div>
-        <div class="modal-buttons">
-            <button class="btn btn-danger" id="btnCancelarSenhaApagar">Cancelar</button>
-            <button class="btn btn-success" id="btnConfirmarSenhaApagar">Confirmar</button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Nova Etapa -->
-<div class="modal" id="modalNovaEtapa">
-    <div class="modal-content">
-        <h3>🔄 INICIAR NOVA ETAPA</h3>
-        <p>Tem certeza que deseja iniciar uma nova etapa?</p>
-        <p style="font-size: 0.9em; opacity: 0.8; margin-top: 10px;">A classificação atual será salva no histórico e os dados serão resetados.</p>
-        <div class="modal-buttons">
-            <button class="btn btn-danger" id="btnCancelarNovaEtapa">Cancelar</button>
-            <button class="btn btn-success" id="btnConfirmarNovaEtapa">Confirmar Nova Etapa</button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Apagar Historico -->
-<div class="modal" id="modalApagarHistorico">
-    <div class="modal-content">
-        <h3>🗑️ APAGAR HISTÓRICO</h3>
-        <p>Tem certeza que deseja apagar TODO o histórico de etapas?</p>
-        <p style="font-size: 0.9em; opacity: 0.8; margin-top: 10px;">Esta ação não pode ser desfeita!</p>
-        <div class="modal-buttons">
-            <button class="btn btn-danger" id="btnCancelarApagarHistorico">Cancelar</button>
-            <button class="btn btn-warning" id="btnConfirmarApagarHistorico">Confirmar</button>
-        </div>
-    </div>
-</div>
-
-<script>
-// Configuração do Firebase
-const firebaseConfig = {
-    apiKey: "AIzaSyD_XXjcjJYM73wLTTzpDgzKCOZnztcJhjE",
-    authDomain: "poker-de-quinta.firebaseapp.com",
-    databaseURL: "https://poker-de-quinta-default-rtdb.firebaseio.com",
-    projectId: "poker-de-quinta",
-    storageBucket: "poker-de-quinta.firebasestorage.app",
-    messagingSenderId: "776724152456",
-    appId: "1:776724152456:web:fbffde9a1c1a7628c61f3d"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-const VALOR_BUYIN = 100;
-const VALOR_REBUY = 30;
-const VALOR_ADDON = 50;
-const TEMPO_INICIAL = 30;
-
-// Tabela de pontuação por posição (1º = 27, 2º = 25, 3º = 23, etc)
-const PONTOS_POSICAO = {
-    1: 27, 2: 25, 3: 23, 4: 21, 5: 19,
-    6: 17, 7: 15, 8: 13, 9: 11, 10: 9,
-    11: 7, 12: 6, 13: 5, 14: 5, 15: 5,
-    16: 5, 17: 5, 18: 5, 19: 5, 20: 5
-};
-
-function calcularPontosPorPosicao(posicao) {
-    return PONTOS_POSICAO[posicao] || 5;
-}
-
-let mesaAtual = 'preta';
-let config = { etapa: 4 };
-let mesasData = { preta: [], amarela: [] };
-let classificacaoData = [];
-let historicoEtapas = [];
-let layoutImportado = { preta: [], amarela: [] };
-let arquivoSelecionado = null;
-let jogadorCorrigindo = null;
-let jogadorEliminando = null;
-let contadorEliminados = 0;
-let totalJogadoresIniciais = 0;
-
-let mesaFinalAtiva = false;
-let jogadoresMesaFinal = [];
-
-let cronometroTempo = TEMPO_INICIAL;
-let cronometroAtivo = false;
-let cronometroInterval = null;
-let cronometroTempoMesaFinal = TEMPO_INICIAL;
-let cronometroAtivoMesaFinal = false;
-let cronometroIntervalMesaFinal = null;
-let alarmeTocando = false;
-let audioContext = null;
-let fotosJogadores = {};
-
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('statusIndicator').textContent = '✅ Conectado';
-    
-    const selectEtapa = document.getElementById('selectEtapa');
-    selectEtapa.addEventListener('change', function() {
-        config.etapa = parseInt(this.value);
-        db.ref('config').set(config);
-    });
-    
-    db.ref('config').on('value', (snapshot) => { 
-        if (snapshot.exists()) {
-            config = snapshot.val();
-            const selectEtapa = document.getElementById('selectEtapa');
-            if (selectEtapa) selectEtapa.value = config.etapa || 4;
-        }
-    });
-    
-    db.ref('mesas').on('value', (snapshot) => {
-        if (snapshot.exists()) mesasData = snapshot.val();
-        else mesasData = { preta: [], amarela: [] };
-        
-        const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
-        if (totalJogadoresIniciais === 0 && todosJogadores.length > 0) {
-            totalJogadoresIniciais = todosJogadores.filter(j => !j.eliminado).length;
-        }
-        
-        atualizarInterface();
-        atualizarAdminResumo();
-        atualizarAdminEstatisticas();
-        atualizarContadorOutraMesa();
-        
-        contadorEliminados = todosJogadores.filter(j => j.eliminado).length;
-        verificarMesaFinal();
-        atualizarBotaoMesaFinal();
-    });
-    
-    db.ref('classificacao').on('value', (snapshot) => {
-        if (snapshot.exists()) classificacaoData = snapshot.val();
-        else classificacaoData = [];
-        atualizarClassificacao();
-    });
-    
-    db.ref('historicoEtapas').on('value', (snapshot) => {
-        if (snapshot.exists()) historicoEtapas = snapshot.val();
-        else historicoEtapas = [];
-        atualizarHistoricoEtapas();
-    });
-    
-    inicializarEventos();
-});
 
 function atualizarContadorOutraMesa() {
     const container = document.getElementById('contadorOutraMesa');
     if (!container) return;
-    
-    const outraMesa = mesaAtual === 'preta' ? 'amarela' : 'preta';
-    const jogadoresOutraMesa = mesasData[outraMesa] || [];
-    const vivosOutraMesa = jogadoresOutraMesa.filter(j => !j.eliminado);
-    const eliminadosOutraMesa = jogadoresOutraMesa.filter(j => j.eliminado);
-    
-    const nomeOutraMesa = outraMesa === 'preta' ? 'MESA PRETA' : 'MESA AMARELA';
-    const iconeOutraMesa = outraMesa === 'preta' ? '♠️' : '♦️';
-    
-    container.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span>${iconeOutraMesa} ${nomeOutraMesa}</span>
-            <span>🟢 VIVOS: ${vivosOutraMesa.length} | ❌ ELIMINADOS: ${eliminadosOutraMesa.length}</span>
-        </div>
-    `;
+    const outra = mesaAtual === 'preta' ? 'amarela' : 'preta';
+    const jogadores = mesasData[outra] || [];
+    const vivos = jogadores.filter(j => !j.eliminado);
+    const eliminados = jogadores.filter(j => j.eliminado);
+    container.innerHTML = `<div>${outra === 'preta' ? '♠️' : '♦️'} ${outra.toUpperCase()}: 🟢 VIVOS: ${vivos.length} | ❌ ELIMINADOS: ${eliminados.length}</div>`;
 }
 
-function atualizarBotaoMesaFinal() {
-    const btnIrMesaFinal = document.getElementById('btnIrMesaFinal');
-    
-    if (mesaFinalAtiva) {
-        if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'inline-block';
-    } else {
-        if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'none';
-    }
-}
-
-function verificarMesaFinal() {
-    const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
-    const jogadoresVivos = todosJogadores.filter(j => !j.eliminado);
-    
-    if (jogadoresVivos.length === 9 && !mesaFinalAtiva) {
-        ativarMesaFinal(jogadoresVivos);
-    }
-    
-    if (mesaFinalAtiva) {
-        const vivosAtualizados = todosJogadores.filter(j => !j.eliminado);
-        if (vivosAtualizados.length < 9) {
-            atualizarMesaFinal(vivosAtualizados);
-        } else if (vivosAtualizados.length > 9) {
-            mesaFinalAtiva = false;
-            jogadoresMesaFinal = [];
-            document.getElementById('mesaFinalApp').classList.add('hidden');
-            atualizarBotaoMesaFinal();
-        }
-    }
-}
-
-function ativarMesaFinal(jogadoresVivos) {
-    mesaFinalAtiva = true;
-    jogadoresMesaFinal = [...jogadoresVivos];
-    jogadoresMesaFinal.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
-    atualizarBotaoMesaFinal();
-    renderizarMesaFinalGrid();
-    mostrarNotificacao('🎉 MESA FINAL! Restam 9 jogadores! 🎉');
-}
-
-function irParaMesaFinal() {
-    if (mesaFinalAtiva) {
-        document.getElementById('appContainer').classList.add('hidden');
-        document.getElementById('mesaFinalApp').classList.remove('hidden');
-        renderizarMesaFinalGrid();
-        pausarCronometro();
-    }
-}
-
-function voltarDaMesaFinal() {
-    document.getElementById('mesaFinalApp').classList.add('hidden');
-    document.getElementById('appContainer').classList.remove('hidden');
-    atualizarGridJogadores();
-    atualizarContadorOutraMesa();
-}
-
-function renderizarMesaFinalGrid() {
-    const grid = document.getElementById('jogadoresMesaFinalGrid');
-    const indicator = document.getElementById('mesaFinalIndicatorText');
-    
-    if (indicator) {
-        indicator.textContent = `🏆 MESA FINAL - ${jogadoresMesaFinal.length} JOGADORES 🏆`;
-    }
-    
-    if (jogadoresMesaFinal.length === 0) {
-        grid.innerHTML = '<div style="text-align: center; padding: 40px; font-size: 1.2em;">🏆 TORNEIO FINALIZADO! 🏆</div>';
+function atualizarGridJogadores() {
+    const grid = document.getElementById('jogadoresGrid');
+    const jogadores = mesasData[mesaAtual] || [];
+    if (jogadores.length === 0) {
+        grid.innerHTML = '<div style="text-align:center;padding:20px;">Nenhum jogador. Importe pelo Admin.</div>';
         return;
     }
-    
-    grid.innerHTML = jogadoresMesaFinal.map((jogador, index) => {
-        const foto = getFotoJogador(jogador.nome);
-        const posicaoAtualNaMesaFinal = index + 1;
+    grid.innerHTML = jogadores.sort((a,b) => (a.posicao||999)-(b.posicao||999)).map(j => {
+        const foto = fotosJogadores[j.nome] || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nome)}&background=d4a121&color=000&size=45`;
         return `
-            <div class="jogador-card">
-                <div class="jogador-posicao-numero">${posicaoAtualNaMesaFinal}</div>
-                <img class="jogador-foto" src="${foto}" alt="${jogador.nome}">
+            <div class="jogador-card ${j.eliminado ? 'eliminado' : ''}">
+                <div class="jogador-posicao-numero">${j.posicao || '?'}</div>
+                <img class="jogador-foto" src="${foto}">
                 <div class="jogador-info">
-                    <div class="jogador-nome">${jogador.nome}</div>
+                    <div class="jogador-nome">${j.nome}</div>
                     <div class="jogador-valores">
-                        ${jogador.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${jogador.rebuys}</span>` : ''}
-                        ${jogador.addon ? '<span class="badge badge-addon">💎 Addon</span>' : ''}
+                        ${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}
+                        ${j.addon ? '<span class="badge badge-addon">💎 Addon</span>' : ''}
+                        ${j.eliminado ? `<span class="badge badge-eliminado">❌ Eliminado (${j.posicaoFinal}º)</span>` : ''}
                     </div>
                 </div>
                 <div class="jogador-actions">
-                    <button class="action-btn btn-eliminar" onclick="eliminarDaMesaFinal('${jogador.nome}')">
-                        ❌ ELIMINAR (${jogadoresMesaFinal.length}º lugar)
-                    </button>
+                    ${!j.eliminado ? `
+                        <button class="action-btn btn-rebuy" onclick="adicionarRebuy('${j.nome}', 'simples')">REBUY</button>
+                        <button class="action-btn btn-rebuy-duplo" onclick="adicionarRebuy('${j.nome}', 'duplo')">REBUY 2x</button>
+                        ${!j.addon ? `<button class="action-btn btn-addon" onclick="adicionarAddon('${j.nome}')">ADDON</button>` : ''}
+                        <button class="action-btn btn-corrigir" onclick="abrirCorrecao('${j.nome}')">✏️</button>
+                        <button class="action-btn btn-eliminar" onclick="eliminarJogador('${j.nome}')">❌ ELIMINAR</button>
+                    ` : ''}
                 </div>
             </div>
         `;
     }).join('');
 }
 
-function atualizarMesaFinal(jogadoresVivos) {
-    jogadoresMesaFinal = [...jogadoresVivos];
-    jogadoresMesaFinal.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
-    renderizarMesaFinalGrid();
-    
-    if (jogadoresMesaFinal.length === 0) {
-        finalizarTorneio();
-    } else if (jogadoresMesaFinal.length === 1) {
-        finalizarComCampeao(jogadoresMesaFinal[0]);
-    }
-}
-
-function eliminarDaMesaFinal(jogadorNome) {
-    const jogador = jogadoresMesaFinal.find(j => j.nome === jogadorNome);
-    if (!jogador) return;
-    
-    const posicaoEliminacao = jogadoresMesaFinal.length;
-    const kos = prompt(`Eliminando ${jogadorNome} (${posicaoEliminacao}º lugar)\nQuantos KO's ele fez neste torneio?`, "0");
-    const quantidadeKOsFinal = parseInt(kos) || 0;
-    const pontosPosicao = calcularPontosPorPosicao(posicaoEliminacao);
-    
-    const classificacaoItem = {
-        nome: jogador.nome,
-        mesa: jogadoresMesaFinal.some(j => mesasData.preta?.some(m => m.nome === j.nome)) ? 'Preta' : 'Amarela',
-        posicao: posicaoEliminacao,
-        pontosPosicao: pontosPosicao,
-        kos: quantidadeKOsFinal,
-        pontosKOs: quantidadeKOsFinal,
-        pontosTotal: pontosPosicao + quantidadeKOsFinal,
-        dataEliminacao: new Date().toISOString(),
-        etapa: config.etapa
-    };
-    
-    classificacaoData.push(classificacaoItem);
-    salvarClassificacao();
-    
-    const jogadorOriginal = [...(mesasData.preta || []), ...(mesasData.amarela || [])]
-        .find(j => j.nome === jogadorNome);
-    if (jogadorOriginal) {
-        jogadorOriginal.eliminado = true;
-        jogadorOriginal.posicaoFinal = posicaoEliminacao;
-        jogadorOriginal.kos = quantidadeKOsFinal;
-        salvarMesas();
-    }
-    
-    jogadoresMesaFinal = jogadoresMesaFinal.filter(j => j.nome !== jogadorNome);
-    
-    if (jogadoresMesaFinal.length === 0) {
-        finalizarTorneio();
-    } else if (jogadoresMesaFinal.length === 1) {
-        finalizarComCampeao(jogadoresMesaFinal[0]);
-    }
-    
-    renderizarMesaFinalGrid();
-    mostrarNotificacao(`✅ ${jogadorNome} eliminado na ${posicaoEliminacao}ª posição!`);
-}
-
-function finalizarComCampeao(campeao) {
-    const pontosPosicao = calcularPontosPorPosicao(1);
-    const classificacaoItem = {
-        nome: campeao.nome,
-        mesa: mesasData.preta?.find(j => j.nome === campeao.nome) ? 'Preta' : 'Amarela',
-        posicao: 1,
-        pontosPosicao: pontosPosicao,
-        kos: campeao.kos || 0,
-        pontosKOs: campeao.kos || 0,
-        pontosTotal: pontosPosicao + (campeao.kos || 0),
-        dataEliminacao: new Date().toISOString(),
-        etapa: config.etapa
-    };
-    classificacaoData.push(classificacaoItem);
-    salvarClassificacao();
-    mostrarNotificacao(`🏆 CAMPEÃO: ${campeao.nome} 🏆`);
-    
-    jogadoresMesaFinal = [];
-    renderizarMesaFinalGrid();
-    
-    setTimeout(() => {
-        alert(`🏆 TORNEIO FINALIZADO! 🏆\n\nCAMPEÃO: ${campeao.nome}\n\nA classificação foi salva!`);
-        fecharMesaFinal();
-    }, 500);
-}
-
-function finalizarTorneio() {
-    mostrarNotificacao('🏆 TORNEIO FINALIZADO! 🏆');
-    setTimeout(() => {
-        alert('🏆 PARABÉNS! O torneio foi finalizado!\n\nTodas as pontuações foram registradas na classificação.');
-        fecharMesaFinal();
-    }, 500);
-}
-
-function fecharMesaFinal() {
-    mesaFinalAtiva = false;
-    jogadoresMesaFinal = [];
-    pausarCronometroMesaFinal();
-    document.getElementById('mesaFinalApp').classList.add('hidden');
-    document.getElementById('appContainer').classList.add('hidden');
-    document.getElementById('telaSelecao').classList.remove('hidden');
-    atualizarBotaoMesaFinal();
-}
-
-function mostrarNotificacao(mensagem) {
-    const notificacao = document.createElement('div');
-    notificacao.textContent = mensagem;
-    notificacao.style.cssText = `
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #d4a121;
-        color: #000;
-        padding: 12px 24px;
-        border-radius: 50px;
-        font-weight: bold;
-        z-index: 3000;
-        animation: fadeInOut 3s ease;
-        white-space: nowrap;
-    `;
-    document.body.appendChild(notificacao);
-    setTimeout(() => notificacao.remove(), 3000);
-}
-
-function inicializarEventos() {
-    document.getElementById('btnSelecionarPreta').onclick = () => {
-        if (mesaFinalAtiva) return;
-        mesaAtual = 'preta';
-        iniciarApp();
-    };
-    document.getElementById('btnSelecionarAmarela').onclick = () => {
-        if (mesaFinalAtiva) return;
-        mesaAtual = 'amarela';
-        iniciarApp();
-    };
-    document.getElementById('btnVoltarParaSelecao').onclick = () => {
-        if (mesaFinalAtiva) return;
-        pausarCronometro();
-        document.getElementById('appContainer').classList.add('hidden');
-        document.getElementById('telaSelecao').classList.remove('hidden');
-    };
-    document.getElementById('btnIrMesaFinal').onclick = () => irParaMesaFinal();
-    document.getElementById('btnVoltarMesaFinalSelecao').onclick = () => voltarDaMesaFinal();
-    
-    document.getElementById('btnAbrirAdminTopo').onclick = () => {
-        if (mesaFinalAtiva) return;
-        document.getElementById('modalSenhaAdmin').classList.add('active');
-    };
-    document.getElementById('btnCancelarSenhaAdmin').onclick = () => {
-        document.getElementById('modalSenhaAdmin').classList.remove('active');
-        document.getElementById('senhaAdmin').value = '';
-    };
-    document.getElementById('btnConfirmarSenhaAdmin').onclick = () => {
-        const senha = document.getElementById('senhaAdmin').value;
-        if (senha === 'poker2026') {
-            document.getElementById('modalSenhaAdmin').classList.remove('active');
-            document.getElementById('senhaAdmin').value = '';
-            document.getElementById('telaSelecao').classList.add('hidden');
-            document.getElementById('telaAdmin').classList.remove('hidden');
-            atualizarAdminResumo();
-            atualizarAdminEstatisticas();
-            atualizarHistoricoEtapas();
-        } else {
-            alert('❌ Senha incorreta!');
-            document.getElementById('senhaAdmin').value = '';
+function adicionarRebuy(nome, tipo) {
+    const qtd = tipo === 'simples' ? 1 : 2;
+    if (confirm(`REBUY ${tipo.toUpperCase()} para ${nome}?`)) {
+        const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
+        if (jogador) {
+            jogador.rebuys = (jogador.rebuys || 0) + qtd;
+            db.ref('mesas').set(mesasData);
         }
-    };
-    document.getElementById('btnVoltarAdmin').onclick = () => {
-        document.getElementById('telaAdmin').classList.add('hidden');
-        document.getElementById('telaSelecao').classList.remove('hidden');
-    };
-    
-    document.getElementById('btnVoltarInicio').onclick = () => {
-        document.getElementById('telaClassificacao').classList.add('hidden');
-        document.getElementById('telaSelecao').classList.remove('hidden');
-    };
-    document.getElementById('btnExportarClassificacao').onclick = exportarClassificacaoCSV;
-    document.getElementById('btnCopiarCSV').onclick = copiarCSVAreaTransferencia;
-    document.getElementById('btnExportarHistorico').onclick = exportarHistoricoCSV;
-    document.getElementById('btnNovaEtapa').onclick = () => {
-        document.getElementById('modalNovaEtapa').classList.add('active');
-    };
-    document.getElementById('btnCancelarNovaEtapa').onclick = () => {
-        document.getElementById('modalNovaEtapa').classList.remove('active');
-    };
-    document.getElementById('btnConfirmarNovaEtapa').onclick = iniciarNovaEtapa;
-    document.getElementById('btnApagarHistorico').onclick = () => {
-        document.getElementById('modalApagarHistorico').classList.add('active');
-    };
-    document.getElementById('btnCancelarApagarHistorico').onclick = () => {
-        document.getElementById('modalApagarHistorico').classList.remove('active');
-    };
-    document.getElementById('btnConfirmarApagarHistorico').onclick = () => {
-        historicoEtapas = [];
-        db.ref('historicoEtapas').set([]);
-        document.getElementById('modalApagarHistorico').classList.remove('active');
-        alert('✅ Histórico apagado com sucesso!');
-        atualizarHistoricoEtapas();
-    };
-    
-    document.getElementById('btnIniciarCronometro').onclick = toggleCronometro;
-    document.getElementById('btnZerarCronometro').onclick = zerarCronometro;
-    document.getElementById('cronometroDisplay').onclick = toggleCronometro;
-    
-    document.getElementById('btnIniciarCronometroMesaFinal').onclick = toggleCronometroMesaFinal;
-    document.getElementById('btnZerarCronometroMesaFinal').onclick = zerarCronometroMesaFinal;
-    document.getElementById('cronometroDisplayMesaFinal').onclick = toggleCronometroMesaFinal;
-    
-    document.getElementById('btnCancelarCorrigir').onclick = () => {
-        document.getElementById('modalCorrigir').classList.remove('active');
-    };
-    document.getElementById('btnSalvarCorrigir').onclick = salvarCorrecao;
-    document.getElementById('btnCancelarEliminar').onclick = () => {
-        document.getElementById('modalEliminar').classList.remove('active');
-        jogadorEliminando = null;
-    };
-    document.getElementById('btnConfirmarEliminar').onclick = confirmarEliminacao;
-    document.getElementById('btnCancelarSenhaApagar').onclick = () => {
-        document.getElementById('modalSenhaApagar').classList.remove('active');
-        document.getElementById('senhaApagar').value = '';
-    };
-    document.getElementById('btnConfirmarSenhaApagar').onclick = () => {
-        const senha = document.getElementById('senhaApagar').value;
-        if (senha === 'poker2026') {
-            apagarTodosDados();
-            document.getElementById('modalSenhaApagar').classList.remove('active');
-            document.getElementById('senhaApagar').value = '';
-        } else {
-            alert('❌ Senha incorreta!');
-            document.getElementById('senhaApagar').value = '';
+    }
+}
+
+function adicionarAddon(nome) {
+    if (confirm(`ADDON para ${nome}?`)) {
+        const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
+        if (jogador) {
+            jogador.addon = true;
+            db.ref('mesas').set(mesasData);
         }
-    };
-    document.getElementById('btnApagarDados').onclick = () => {
-        document.getElementById('modalSenhaApagar').classList.add('active');
-    };
-    
-    document.querySelectorAll('.nav-tab-admin').forEach(tab => {
-        tab.onclick = () => {
-            document.querySelectorAll('.nav-tab-admin').forEach(t => {
-                t.style.background = 'transparent';
-                t.style.color = '#fff';
-            });
-            document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.add('hidden'));
-            tab.style.background = '#d4a121';
-            tab.style.color = '#000';
-            const tabId = tab.getAttribute('data-admin-tab');
-            document.getElementById(`admin-${tabId}`).classList.remove('hidden');
-            if (tabId === 'resumo') atualizarAdminResumo();
-            if (tabId === 'estatisticas') atualizarAdminEstatisticas();
-            if (tabId === 'historico') atualizarHistoricoEtapas();
-        };
-    });
-    
-    document.getElementById('btnEscolherArquivo').onclick = () => {
-        document.getElementById('fileInput').click();
-    };
-    const fileInput = document.getElementById('fileInput');
-    const btnProcessarLayout = document.getElementById('btnProcessarLayout');
-    fileInput.onchange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            arquivoSelecionado = file;
-            btnProcessarLayout.style.display = 'inline-block';
-            document.getElementById('importResult').classList.add('show');
-            document.getElementById('importResult').innerHTML = `📄 ${file.name}`;
-        }
-    };
-    btnProcessarLayout.onclick = processarLayout;
-    document.getElementById('btnAdminExportarCSV').onclick = exportarCSVSimples;
-    document.getElementById('btnAdminExportarCompleto').onclick = exportarCSVCompleto;
-}
-
-function iniciarNovaEtapa() {
-    if (classificacaoData.length > 0) {
-        const novaEtapa = {
-            data: new Date().toISOString(),
-            classificacao: [...classificacaoData],
-            totalJogadores: totalJogadoresIniciais,
-            totalClassificados: classificacaoData.length,
-            etapaNumero: config.etapa
-        };
-        historicoEtapas.unshift(novaEtapa);
-        db.ref('historicoEtapas').set(historicoEtapas);
-    }
-    
-    mesasData = { preta: [], amarela: [] };
-    classificacaoData = [];
-    contadorEliminados = 0;
-    mesaFinalAtiva = false;
-    jogadoresMesaFinal = [];
-    totalJogadoresIniciais = 0;
-    salvarMesas();
-    salvarClassificacao();
-    
-    document.getElementById('modalNovaEtapa').classList.remove('active');
-    document.getElementById('telaAdmin').classList.add('hidden');
-    document.getElementById('telaSelecao').classList.remove('hidden');
-    document.getElementById('mesaFinalApp').classList.add('hidden');
-    document.getElementById('appContainer').classList.add('hidden');
-    atualizarBotaoMesaFinal();
-    
-    alert('✅ Nova etapa iniciada! Todos os dados foram resetados.');
-}
-
-function atualizarHistoricoEtapas() {
-    const container = document.getElementById('etapasList');
-    if (historicoEtapas.length === 0) {
-        container.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.7;">Nenhuma etapa finalizada ainda.</div>';
-        return;
-    }
-    container.innerHTML = historicoEtapas.map((etapa, index) => {
-        const data = new Date(etapa.data).toLocaleString('pt-BR');
-        const classificacaoOrdenada = [...etapa.classificacao].sort((a, b) => a.posicao - b.posicao);
-        const numeroEtapa = historicoEtapas.length - index;
-        return `
-            <div class="etapa-card">
-                <div class="etapa-header" onclick="toggleEtapa(${index})">
-                    <div><strong>📅 ${numeroEtapa}ª ETAPA</strong><div class="etapa-data">${data}</div></div>
-                    <div>🏆 ${etapa.totalJogadores} jogadores | ${etapa.totalClassificados} classificados</div>
-                </div>
-                <div class="etapa-classificacao" id="etapa-${index}">
-                    <table class="etapa-table"><thead><tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th></tr></thead>
-                    <tbody>${classificacaoOrdenada.map(j => `<tr><td><strong>${j.posicao}º</strong></td><td>${j.nome}</td><td>${j.mesa}</td><td>${j.pontosPosicao}</td><td>${j.kos || 0}</td><td><strong>${j.pontosTotal || j.pontosPosicao}</strong></td></tr>`).join('')}</tbody>赶
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function toggleEtapa(index) {
-    const elemento = document.getElementById(`etapa-${index}`);
-    if (elemento) elemento.classList.toggle('show');
-}
-
-function apagarTodosDados() {
-    if (confirm('⚠️ ATENÇÃO! Isso irá apagar TODOS os dados das mesas, classificação e histórico. Confirma?')) {
-        mesasData = { preta: [], amarela: [] };
-        classificacaoData = [];
-        historicoEtapas = [];
-        contadorEliminados = 0;
-        mesaFinalAtiva = false;
-        jogadoresMesaFinal = [];
-        totalJogadoresIniciais = 0;
-        salvarMesas();
-        salvarClassificacao();
-        db.ref('historicoEtapas').set([]);
-        document.getElementById('mesaFinalApp').classList.add('hidden');
-        document.getElementById('appContainer').classList.add('hidden');
-        alert('✅ Todos os dados foram apagados!');
-        atualizarAdminResumo();
-        atualizarAdminEstatisticas();
-        atualizarClassificacao();
-        atualizarHistoricoEtapas();
-        atualizarBotaoMesaFinal();
     }
 }
 
-function iniciarApp() {
-    if (mesaFinalAtiva) return;
-    document.getElementById('telaSelecao').classList.add('hidden');
-    document.getElementById('appContainer').classList.remove('hidden');
-    atualizarIndicadorMesa();
-    atualizarGridJogadores();
-    atualizarContadorOutraMesa();
-}
-
-function atualizarIndicadorMesa() {
-    const indicator = document.getElementById('mesaIndicator');
-    const indicatorText = document.getElementById('mesaIndicatorText');
-    indicator.className = `mesa-indicator ${mesaAtual}`;
-    const texto = mesaAtual === 'preta' ? '♠️ MESA PRETA ♠️' : '♦️ MESA AMARELA ♦️';
-    indicatorText.textContent = texto;
-}
-
-function toggleCronometro() { initAudio(); if (cronometroAtivo) pausarCronometro(); else iniciarCronometro(); }
-function iniciarCronometro() {
-    if (!cronometroAtivo && cronometroTempo > 0) {
-        cronometroAtivo = true;
-        document.getElementById('btnIniciarCronometro').textContent = '⏸ PAUSAR';
-        document.getElementById('cronometroDisplay').classList.remove('finished', 'warning');
-        cronometroInterval = setInterval(() => {
-            if (cronometroTempo > 0) {
-                cronometroTempo--;
-                atualizarCronometroDisplay();
-                if (cronometroTempo === 0) { tocarAlarme(); pausarCronometro(); }
-            }
-        }, 1000);
-    }
-}
-function pausarCronometro() {
-    cronometroAtivo = false;
-    document.getElementById('btnIniciarCronometro').textContent = '▶ INICIAR';
-    if (cronometroInterval) { clearInterval(cronometroInterval); cronometroInterval = null; }
-}
-function zerarCronometro() { pausarCronometro(); cronometroTempo = TEMPO_INICIAL; atualizarCronometroDisplay(); document.getElementById('cronometroDisplay').classList.remove('finished', 'warning'); }
-function atualizarCronometroDisplay() {
-    const minutos = Math.floor(cronometroTempo / 60);
-    const segundos = cronometroTempo % 60;
-    const display = document.getElementById('cronometroDisplay');
-    display.textContent = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
-    display.classList.remove('warning', 'finished');
-    if (cronometroTempo === 0) display.classList.add('finished');
-    else if (cronometroTempo <= 5) display.classList.add('warning');
-}
-function toggleCronometroMesaFinal() { initAudio(); if (cronometroAtivoMesaFinal) pausarCronometroMesaFinal(); else iniciarCronometroMesaFinal(); }
-function iniciarCronometroMesaFinal() {
-    if (!cronometroAtivoMesaFinal && cronometroTempoMesaFinal > 0) {
-        cronometroAtivoMesaFinal = true;
-        document.getElementById('btnIniciarCronometroMesaFinal').textContent = '⏸ PAUSAR';
-        document.getElementById('cronometroDisplayMesaFinal').classList.remove('finished', 'warning');
-        cronometroIntervalMesaFinal = setInterval(() => {
-            if (cronometroTempoMesaFinal > 0) {
-                cronometroTempoMesaFinal--;
-                atualizarCronometroDisplayMesaFinal();
-                if (cronometroTempoMesaFinal === 0) { tocarAlarme(); pausarCronometroMesaFinal(); }
-            }
-        }, 1000);
-    }
-}
-function pausarCronometroMesaFinal() {
-    cronometroAtivoMesaFinal = false;
-    document.getElementById('btnIniciarCronometroMesaFinal').textContent = '▶ INICIAR';
-    if (cronometroIntervalMesaFinal) { clearInterval(cronometroIntervalMesaFinal); cronometroIntervalMesaFinal = null; }
-}
-function zerarCronometroMesaFinal() { pausarCronometroMesaFinal(); cronometroTempoMesaFinal = TEMPO_INICIAL; atualizarCronometroDisplayMesaFinal(); document.getElementById('cronometroDisplayMesaFinal').classList.remove('finished', 'warning'); }
-function atualizarCronometroDisplayMesaFinal() {
-    const minutos = Math.floor(cronometroTempoMesaFinal / 60);
-    const segundos = cronometroTempoMesaFinal % 60;
-    const display = document.getElementById('cronometroDisplayMesaFinal');
-    display.textContent = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
-    display.classList.remove('warning', 'finished');
-    if (cronometroTempoMesaFinal === 0) display.classList.add('finished');
-    else if (cronometroTempoMesaFinal <= 5) display.classList.add('warning');
-}
-function tocarAlarme() {
-    if (!alarmeTocando) {
-        alarmeTocando = true;
-        if (audioContext) { const oscillator = audioContext.createOscillator(); const gainNode = audioContext.createGain(); oscillator.connect(gainNode); gainNode.connect(audioContext.destination); oscillator.frequency.value = 800; oscillator.type = 'square'; gainNode.gain.value = 0.3; oscillator.start(); setTimeout(() => oscillator.stop(), 500); }
-        if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
-        setTimeout(() => alarmeTocando = false, 1000);
-    }
-}
-function initAudio() { if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)(); }
-
-window.adicionarRebuy = function(jogadorNome, tipo) {
-    if (mesaFinalAtiva) return;
-    const quantidade = tipo === 'simples' ? 1 : 2;
-    if (confirm(`Confirmar REBUY ${tipo === 'simples' ? 'SIMPLES' : 'DUPLO'} para ${jogadorNome}?`)) {
-        const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorNome);
-        if (jogador) { jogador.rebuys = (jogador.rebuys || 0) + quantidade; salvarMesas(); }
-    }
-};
-window.adicionarAddon = function(jogadorNome) {
-    if (mesaFinalAtiva) return;
-    if (confirm(`Confirmar ADDON para ${jogadorNome}?`)) {
-        const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorNome);
-        if (jogador) { jogador.addon = true; salvarMesas(); }
-    }
-};
-window.abrirCorrecao = function(jogadorNome) {
-    if (mesaFinalAtiva) return;
-    const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorNome);
+function abrirCorrecao(nome) {
+    const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
     if (jogador) {
-        jogadorCorrigindo = jogadorNome;
-        document.getElementById('corrigirJogadorNome').textContent = jogadorNome;
+        jogadorCorrigindo = nome;
+        document.getElementById('corrigirJogadorNome').textContent = nome;
         document.getElementById('corrigirRebuys').value = jogador.rebuys || 0;
         document.getElementById('corrigirAddon').checked = jogador.addon || false;
         document.getElementById('modalCorrigir').classList.add('active');
     }
-};
-window.eliminarJogador = function(jogadorNome) {
-    if (mesaFinalAtiva) return;
-    const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorNome);
+}
+
+function salvarCorrecao() {
+    if (jogadorCorrigindo) {
+        const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorCorrigindo);
+        if (jogador) {
+            jogador.rebuys = parseInt(document.getElementById('corrigirRebuys').value) || 0;
+            jogador.addon = document.getElementById('corrigirAddon').checked;
+            db.ref('mesas').set(mesasData);
+        }
+    }
+    document.getElementById('modalCorrigir').classList.remove('active');
+    jogadorCorrigindo = null;
+}
+
+function eliminarJogador(nome) {
+    const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
     if (jogador && !jogador.eliminado) {
-        jogadorEliminando = jogadorNome;
-        document.getElementById('eliminarJogadorNome').textContent = jogadorNome;
+        jogadorEliminando = nome;
+        document.getElementById('eliminarJogadorNome').textContent = nome;
         document.getElementById('quantidadeKOs').value = 0;
         document.getElementById('modalEliminar').classList.add('active');
     }
-};
+}
+
 function confirmarEliminacao() {
     if (jogadorEliminando) {
         const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorEliminando);
         if (jogador && !jogador.eliminado) {
             contadorEliminados++;
             const posicao = totalJogadoresIniciais - (contadorEliminados - 1);
-            const quantidadeKOs = parseInt(document.getElementById('quantidadeKOs').value) || 0;
-            const pontosPosicao = calcularPontosPorPosicao(posicao);
-            const classificacaoItem = { 
-                nome: jogador.nome, 
-                mesa: mesaAtual === 'preta' ? 'Preta' : 'Amarela', 
-                posicao: posicao, 
-                pontosPosicao: pontosPosicao, 
-                kos: quantidadeKOs, 
-                pontosKOs: quantidadeKOs, 
-                pontosTotal: pontosPosicao + quantidadeKOs, 
+            const qtdKos = parseInt(document.getElementById('quantidadeKOs').value) || 0;
+            
+            const item = {
+                nome: jogador.nome,
+                mesa: mesaAtual === 'preta' ? 'Preta' : 'Amarela',
+                posicao: posicao,
+                pontosPosicao: getPontosPosicao(posicao),
+                kos: qtdKos,
+                pontosKOs: qtdKos,
+                pontosTotal: getPontosPosicao(posicao) + qtdKos,
                 dataEliminacao: new Date().toISOString(),
                 etapa: config.etapa
             };
-            classificacaoData.push(classificacaoItem);
-            salvarClassificacao();
+            
+            classificacaoData.push(item);
+            db.ref('classificacao').set(classificacaoData);
+            
             jogador.eliminado = true;
             jogador.posicaoFinal = posicao;
-            jogador.kos = quantidadeKOs;
-            salvarMesas();
+            jogador.kos = qtdKos;
+            db.ref('mesas').set(mesasData);
+            
             alert(`✅ ${jogador.nome} eliminado na ${posicao}ª posição!`);
             atualizarGridJogadores();
             atualizarContadorOutraMesa();
@@ -2669,200 +1339,446 @@ function confirmarEliminacao() {
     document.getElementById('modalEliminar').classList.remove('active');
     jogadorEliminando = null;
 }
-function salvarCorrecao() {
-    if (jogadorCorrigindo) {
-        const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorCorrigindo);
-        if (jogador) {
-            jogador.rebuys = parseInt(document.getElementById('corrigirRebuys').value) || 0;
-            jogador.addon = document.getElementById('corrigirAddon').checked;
-            salvarMesas();
-        }
-    }
-    document.getElementById('modalCorrigir').classList.remove('active');
-    jogadorCorrigindo = null;
-}
-window.atualizarKOs = function(jogadorNome, inputElement) {
-    const kos = parseInt(inputElement.value) || 0;
-    const jogadorClassif = classificacaoData.find(j => j.nome === jogadorNome);
-    if (jogadorClassif) {
-        jogadorClassif.kos = kos;
-        jogadorClassif.pontosKOs = kos;
-        jogadorClassif.pontosTotal = jogadorClassif.pontosPosicao + kos;
-        salvarClassificacao();
-        atualizarClassificacao();
-    }
-};
-function salvarMesas() { db.ref('mesas').set(mesasData); }
-function salvarClassificacao() { db.ref('classificacao').set(classificacaoData); }
-function getFotoJogador(nome) { return fotosJogadores[nome] || `https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=d4a121&color=000&size=45`; }
-function atualizarInterface() { atualizarGridJogadores(); }
-function atualizarGridJogadores() {
-    const grid = document.getElementById('jogadoresGrid');
-    const jogadores = mesasData[mesaAtual] || [];
-    if (jogadores.length === 0) { grid.innerHTML = '<div class="empty-state" style="text-align: center; padding: 20px; opacity: 0.7;">Nenhum jogador na mesa. Importe pelo modo Administração.</div>'; return; }
-    grid.innerHTML = jogadores.sort((a, b) => (a.posicao || 999) - (b.posicao || 999)).map(j => {
-        const foto = getFotoJogador(j.nome);
-        const eliminadoClass = j.eliminado ? 'eliminado' : '';
-        return `<div class="jogador-card ${eliminadoClass}"><div class="jogador-posicao-numero">${j.posicao || '?'}</div><img class="jogador-foto" src="${foto}"><div class="jogador-info"><div class="jogador-nome">${j.nome}</div><div class="jogador-valores">${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}${j.addon ? '<span class="badge badge-addon">💎 Addon</span>' : ''}${j.eliminado ? `<span class="badge badge-eliminado">❌ Eliminado (${j.posicaoFinal}º)</span>` : ''}</div></div><div class="jogador-actions">${!j.eliminado ? `<button class="action-btn btn-rebuy" onclick="window.adicionarRebuy('${j.nome}', 'simples')">REBUY</button><button class="action-btn btn-rebuy-duplo" onclick="window.adicionarRebuy('${j.nome}', 'duplo')">REBUY 2x</button>${!j.addon ? `<button class="action-btn btn-addon" onclick="window.adicionarAddon('${j.nome}')">ADDON</button>` : ''}<button class="action-btn btn-corrigir" onclick="window.abrirCorrecao('${j.nome}')">✏️</button><button class="action-btn btn-eliminar" onclick="window.eliminarJogador('${j.nome}')">❌ ELIMINAR</button>` : ''}</div></div>`;
-    }).join('');
-}
-function atualizarClassificacao() {
-    const tbody = document.getElementById('classificacaoBody');
-    const classificacaoOrdenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
-    if (classificacaoOrdenada.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">Nenhum jogador eliminado ainda</td></tr>'; return; }
-    tbody.innerHTML = classificacaoOrdenada.map(j => { let rowClass = ''; if (j.posicao === 1) rowClass = 'top-1'; else if (j.posicao === 2) rowClass = 'top-2'; else if (j.posicao === 3) rowClass = 'top-3'; return `<tr class="${rowClass}"><td><strong>${j.posicao}º</strong></td><td>${j.nome}</td><td>${j.mesa}</td><td>${j.pontosPosicao}</td><td><input type="number" class="ko-input" value="${j.kos || 0}" onchange="window.atualizarKOs('${j.nome}', this)" min="0"></td><td>${j.pontosKOs || 0}</td><td><strong style="color: #d4a121;">${j.pontosTotal || j.pontosPosicao}</strong></td></tr>`; }).join('');
-}
-function calcularTotalJogador(jogador) { let total = VALOR_BUYIN; total += (jogador.rebuys || 0) * VALOR_REBUY; if (jogador.addon) total += VALOR_ADDON; return total; }
+
+// ========== FUNÇÕES ADMIN ==========
 function atualizarAdminResumo() {
-    const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const tbody = document.getElementById('adminResumoBody');
-    if (todosJogadores.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">Nenhum dado</td></tr>'; document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; return; }
+    if (todos.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7">Nenhum dado</td></tr>';
+        document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00';
+        return;
+    }
     let totalGeral = 0;
-    const ordenados = [...todosJogadores].sort((a, b) => a.nome.localeCompare(b.nome));
-    tbody.innerHTML = ordenados.map(jogador => { const mesa = mesasData.preta?.includes(jogador) ? 'Preta' : 'Amarela'; const total = calcularTotalJogador(jogador); totalGeral += total; return `<tr><td>${jogador.nome} ${jogador.eliminado ? '❌' : ''}</td><td>${mesa}</td><td>${jogador.posicao || '-'}</td><td>R$ ${VALOR_BUYIN}</td><td>${jogador.rebuys || 0}</td><td>${jogador.addon ? '1' : '0'}</td><td><strong>R$ ${total}</strong></td></tr>`; }).join('');
+    tbody.innerHTML = todos.map(j => {
+        const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela';
+        const total = VALOR_BUYIN + (j.rebuys || 0) * VALOR_REBUY + (j.addon ? VALOR_ADDON : 0);
+        totalGeral += total;
+        return `<tr><td>${j.nome}</td><td>${mesa}</td><td>${j.posicao || '-'}</td><td>R$ ${VALOR_BUYIN}</td><td>${j.rebuys || 0}</td><td>${j.addon ? 1 : 0}</td><td><strong>R$ ${total}</strong></td></tr>`;
+    }).join('');
     document.getElementById('adminTotalGeral').textContent = `TOTAL GERAL: R$ ${totalGeral},00`;
 }
+
 function atualizarAdminEstatisticas() {
     const preta = mesasData.preta || [];
     const amarela = mesasData.amarela || [];
     const todos = [...preta, ...amarela];
-    const pretRebuys = preta.reduce((s, j) => s + (j.rebuys || 0), 0);
-    const pretAddons = preta.filter(j => j.addon).length;
-    const pretTotal = preta.reduce((s, j) => s + calcularTotalJogador(j), 0);
-    const amarRebuys = amarela.reduce((s, j) => s + (j.rebuys || 0), 0);
-    const amarAddons = amarela.filter(j => j.addon).length;
-    const amarTotal = amarela.reduce((s, j) => s + calcularTotalJogador(j), 0);
+    
     document.getElementById('adminStatPretaJogadores').textContent = preta.length;
-    document.getElementById('adminStatPretaRebuys').textContent = pretRebuys;
-    document.getElementById('adminStatPretaAddons').textContent = pretAddons;
-    document.getElementById('adminStatPretaTotal').textContent = `R$ ${pretTotal}`;
+    document.getElementById('adminStatPretaRebuys').textContent = preta.reduce((s,j) => s + (j.rebuys||0), 0);
+    document.getElementById('adminStatPretaAddons').textContent = preta.filter(j => j.addon).length;
+    document.getElementById('adminStatPretaTotal').textContent = `R$ ${preta.reduce((s,j) => s + VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + (j.addon?VALOR_ADDON:0), 0)}`;
+    
     document.getElementById('adminStatAmarelaJogadores').textContent = amarela.length;
-    document.getElementById('adminStatAmarelaRebuys').textContent = amarRebuys;
-    document.getElementById('adminStatAmarelaAddons').textContent = amarAddons;
-    document.getElementById('adminStatAmarelaTotal').textContent = `R$ ${amarTotal}`;
-    const totalRebuys = todos.reduce((s, j) => s + (j.rebuys || 0), 0);
-    const totalAddons = todos.filter(j => j.addon).length;
-    document.getElementById('adminStatTotalRebuys').textContent = totalRebuys;
-    document.getElementById('adminStatTotalAddons').textContent = totalAddons;
-    const ranking = todos.filter(j => (j.rebuys || 0) > 0).sort((a, b) => (b.rebuys || 0) - (a.rebuys || 0)).slice(0, 5);
-    const rankingBody = document.getElementById('adminRankingBody');
-    if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Nenhum rebuy</td></tr>';
-    else rankingBody.innerHTML = ranking.map((j, i) => { const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'; return `<tr><td>${i+1}º</td><td>${j.nome}</td><td>${mesa}</td><td>${j.rebuys}</td></tr>`; }).join('');
+    document.getElementById('adminStatAmarelaRebuys').textContent = amarela.reduce((s,j) => s + (j.rebuys||0), 0);
+    document.getElementById('adminStatAmarelaAddons').textContent = amarela.filter(j => j.addon).length;
+    document.getElementById('adminStatAmarelaTotal').textContent = `R$ ${amarela.reduce((s,j) => s + VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + (j.addon?VALOR_ADDON:0), 0)}`;
+    
+    document.getElementById('adminStatTotalRebuys').textContent = todos.reduce((s,j) => s + (j.rebuys||0), 0);
+    document.getElementById('adminStatTotalAddons').textContent = todos.filter(j => j.addon).length;
+    
+    const ranking = [...todos].filter(j => (j.rebuys||0) > 0).sort((a,b) => (b.rebuys||0) - (a.rebuys||0)).slice(0,5);
+    const rb = document.getElementById('adminRankingBody');
+    if (ranking.length === 0) rb.innerHTML = '<tr><td colspan="4">Nenhum rebuy</td></tr>';
+    else rb.innerHTML = ranking.map((j,i) => `<tr><td>${i+1}</td><td>${j.nome}</td><td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}</td><td>${j.rebuys}</td></tr>`).join('');
 }
-function processarLayout() {
-    if (!arquivoSelecionado) { alert('Selecione um arquivo!'); return; }
-    const reader = new FileReader();
-    reader.onload = (e) => analisarLayoutHTML(e.target.result);
-    reader.readAsText(arquivoSelecionado);
+
+function atualizarClassificacao() {
+    const tbody = document.getElementById('classificacaoBody');
+    const ordenada = [...classificacaoData].sort((a,b) => a.posicao - b.posicao);
+    if (ordenada.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7">Nenhum jogador eliminado</td></tr>';
+        return;
+    }
+    tbody.innerHTML = ordenada.map(j => {
+        let cls = '';
+        if (j.posicao === 1) cls = 'top-1';
+        else if (j.posicao === 2) cls = 'top-2';
+        else if (j.posicao === 3) cls = 'top-3';
+        return `<tr class="${cls}"><td><strong>${j.posicao}º</strong></td><td>${j.nome}</td><td>${j.mesa}</td><td>${j.pontosPosicao}</td><td><input type="number" class="ko-input" value="${j.kos || 0}" onchange="atualizarKOs('${j.nome}', this)" min="0"></td><td>${j.pontosKOs || 0}</td><td><strong>${j.pontosTotal || j.pontosPosicao}</strong></td></tr>`;
+    }).join('');
 }
-function analisarLayoutHTML(html) {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-    layoutImportado = { preta: [], amarela: [] };
-    const rows = doc.querySelectorAll('tr');
-    rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        if (cells.length >= 3) {
-            const seatCell = cells[2]?.textContent?.trim() || '';
-            const matchPreta = seatCell.match(/MESA\s*PRETA\s*Seat\s*(\d+)/i);
-            const matchAmarela = seatCell.match(/MESA\s*AMARELA\s*Seat\s*(\d+)/i);
-            let mesa = null, posicao = null;
-            if (matchPreta) { mesa = 'preta'; posicao = parseInt(matchPreta[1]); }
-            else if (matchAmarela) { mesa = 'amarela'; posicao = parseInt(matchAmarela[1]); }
-            if (mesa && posicao) {
-                const nameCell = cells[1]?.textContent?.trim() || '';
-                const nome = nameCell.replace(/\.+/g, '').trim();
-                if (nome) layoutImportado[mesa].push({ posicao, nome });
-            }
-        }
-    });
-    layoutImportado.preta.sort((a, b) => a.posicao - b.posicao);
-    layoutImportado.amarela.sort((a, b) => a.posicao - b.posicao);
-    mostrarPreviewAdmin();
+
+function atualizarKOs(nome, input) {
+    const kos = parseInt(input.value) || 0;
+    const j = classificacaoData.find(j => j.nome === nome);
+    if (j) {
+        j.kos = kos;
+        j.pontosKOs = kos;
+        j.pontosTotal = j.pontosPosicao + kos;
+        db.ref('classificacao').set(classificacaoData);
+        atualizarClassificacao();
+    }
 }
-function mostrarPreviewAdmin() {
-    document.getElementById('previewCountPreta').textContent = layoutImportado.preta.length;
-    document.getElementById('previewCountAmarela').textContent = layoutImportado.amarela.length;
-    document.getElementById('previewPreta').innerHTML = layoutImportado.preta.map(p => `<div>Posição ${p.posicao}: ${p.nome}</div>`).join('') || '<div>Nenhum jogador</div>';
-    document.getElementById('previewAmarela').innerHTML = layoutImportado.amarela.map(p => `<div>Posição ${p.posicao}: ${p.nome}</div>`).join('') || '<div>Nenhum jogador</div>';
-    document.getElementById('previewMesas').style.display = 'grid';
-    const btnConfirmar = document.createElement('button');
-    btnConfirmar.className = 'btn btn-success';
-    btnConfirmar.textContent = '✅ CONFIRMAR E APLICAR LAYOUT';
-    btnConfirmar.style.marginTop = '20px';
-    btnConfirmar.style.width = '100%';
-    btnConfirmar.onclick = aplicarLayoutImportado;
-    const existingBtn = document.querySelector('#previewMesas + button');
-    if (existingBtn) existingBtn.remove();
-    document.getElementById('previewMesas').after(btnConfirmar);
-    document.getElementById('importResult').innerHTML = `✅ Layout analisado! Preta: ${layoutImportado.preta.length} | Amarela: ${layoutImportado.amarela.length}`;
+
+function atualizarHistoricoEtapas() {
+    const container = document.getElementById('etapasList');
+    if (historicoEtapas.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;">Nenhuma etapa finalizada</div>';
+        return;
+    }
+    container.innerHTML = historicoEtapas.map((etapa, idx) => {
+        const data = new Date(etapa.data).toLocaleString('pt-BR');
+        const ordenada = [...etapa.classificacao].sort((a,b) => a.posicao - b.posicao);
+        const num = historicoEtapas.length - idx;
+        return `
+            <div class="etapa-card">
+                <div class="etapa-header" onclick="toggleEtapa(${idx})">
+                    <div><strong>📅 ${num}ª ETAPA</strong><div class="etapa-data">${data}</div></div>
+                    <div>🏆 ${etapa.totalJogadores} jogadores | ${etapa.totalClassificados} classificados</div>
+                </div>
+                <div class="etapa-classificacao" id="etapa-${idx}">
+                    <table class="etapa-table"><thead><tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th></tr></thead>
+                    <tbody>${ordenada.map(j => `<tr><td>${j.posicao}º</td><td>${j.nome}</td><td>${j.mesa}</td><td>${j.pontosPosicao}</td><td>${j.kos || 0}</td><td><strong>${j.pontosTotal || j.pontosPosicao}</strong></td></tr>`).join('')}</tbody></table>
+                </div>
+            </div>
+        `;
+    }).join('');
 }
-function aplicarLayoutImportado() {
-    mesasData.preta = layoutImportado.preta.map(p => ({ nome: p.nome, posicao: p.posicao, rebuys: 0, addon: false, eliminado: false, timestamp: Date.now() }));
-    mesasData.amarela = layoutImportado.amarela.map(p => ({ nome: p.nome, posicao: p.posicao, rebuys: 0, addon: false, eliminado: false, timestamp: Date.now() }));
+
+function toggleEtapa(idx) {
+    const el = document.getElementById(`etapa-${idx}`);
+    if (el) el.classList.toggle('show');
+}
+
+function iniciarNovaEtapa() {
+    if (classificacaoData.length > 0) {
+        const nova = {
+            data: new Date().toISOString(),
+            classificacao: [...classificacaoData],
+            totalJogadores: totalJogadoresIniciais,
+            totalClassificados: classificacaoData.length,
+            etapaNumero: config.etapa
+        };
+        historicoEtapas.unshift(nova);
+        db.ref('historicoEtapas').set(historicoEtapas);
+    }
+    
+    mesasData = { preta: [], amarela: [] };
+    classificacaoData = [];
     contadorEliminados = 0;
     mesaFinalAtiva = false;
     jogadoresMesaFinal = [];
+    totalJogadoresIniciais = 0;
+    
+    db.ref('mesas').set(mesasData);
+    db.ref('classificacao').set(classificacaoData);
+    
+    document.getElementById('modalNovaEtapa').classList.remove('active');
+    document.getElementById('telaAdmin').classList.add('hidden');
+    document.getElementById('telaSelecao').classList.remove('hidden');
+    document.getElementById('mesaFinalApp').classList.add('hidden');
+    document.getElementById('btnIrMesaFinal').style.display = 'none';
+    
+    alert('✅ Nova etapa iniciada!');
+}
+
+function apagarTodosDados() {
+    if (confirm('⚠️ Apagar TODOS os dados?')) {
+        mesasData = { preta: [], amarela: [] };
+        classificacaoData = [];
+        historicoEtapas = [];
+        contadorEliminados = 0;
+        mesaFinalAtiva = false;
+        jogadoresMesaFinal = [];
+        totalJogadoresIniciais = 0;
+        
+        db.ref('mesas').set(mesasData);
+        db.ref('classificacao').set(classificacaoData);
+        db.ref('historicoEtapas').set([]);
+        
+        document.getElementById('telaAdmin').classList.add('hidden');
+        document.getElementById('telaSelecao').classList.remove('hidden');
+        alert('✅ Todos os dados foram apagados!');
+    }
+    document.getElementById('modalSenhaApagar').classList.remove('active');
+}
+
+// ========== CRONÔMETROS ==========
+function iniciarCronometro() {
+    if (!cronometroAtivo && cronometroTempo > 0) {
+        cronometroAtivo = true;
+        document.getElementById('btnIniciarCronometro').textContent = '⏸ PAUSAR';
+        cronometroInterval = setInterval(() => {
+            if (cronometroTempo > 0) {
+                cronometroTempo--;
+                const m = Math.floor(cronometroTempo / 60);
+                const s = cronometroTempo % 60;
+                const display = document.getElementById('cronometroDisplay');
+                display.textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                if (cronometroTempo === 0) {
+                    clearInterval(cronometroInterval);
+                    cronometroAtivo = false;
+                    document.getElementById('btnIniciarCronometro').textContent = '▶ INICIAR';
+                    if (navigator.vibrate) navigator.vibrate([200,100,200]);
+                }
+            }
+        }, 1000);
+    }
+}
+
+function pausarCronometro() {
+    cronometroAtivo = false;
+    if (cronometroInterval) clearInterval(cronometroInterval);
+    document.getElementById('btnIniciarCronometro').textContent = '▶ INICIAR';
+}
+
+function zerarCronometro() {
+    pausarCronometro();
+    cronometroTempo = TEMPO_INICIAL;
+    document.getElementById('cronometroDisplay').textContent = '00:30';
+}
+
+function iniciarCronometroMF() {
+    if (!cronometroAtivoMF && cronometroTempoMF > 0) {
+        cronometroAtivoMF = true;
+        document.getElementById('btnIniciarCronometroMesaFinal').textContent = '⏸ PAUSAR';
+        cronometroIntervalMF = setInterval(() => {
+            if (cronometroTempoMF > 0) {
+                cronometroTempoMF--;
+                const m = Math.floor(cronometroTempoMF / 60);
+                const s = cronometroTempoMF % 60;
+                document.getElementById('cronometroDisplayMesaFinal').textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                if (cronometroTempoMF === 0) {
+                    clearInterval(cronometroIntervalMF);
+                    cronometroAtivoMF = false;
+                    document.getElementById('btnIniciarCronometroMesaFinal').textContent = '▶ INICIAR';
+                    if (navigator.vibrate) navigator.vibrate([200,100,200]);
+                }
+            }
+        }, 1000);
+    }
+}
+
+function pausarCronometroMF() {
+    cronometroAtivoMF = false;
+    if (cronometroIntervalMF) clearInterval(cronometroIntervalMF);
+    document.getElementById('btnIniciarCronometroMesaFinal').textContent = '▶ INICIAR';
+}
+
+function zerarCronometroMF() {
+    pausarCronometroMF();
+    cronometroTempoMF = TEMPO_INICIAL;
+    document.getElementById('cronometroDisplayMesaFinal').textContent = '00:30';
+}
+
+// ========== IMPORTAÇÃO LAYOUT ==========
+function processarLayout() {
+    if (!arquivoSelecionado) { alert('Selecione um arquivo!'); return; }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const html = e.target.result;
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const rows = doc.querySelectorAll('tr');
+        layoutImportado = { preta: [], amarela: [] };
+        
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length >= 3) {
+                const seat = cells[2]?.textContent?.trim() || '';
+                const matchPreta = seat.match(/MESA\s*PRETA\s*Seat\s*(\d+)/i);
+                const matchAmarela = seat.match(/MESA\s*AMARELA\s*Seat\s*(\d+)/i);
+                let mesa = null, pos = null;
+                if (matchPreta) { mesa = 'preta'; pos = parseInt(matchPreta[1]); }
+                else if (matchAmarela) { mesa = 'amarela'; pos = parseInt(matchAmarela[1]); }
+                if (mesa && pos) {
+                    const nome = cells[1]?.textContent?.trim()?.replace(/\.+/g, '').trim();
+                    if (nome) layoutImportado[mesa].push({ posicao: pos, nome });
+                }
+            }
+        });
+        
+        layoutImportado.preta.sort((a,b) => a.posicao - b.posicao);
+        layoutImportado.amarela.sort((a,b) => a.posicao - b.posicao);
+        
+        document.getElementById('previewCountPreta').textContent = layoutImportado.preta.length;
+        document.getElementById('previewCountAmarela').textContent = layoutImportado.amarela.length;
+        document.getElementById('previewPreta').innerHTML = layoutImportado.preta.map(p => `<div>Pos ${p.posicao}: ${p.nome}</div>`).join('');
+        document.getElementById('previewAmarela').innerHTML = layoutImportado.amarela.map(p => `<div>Pos ${p.posicao}: ${p.nome}</div>`).join('');
+        document.getElementById('previewMesas').style.display = 'grid';
+        document.getElementById('importResult').style.display = 'block';
+        document.getElementById('importResult').innerHTML = `✅ Analisado! Preta: ${layoutImportado.preta.length} | Amarela: ${layoutImportado.amarela.length}`;
+        
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-success';
+        btn.textContent = '✅ APLICAR LAYOUT';
+        btn.style.marginTop = '20px';
+        btn.style.width = '100%';
+        btn.onclick = aplicarLayout;
+        const old = document.querySelector('#previewMesas + button');
+        if (old) old.remove();
+        document.getElementById('previewMesas').after(btn);
+    };
+    reader.readAsText(arquivoSelecionado);
+}
+
+function aplicarLayout() {
+    mesasData.preta = layoutImportado.preta.map(p => ({ nome: p.nome, posicao: p.posicao, rebuys: 0, addon: false, eliminado: false, timestamp: Date.now() }));
+    mesasData.amarela = layoutImportado.amarela.map(p => ({ nome: p.nome, posicao: p.posicao, rebuys: 0, addon: false, eliminado: false, timestamp: Date.now() }));
     totalJogadoresIniciais = mesasData.preta.length + mesasData.amarela.length;
-    salvarMesas();
-    alert(`✅ Layout aplicado!\nMesa Preta: ${mesasData.preta.length} jogadores\nMesa Amarela: ${mesasData.amarela.length} jogadores\nTotal: ${totalJogadoresIniciais} jogadores`);
+    contadorEliminados = 0;
+    mesaFinalAtiva = false;
+    jogadoresMesaFinal = [];
+    db.ref('mesas').set(mesasData);
+    alert(`✅ Layout aplicado!\nPreta: ${mesasData.preta.length}\nAmarela: ${mesasData.amarela.length}\nTotal: ${totalJogadoresIniciais}`);
     atualizarAdminResumo();
     atualizarAdminEstatisticas();
 }
+
+// ========== EXPORTAÇÕES ==========
 function exportarCSVSimples() {
-    const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
-    if (todosJogadores.length === 0) { alert('Nenhum jogador!'); return; }
+    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+    if (todos.length === 0) { alert('Nenhum jogador!'); return; }
     let csv = 'Nome,Rebuys,Addons\n';
-    todosJogadores.sort((a, b) => a.nome.localeCompare(b.nome)).forEach(j => { csv += `"${j.nome}",${j.rebuys || 0},${j.addon ? 1 : 0}\n`; });
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `rebuy-addon-etapa${config.etapa}.csv`;
-    link.click();
+    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => csv += `"${j.nome}",${j.rebuys||0},${j.addon?1:0}\n`);
+    downloadCSV(csv, `rebuy-addon-etapa${config.etapa}.csv`);
 }
-function copiarCSVAreaTransferencia() {
-    const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
-    if (todosJogadores.length === 0) { alert('Nenhum jogador!'); return; }
-    let csv = 'Nome,Rebuys,Addons\n';
-    todosJogadores.sort((a, b) => a.nome.localeCompare(b.nome)).forEach(j => { csv += `${j.nome},${j.rebuys || 0},${j.addon ? 1 : 0}\n`; });
-    navigator.clipboard.writeText(csv).then(() => alert('✅ Dados copiados!')).catch(() => alert('❌ Erro ao copiar.'));
-}
+
 function exportarCSVCompleto() {
-    const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
-    if (todosJogadores.length === 0) { alert('Nenhum jogador!'); return; }
+    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+    if (todos.length === 0) { alert('Nenhum jogador!'); return; }
     let csv = 'Nome,Mesa,Posição,Buy-in,Rebuys,Addon,Total\n';
-    let totalGeral = 0;
-    todosJogadores.sort((a, b) => { const mesaA = mesasData.preta?.includes(a) ? 'Preta' : 'Amarela'; const mesaB = mesasData.preta?.includes(b) ? 'Preta' : 'Amarela'; if (mesaA !== mesaB) return mesaA === 'Preta' ? -1 : 1; return a.nome.localeCompare(b.nome); }).forEach(j => { const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'; const total = calcularTotalJogador(j); totalGeral += total; csv += `"${j.nome}",${mesa},${j.posicao || ''},${VALOR_BUYIN},${j.rebuys || 0},${j.addon ? 'Sim' : 'Não'},${total}\n`; });
-    csv += `\n"TOTAL GERAL",,,,,,${totalGeral}\n`;
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `caixa-completo-etapa${config.etapa}.csv`;
-    link.click();
+    let total = 0;
+    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => {
+        const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela';
+        const t = VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + (j.addon?VALOR_ADDON:0);
+        total += t;
+        csv += `"${j.nome}",${mesa},${j.posicao||''},${VALOR_BUYIN},${j.rebuys||0},${j.addon?'Sim':'Não'},${t}\n`;
+    });
+    csv += `\n"TOTAL GERAL",,,,,,${total}\n`;
+    downloadCSV(csv, `caixa-completo-etapa${config.etapa}.csv`);
 }
+
 function exportarClassificacaoCSV() {
-    if (classificacaoData.length === 0) { alert('Nenhum jogador classificado!'); return; }
+    if (classificacaoData.length === 0) { alert('Nenhum classificado!'); return; }
     let csv = 'Posição,Jogador,Mesa,Pontos Posição,KO\'s,Pontos KO\'s,Pontuação Total,Etapa\n';
-    [...classificacaoData].sort((a, b) => a.posicao - b.posicao).forEach(j => { csv += `${j.posicao},"${j.nome}",${j.mesa},${j.pontosPosicao},${j.kos || 0},${j.pontosKOs || 0},${j.pontosTotal || j.pontosPosicao},${j.etapa || config.etapa}\n`; });
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `classificacao-etapa${config.etapa}.csv`;
-    link.click();
+    [...classificacaoData].sort((a,b) => a.posicao - b.posicao).forEach(j => csv += `${j.posicao},"${j.nome}",${j.mesa},${j.pontosPosicao},${j.kos||0},${j.pontosKOs||0},${j.pontosTotal||j.pontosPosicao},${j.etapa||config.etapa}\n`);
+    downloadCSV(csv, `classificacao-etapa${config.etapa}.csv`);
 }
+
 function exportarHistoricoCSV() {
-    if (historicoEtapas.length === 0) { alert('Nenhuma etapa no histórico!'); return; }
+    if (historicoEtapas.length === 0) { alert('Nenhuma etapa!'); return; }
     let csv = 'Etapa,Data,Jogador,Posição,Mesa,Pontos Posição,KO\'s,Pontos Total\n';
-    historicoEtapas.forEach((etapa, idx) => { const data = new Date(etapa.data).toLocaleString('pt-BR'); const classificacaoOrdenada = [...etapa.classificacao].sort((a, b) => a.posicao - b.posicao); const numeroEtapa = historicoEtapas.length - idx; classificacaoOrdenada.forEach(j => { csv += `${numeroEtapa},"${data}","${j.nome}",${j.posicao},"${j.mesa}",${j.pontosPosicao},${j.kos || 0},${j.pontosTotal || j.pontosPosicao}\n`; }); });
+    historicoEtapas.forEach((etapa, idx) => {
+        const data = new Date(etapa.data).toLocaleString('pt-BR');
+        const num = historicoEtapas.length - idx;
+        [...etapa.classificacao].sort((a,b) => a.posicao - b.posicao).forEach(j => {
+            csv += `${num},"${data}","${j.nome}",${j.posicao},"${j.mesa}",${j.pontosPosicao},${j.kos||0},${j.pontosTotal||j.pontosPosicao}\n`;
+        });
+    });
+    downloadCSV(csv, 'historico-etapas.csv');
+}
+
+function copiarCSV() {
+    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+    if (todos.length === 0) { alert('Nenhum jogador!'); return; }
+    let csv = 'Nome,Rebuys,Addons\n';
+    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => csv += `${j.nome},${j.rebuys||0},${j.addon?1:0}\n`);
+    navigator.clipboard.writeText(csv).then(() => alert('✅ Copiado!')).catch(() => alert('❌ Erro'));
+}
+
+function downloadCSV(csv, nome) {
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `historico-etapas.csv`;
+    link.download = nome;
     link.click();
 }
-window.toggleEtapa = toggleEtapa;
-window.eliminarDaMesaFinal = eliminarDaMesaFinal;
+
+// ========== EVENTOS ==========
+function inicializarEventos() {
+    document.getElementById('btnSelecionarPreta').onclick = () => { if (!mesaFinalAtiva) { mesaAtual = 'preta'; iniciarApp(); } };
+    document.getElementById('btnSelecionarAmarela').onclick = () => { if (!mesaFinalAtiva) { mesaAtual = 'amarela'; iniciarApp(); } };
+    document.getElementById('btnVoltarParaSelecao').onclick = () => { if (!mesaFinalAtiva) { pausarCronometro(); document.getElementById('appContainer').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); } };
+    document.getElementById('btnIrMesaFinal').onclick = irParaMesaFinal;
+    document.getElementById('btnVoltarMesaFinalSelecao').onclick = voltarDaMesaFinal;
+    
+    document.getElementById('btnAbrirAdminTopo').onclick = () => { if (!mesaFinalAtiva) document.getElementById('modalSenhaAdmin').classList.add('active'); };
+    document.getElementById('btnCancelarSenhaAdmin').onclick = () => { document.getElementById('modalSenhaAdmin').classList.remove('active'); document.getElementById('senhaAdmin').value = ''; };
+    document.getElementById('btnConfirmarSenhaAdmin').onclick = () => {
+        if (document.getElementById('senhaAdmin').value === 'poker2026') {
+            document.getElementById('modalSenhaAdmin').classList.remove('active');
+            document.getElementById('telaSelecao').classList.add('hidden');
+            document.getElementById('telaAdmin').classList.remove('hidden');
+            atualizarAdminResumo();
+            atualizarAdminEstatisticas();
+            atualizarHistoricoEtapas();
+        } else alert('❌ Senha incorreta!');
+        document.getElementById('senhaAdmin').value = '';
+    };
+    document.getElementById('btnVoltarAdmin').onclick = () => { document.getElementById('telaAdmin').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); };
+    document.getElementById('btnVoltarInicio').onclick = () => { document.getElementById('telaClassificacao').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); };
+    
+    document.getElementById('btnIniciarCronometro').onclick = () => { if (cronometroAtivo) pausarCronometro(); else iniciarCronometro(); };
+    document.getElementById('btnZerarCronometro').onclick = zerarCronometro;
+    document.getElementById('btnIniciarCronometroMesaFinal').onclick = () => { if (cronometroAtivoMF) pausarCronometroMF(); else iniciarCronometroMF(); };
+    document.getElementById('btnZerarCronometroMesaFinal').onclick = zerarCronometroMF;
+    
+    document.getElementById('btnCancelarCorrigir').onclick = () => document.getElementById('modalCorrigir').classList.remove('active');
+    document.getElementById('btnSalvarCorrigir').onclick = salvarCorrecao;
+    document.getElementById('btnCancelarEliminar').onclick = () => document.getElementById('modalEliminar').classList.remove('active');
+    document.getElementById('btnConfirmarEliminar').onclick = confirmarEliminacao;
+    
+    document.getElementById('btnCancelarSenhaApagar').onclick = () => document.getElementById('modalSenhaApagar').classList.remove('active');
+    document.getElementById('btnConfirmarSenhaApagar').onclick = () => {
+        if (document.getElementById('senhaApagar').value === 'poker2026') apagarTodosDados();
+        else alert('❌ Senha incorreta!');
+        document.getElementById('senhaApagar').value = '';
+    };
+    document.getElementById('btnApagarDados').onclick = () => document.getElementById('modalSenhaApagar').classList.add('active');
+    
+    document.getElementById('btnNovaEtapa').onclick = () => document.getElementById('modalNovaEtapa').classList.add('active');
+    document.getElementById('btnCancelarNovaEtapa').onclick = () => document.getElementById('modalNovaEtapa').classList.remove('active');
+    document.getElementById('btnConfirmarNovaEtapa').onclick = iniciarNovaEtapa;
+    document.getElementById('btnApagarHistorico').onclick = () => document.getElementById('modalApagarHistorico').classList.add('active');
+    document.getElementById('btnCancelarApagarHistorico').onclick = () => document.getElementById('modalApagarHistorico').classList.remove('active');
+    document.getElementById('btnConfirmarApagarHistorico').onclick = () => {
+        historicoEtapas = [];
+        db.ref('historicoEtapas').set([]);
+        document.getElementById('modalApagarHistorico').classList.remove('active');
+        alert('✅ Histórico apagado!');
+        atualizarHistoricoEtapas();
+    };
+    
+    document.querySelectorAll('.nav-tab-admin').forEach(tab => {
+        tab.onclick = () => {
+            document.querySelectorAll('.nav-tab-admin').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.add('hidden'));
+            tab.classList.add('active');
+            document.getElementById(`admin-${tab.dataset.adminTab}`).classList.remove('hidden');
+        };
+    });
+    
+    document.getElementById('btnEscolherArquivo').onclick = () => document.getElementById('fileInput').click();
+    document.getElementById('fileInput').onchange = (e) => {
+        if (e.target.files[0]) {
+            arquivoSelecionado = e.target.files[0];
+            document.getElementById('btnProcessarLayout').style.display = 'inline-block';
+        }
+    };
+    document.getElementById('btnProcessarLayout').onclick = processarLayout;
+    document.getElementById('btnAdminExportarCSV').onclick = exportarCSVSimples;
+    document.getElementById('btnAdminExportarCompleto').onclick = exportarCSVCompleto;
+    document.getElementById('btnExportarClassificacao').onclick = exportarClassificacaoCSV;
+    document.getElementById('btnExportarHistorico').onclick = exportarHistoricoCSV;
+    document.getElementById('btnCopiarCSV').onclick = copiarCSV;
+    
+    // Select etapa
+    document.getElementById('selectEtapa').addEventListener('change', (e) => {
+        config.etapa = parseInt(e.target.value);
+        db.ref('config').set(config);
+    });
+}
+
+// Expor funções globais
+window.adicionarRebuy = adicionarRebuy;
+window.adicionarAddon = adicionarAddon;
+window.abrirCorrecao = abrirCorrecao;
+window.eliminarJogador = eliminarJogador;
 window.atualizarKOs = atualizarKOs;
+window.eliminarDaMesaFinal = eliminarDaMesaFinal;
+window.toggleEtapa = toggleEtapa;
 </script>
 </body>
 </html>
