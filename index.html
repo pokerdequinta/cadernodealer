@@ -99,6 +99,25 @@
             box-shadow: 0 0 30px rgba(212, 161, 33, 0.5);
         }
         
+        .btn-mesa-final-topo {
+            margin-top: 15px;
+            padding: 12px;
+            background: #d4a121;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1em;
+            width: 100%;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
         .app-container, .mesa-final-app {
             display: flex;
             height: 100vh;
@@ -168,22 +187,6 @@
             animation: pulse 1s infinite;
         }
         
-        .btn-voltar-mesa-final {
-            padding: 8px 15px;
-            background: #4CAF50;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 0.85em;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        
         .mesa-indicator {
             background: #102810;
             border: 3px solid #d4a121;
@@ -202,18 +205,32 @@
             text-transform: uppercase;
         }
         
-        .contador-outra-mesa {
+        .contador-geral {
             margin-top: 10px;
             padding: 8px;
-            background: #00000040;
+            background: #00000060;
             border-radius: 8px;
-            font-size: 0.9em;
+            font-size: 0.85em;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
         }
+        
+        .contador-mesa {
+            flex: 1;
+            text-align: center;
+            padding: 5px;
+            border-radius: 6px;
+        }
+        
+        .contador-mesa.preta { background: rgba(0,0,0,0.3); border-left: 3px solid #fff; }
+        .contador-mesa.amarela { background: rgba(0,0,0,0.3); border-left: 3px solid #FFD700; }
         
         .jogadores-grid {
             display: grid;
             gap: 8px;
-            max-height: calc(100vh - 280px);
+            max-height: calc(100vh - 320px);
             overflow-y: auto;
         }
         
@@ -682,6 +699,9 @@
             <button class="selecao-btn preta" id="btnSelecionarPreta">♠️ MESA PRETA</button>
             <button class="selecao-btn amarela" id="btnSelecionarAmarela">♦️ MESA AMARELA</button>
         </div>
+        
+        <!-- Botão da Mesa Final na tela inicial -->
+        <button class="btn-mesa-final-topo" id="btnMesaFinalTopo" style="display: none;">🏆 IR PARA MESA FINAL 🏆</button>
     </div>
 </div>
 
@@ -844,13 +864,12 @@
             <div>
                 <button class="btn-voltar-mesa" id="btnVoltarParaSelecao">↩️ TROCAR DE MESA</button>
                 <button class="btn-ir-mesa-final" id="btnIrMesaFinal" style="display: none;">🏆 IR PARA MESA FINAL</button>
-                <button class="btn-voltar-mesa-final" id="btnVoltarMesaFinal" style="display: none;">🏆 VOLTAR MESA FINAL</button>
             </div>
         </div>
         <div class="mesa-indicator" id="mesaIndicator">
             <div class="mesa-indicator-text" id="mesaIndicatorText">♠️ MESA PRETA ♠️</div>
             <div style="font-size: 0.9em; opacity: 0.8;">Você está atuando nesta mesa</div>
-            <div class="contador-outra-mesa" id="contadorOutraMesa"></div>
+            <div class="contador-geral" id="contadorGeral"></div>
         </div>
         <div class="jogadores-grid" id="jogadoresGrid"></div>
     </div>
@@ -882,6 +901,7 @@
         <div class="mesa-indicator" style="border-color: #d4a121; background: linear-gradient(135deg, #d4a12120, #00000040);">
             <div class="mesa-indicator-text" id="mesaFinalIndicatorText">🏆 MESA FINAL</div>
             <div style="font-size: 0.9em; opacity: 0.8;">Elimine os jogadores para definir o campeão</div>
+            <div class="contador-geral" id="contadorGeralMF"></div>
         </div>
         <div class="jogadores-grid" id="jogadoresMesaFinalGrid"></div>
     </div>
@@ -1010,7 +1030,7 @@ let fotosJogadores = {};
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('statusIndicator').textContent = '✅ Conectado';
     
-    // Inicializar áudio (contexto suspenso até primeiro uso)
+    // Inicializar áudio
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
     // Carregar fotos
@@ -1040,8 +1060,9 @@ document.addEventListener('DOMContentLoaded', function() {
         atualizarGridJogadores();
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
-        atualizarContadorOutraMesa();
+        atualizarContadorGeral();
         verificarMesaFinal();
+        atualizarBotoesMesaFinal();
     });
     
     // Carregar classificação
@@ -1069,58 +1090,66 @@ function getFotoJogador(nome) {
 function tocarAlertaMesaFinal() {
     if (!audioContext) return;
     
-    // Reativar contexto se estiver suspenso
     if (audioContext.state === 'suspended') {
         audioContext.resume();
     }
     
     try {
-        // Som 1
-        const osc1 = audioContext.createOscillator();
-        const gain1 = audioContext.createGain();
-        osc1.connect(gain1);
-        gain1.connect(audioContext.destination);
-        osc1.frequency.value = 880;
-        osc1.type = 'sine';
-        gain1.gain.value = 0.3;
-        osc1.start();
-        gain1.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.5);
-        setTimeout(() => osc1.stop(), 500);
-        
-        // Som 2 após 200ms
-        setTimeout(() => {
-            const osc2 = audioContext.createOscillator();
-            const gain2 = audioContext.createGain();
-            osc2.connect(gain2);
-            gain2.connect(audioContext.destination);
-            osc2.frequency.value = 440;
-            osc2.type = 'sine';
-            gain2.gain.value = 0.3;
-            osc2.start();
-            gain2.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.5);
-            setTimeout(() => osc2.stop(), 500);
-        }, 200);
-        
-        // Som 3 após 400ms
-        setTimeout(() => {
-            const osc3 = audioContext.createOscillator();
-            const gain3 = audioContext.createGain();
-            osc3.connect(gain3);
-            gain3.connect(audioContext.destination);
-            osc3.frequency.value = 880;
-            osc3.type = 'sine';
-            gain3.gain.value = 0.3;
-            osc3.start();
-            gain3.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.5);
-            setTimeout(() => osc3.stop(), 500);
-        }, 400);
+        // Sequência de beeps
+        const frequencias = [880, 440, 880, 440, 880];
+        frequencias.forEach((freq, index) => {
+            setTimeout(() => {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.frequency.value = freq;
+                osc.type = 'sine';
+                gain.gain.value = 0.4;
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.3);
+                setTimeout(() => osc.stop(), 300);
+            }, index * 200);
+        });
     } catch(e) {
         console.log('Erro no áudio:', e);
     }
     
     // Vibração
     if (navigator.vibrate) {
-        navigator.vibrate([300, 200, 300, 200, 300]);
+        navigator.vibrate([300, 200, 300, 200, 500]);
+    }
+}
+
+function atualizarContadorGeral() {
+    const preta = mesasData.preta || [];
+    const amarela = mesasData.amarela || [];
+    const totalJogadores = preta.length + amarela.length;
+    const vivos = preta.filter(j => !j.eliminado).length + amarela.filter(j => !j.eliminado).length;
+    const eliminados = totalJogadores - vivos;
+    
+    const html = `
+        <div class="contador-mesa preta">♠️ PRETA: ${preta.length} | 🟢 ${preta.filter(j => !j.eliminado).length}</div>
+        <div class="contador-mesa amarela">♦️ AMARELA: ${amarela.length} | 🟢 ${amarela.filter(j => !j.eliminado).length}</div>
+        <div class="contador-mesa" style="background:#d4a12120;">📊 TOTAL: ${totalJogadores} | 🟢 VIVOS: ${vivos} | ❌ ELIMINADOS: ${eliminados}</div>
+    `;
+    
+    const contadorGeral = document.getElementById('contadorGeral');
+    const contadorGeralMF = document.getElementById('contadorGeralMF');
+    if (contadorGeral) contadorGeral.innerHTML = html;
+    if (contadorGeralMF) contadorGeralMF.innerHTML = html;
+}
+
+function atualizarBotoesMesaFinal() {
+    const btnIrMesaFinal = document.getElementById('btnIrMesaFinal');
+    const btnMesaFinalTopo = document.getElementById('btnMesaFinalTopo');
+    
+    if (mesaFinalAtiva) {
+        if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'inline-block';
+        if (btnMesaFinalTopo) btnMesaFinalTopo.style.display = 'block';
+    } else {
+        if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'none';
+        if (btnMesaFinalTopo) btnMesaFinalTopo.style.display = 'none';
     }
 }
 
@@ -1134,13 +1163,9 @@ function verificarMesaFinal() {
         jogadoresMesaFinal = [...vivos];
         jogadoresMesaFinal.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
         
-        // Mostrar botões na tela do dealer
-        const btnIrMesaFinal = document.getElementById('btnIrMesaFinal');
-        const btnVoltarMesaFinal = document.getElementById('btnVoltarMesaFinal');
-        if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'inline-block';
-        if (btnVoltarMesaFinal) btnVoltarMesaFinal.style.display = 'inline-block';
-        
         renderizarMesaFinal();
+        atualizarContadorGeral();
+        atualizarBotoesMesaFinal();
         
         // Alerta visual, sonoro e vibração
         tocarAlertaMesaFinal();
@@ -1153,6 +1178,8 @@ function verificarMesaFinal() {
             jogadoresMesaFinal = [...vivosAtualizados];
             jogadoresMesaFinal.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
             renderizarMesaFinal();
+            atualizarContadorGeral();
+            
             if (jogadoresMesaFinal.length === 0) finalizarTorneio();
             else if (jogadoresMesaFinal.length === 1) finalizarComCampeao(jogadoresMesaFinal[0]);
         }
@@ -1230,6 +1257,7 @@ function confirmarEliminacaoMF() {
             
             jogadoresMesaFinal = jogadoresMesaFinal.filter(j => j.nome !== jogador.nome);
             renderizarMesaFinal();
+            atualizarContadorGeral();
             
             if (jogadoresMesaFinal.length === 0) finalizarTorneio();
             else if (jogadoresMesaFinal.length === 1) finalizarComCampeao(jogadoresMesaFinal[0]);
@@ -1257,32 +1285,23 @@ function finalizarComCampeao(campeao) {
     classificacaoData.push(item);
     db.ref('classificacao').set(classificacaoData);
     
-    // Salvar etapa no histórico automaticamente ao finalizar
+    // Salvar etapa no histórico
     if (classificacaoData.length > 0) {
         const classificacaoParaSalvar = classificacaoData.map(j => ({
-            nome: j.nome,
-            mesa: j.mesa,
-            posicao: j.posicao,
-            pontosPosicao: j.pontosPosicao,
-            kos: j.kos || 0,
-            pontosKOs: j.pontosKOs || 0,
-            pontosTotal: j.pontosTotal || j.pontosPosicao,
-            dataEliminacao: j.dataEliminacao,
-            etapa: j.etapa || config.etapa
+            nome: j.nome, mesa: j.mesa, posicao: j.posicao,
+            pontosPosicao: j.pontosPosicao, kos: j.kos || 0,
+            pontosKOs: j.pontosKOs || 0, pontosTotal: j.pontosTotal || j.pontosPosicao,
+            dataEliminacao: j.dataEliminacao, etapa: j.etapa || config.etapa
         }));
-        
         classificacaoParaSalvar.sort((a, b) => a.posicao - b.posicao);
         
-        const novaEtapaHistorico = {
+        historicoEtapas.unshift({
             data: new Date().toISOString(),
             classificacao: classificacaoParaSalvar,
             totalJogadores: totalJogadoresIniciais,
             totalClassificados: classificacaoData.length,
-            etapaNumero: config.etapa,
-            resumo: classificacaoParaSalvar.map(j => `${j.posicao}º: ${j.nome} (${j.pontosTotal} pts)`).join(', ')
-        };
-        
-        historicoEtapas.unshift(novaEtapaHistorico);
+            etapaNumero: config.etapa
+        });
         db.ref('historicoEtapas').set(historicoEtapas);
     }
     
@@ -1305,12 +1324,8 @@ function fecharMesaFinal() {
     jogadoresMesaFinal = [];
     document.getElementById('mesaFinalApp').classList.add('hidden');
     document.getElementById('telaSelecao').classList.remove('hidden');
-    
-    // Esconder botões
-    const btnIrMesaFinal = document.getElementById('btnIrMesaFinal');
-    const btnVoltarMesaFinal = document.getElementById('btnVoltarMesaFinal');
-    if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'none';
-    if (btnVoltarMesaFinal) btnVoltarMesaFinal.style.display = 'none';
+    atualizarBotoesMesaFinal();
+    atualizarContadorGeral();
 }
 
 function irParaMesaFinal() {
@@ -1318,7 +1333,17 @@ function irParaMesaFinal() {
         document.getElementById('appContainer').classList.add('hidden');
         document.getElementById('mesaFinalApp').classList.remove('hidden');
         renderizarMesaFinal();
+        atualizarContadorGeral();
         pausarCronometro();
+    }
+}
+
+function irParaMesaFinalTopo() {
+    if (mesaFinalAtiva) {
+        document.getElementById('telaSelecao').classList.add('hidden');
+        document.getElementById('mesaFinalApp').classList.remove('hidden');
+        renderizarMesaFinal();
+        atualizarContadorGeral();
     }
 }
 
@@ -1326,7 +1351,7 @@ function voltarDaMesaFinal() {
     document.getElementById('mesaFinalApp').classList.add('hidden');
     document.getElementById('appContainer').classList.remove('hidden');
     atualizarGridJogadores();
-    atualizarContadorOutraMesa();
+    atualizarContadorGeral();
 }
 
 // ========== FUNÇÕES DO DEALER ==========
@@ -1336,7 +1361,7 @@ function iniciarApp() {
     document.getElementById('appContainer').classList.remove('hidden');
     atualizarIndicadorMesa();
     atualizarGridJogadores();
-    atualizarContadorOutraMesa();
+    atualizarContadorGeral();
 }
 
 function atualizarIndicadorMesa() {
@@ -1344,21 +1369,6 @@ function atualizarIndicadorMesa() {
     const text = document.getElementById('mesaIndicatorText');
     indicator.className = `mesa-indicator ${mesaAtual}`;
     text.textContent = mesaAtual === 'preta' ? '♠️ MESA PRETA ♠️' : '♦️ MESA AMARELA ♦️';
-}
-
-function atualizarContadorOutraMesa() {
-    const container = document.getElementById('contadorOutraMesa');
-    if (!container) return;
-    const outra = mesaAtual === 'preta' ? 'amarela' : 'preta';
-    const jogadoresOutra = mesasData[outra] || [];
-    const jogadoresAtual = mesasData[mesaAtual] || [];
-    const totalJogadores = jogadoresAtual.length + jogadoresOutra.length;
-    const totalVivos = jogadoresAtual.filter(j => !j.eliminado).length + jogadoresOutra.filter(j => !j.eliminado).length;
-    
-    container.innerHTML = `
-        <div>${outra === 'preta' ? '♠️' : '♦️'} ${outra.toUpperCase()}: JOGADORES: ${jogadoresOutra.length} | ELIMINADOS: ${jogadoresOutra.filter(j => j.eliminado).length}</div>
-        <div>📊 TOTAL: ${totalJogadores} JOGADORES | ${totalVivos} JOGANDO</div>
-    `;
 }
 
 function atualizarGridJogadores() {
@@ -1458,15 +1468,11 @@ function confirmarEliminacao() {
             const pontosPosicaoCalculado = getPontosPosicao(posicao);
             
             const item = {
-                nome: jogador.nome,
-                mesa: mesaAtual === 'preta' ? 'Preta' : 'Amarela',
-                posicao: posicao,
-                pontosPosicao: pontosPosicaoCalculado,
-                kos: qtdKos,
-                pontosKOs: qtdKos,
+                nome: jogador.nome, mesa: mesaAtual === 'preta' ? 'Preta' : 'Amarela',
+                posicao: posicao, pontosPosicao: pontosPosicaoCalculado,
+                kos: qtdKos, pontosKOs: qtdKos,
                 pontosTotal: pontosPosicaoCalculado + qtdKos,
-                dataEliminacao: new Date().toISOString(),
-                etapa: config.etapa
+                dataEliminacao: new Date().toISOString(), etapa: config.etapa
             };
             
             classificacaoData.push(item);
@@ -1479,7 +1485,7 @@ function confirmarEliminacao() {
             
             alert(`✅ ${jogador.nome} eliminado na ${posicao}ª posição com ${qtdKos} KO(s)!`);
             atualizarGridJogadores();
-            atualizarContadorOutraMesa();
+            atualizarContadorGeral();
             verificarMesaFinal();
         }
     }
@@ -1492,46 +1498,29 @@ function iniciarEtapaAdmin() {
     const novaEtapa = parseInt(document.getElementById('adminSelectEtapa').value);
     if (confirm(`Iniciar ${novaEtapa}ª ETAPA? Os dados atuais serão salvos no histórico.`)) {
         
-        // SALVAR ETAPA ATUAL NO HISTÓRICO ANTES DE LIMPAR
         if (classificacaoData.length > 0 || totalJogadoresIniciais > 0) {
-            
-            // Criar uma cópia PROFUNDA dos dados da classificação com todas as informações
             const classificacaoParaSalvar = classificacaoData.map(j => ({
-                nome: j.nome,
-                mesa: j.mesa,
-                posicao: j.posicao,
-                pontosPosicao: j.pontosPosicao,
-                kos: j.kos || 0,
-                pontosKOs: j.pontosKOs || 0,
-                pontosTotal: j.pontosTotal || j.pontosPosicao,
-                dataEliminacao: j.dataEliminacao,
-                etapa: j.etapa || config.etapa
+                nome: j.nome, mesa: j.mesa, posicao: j.posicao,
+                pontosPosicao: j.pontosPosicao, kos: j.kos || 0,
+                pontosKOs: j.pontosKOs || 0, pontosTotal: j.pontosTotal || j.pontosPosicao,
+                dataEliminacao: j.dataEliminacao, etapa: j.etapa || config.etapa
             }));
-            
-            // Ordenar por posição para garantir consistência
             classificacaoParaSalvar.sort((a, b) => a.posicao - b.posicao);
             
-            const novaEtapaHistorico = {
+            historicoEtapas.unshift({
                 data: new Date().toISOString(),
                 classificacao: classificacaoParaSalvar,
                 totalJogadores: totalJogadoresIniciais,
                 totalClassificados: classificacaoData.length,
-                etapaNumero: config.etapa,
-                resumo: classificacaoParaSalvar.map(j => `${j.posicao}º: ${j.nome} (${j.pontosTotal} pts)`).join(', ')
-            };
-            
-            historicoEtapas.unshift(novaEtapaHistorico);
+                etapaNumero: config.etapa
+            });
             db.ref('historicoEtapas').set(historicoEtapas);
-            
-            console.log('Etapa salva no histórico:', novaEtapaHistorico);
             alert(`✅ ${config.etapa}ª ETAPA salva no histórico!`);
         }
         
-        // Atualizar configuração para nova etapa
         config.etapa = novaEtapa;
         db.ref('config').set(config);
         
-        // Limpar dados para nova etapa
         mesasData = { preta: [], amarela: [] };
         classificacaoData = [];
         contadorEliminados = 0;
@@ -1542,17 +1531,12 @@ function iniciarEtapaAdmin() {
         db.ref('mesas').set(mesasData);
         db.ref('classificacao').set(classificacaoData);
         
-        // Esconder botões da mesa final
-        const btnIrMesaFinal = document.getElementById('btnIrMesaFinal');
-        const btnVoltarMesaFinal = document.getElementById('btnVoltarMesaFinal');
-        if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'none';
-        if (btnVoltarMesaFinal) btnVoltarMesaFinal.style.display = 'none';
-        
-        // Atualizar interface
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
         atualizarHistoricoEtapas();
         atualizarClassificacao();
+        atualizarContadorGeral();
+        atualizarBotoesMesaFinal();
         
         alert(`✅ ${novaEtapa}ª ETAPA iniciada! Importe o layout das mesas.`);
     }
@@ -1597,7 +1581,7 @@ function atualizarAdminEstatisticas() {
     const ranking = [...todos].filter(j => (j.rebuys||0) > 0).sort((a,b) => (b.rebuys||0) - (a.rebuys||0)).slice(0,5);
     const rb = document.getElementById('adminRankingBody');
     if (ranking.length === 0) rb.innerHTML = '<tr><td colspan="4">Nenhum rebuy</td></tr>';
-    else rb.innerHTML = ranking.map((j,i) => `<tr><td>${i+1}</td><td>${j.nome}</td><td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}</td><td>${j.rebuys}</td></tr>`).join('');
+    else rb.innerHTML = ranking.map((j,i) => `</tr><td>${i+1}</td><td>${j.nome}</td><td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}</td><td>${j.rebuys}</td>`).join('');
 }
 
 function atualizarClassificacao() {
@@ -1612,7 +1596,7 @@ function atualizarClassificacao() {
         if (j.posicao === 1) cls = 'top-1';
         else if (j.posicao === 2) cls = 'top-2';
         else if (j.posicao === 3) cls = 'top-3';
-        return `<tr class="${cls}"><td><strong>${j.posicao}º</strong></td><td>${j.nome}</td><td>${j.mesa}</td><td>${j.pontosPosicao}</td><td><input type="number" class="ko-input" value="${j.kos || 0}" onchange="atualizarKOs('${j.nome}', this)" min="0"></td><td>${j.pontosKOs || 0}</td><td><strong style="color: #d4a121;">${j.pontosTotal || j.pontosPosicao}</strong></td></tr>`;
+        return `<tr class="${cls}"><td><strong>${j.posicao}º</strong></td><td>${j.nome}</td><td>${j.mesa}</td><td>${j.pontosPosicao}</td><td><input type="number" class="ko-input" value="${j.kos || 0}" onchange="atualizarKOs('${j.nome}', this)" min="0"></td><td>${j.pontosKOs || 0}</td><td><strong style="color:#d4a121;">${j.pontosTotal || j.pontosPosicao}</strong></td></tr>`;
     }).join('');
 }
 
@@ -1638,54 +1622,17 @@ function atualizarHistoricoEtapas() {
     container.innerHTML = historicoEtapas.map((etapa, idx) => {
         const data = new Date(etapa.data).toLocaleString('pt-BR');
         const num = historicoEtapas.length - idx;
-        
-        const classificacaoOrdenada = (etapa.classificacao || [])
-            .filter(j => j && j.posicao)
-            .sort((a, b) => a.posicao - b.posicao);
-        
-        if (classificacaoOrdenada.length === 0) {
-            return `
-                <div class="etapa-card">
-                    <div class="etapa-header">
-                        <div><strong>📅 ${num}ª ETAPA</strong><div class="etapa-data">${data}</div></div>
-                        <div>🏆 ${etapa.totalJogadores || 0} jogadores | 0 classificados</div>
-                    </div>
-                    <div class="etapa-classificacao" id="etapa-${idx}">
-                        <div style="text-align:center;padding:20px;">Nenhum dado de classificação disponível</div>
-                    </div>
-                </div>
-            `;
-        }
+        const classificacaoOrdenada = (etapa.classificacao || []).filter(j => j && j.posicao).sort((a, b) => a.posicao - b.posicao);
         
         return `
             <div class="etapa-card">
                 <div class="etapa-header" onclick="toggleEtapa(${idx})">
-                    <div>
-                        <strong>📅 ${num}ª ETAPA</strong>
-                        <div class="etapa-data">${data}</div>
-                    </div>
-                    <div>
-                        🏆 ${etapa.totalJogadores || 0} jogadores | ${classificacaoOrdenada.length} classificados
-                    </div>
+                    <div><strong>📅 ${num}ª ETAPA</strong><div class="etapa-data">${data}</div></div>
+                    <div>🏆 ${etapa.totalJogadores || 0} jogadores | ${classificacaoOrdenada.length} classificados</div>
                 </div>
                 <div class="etapa-classificacao" id="etapa-${idx}">
-                    <table class="etapa-table">
-                        <thead>
-                            <tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th></tr>
-                        </thead>
-                        <tbody>
-                            ${classificacaoOrdenada.map(j => `
-                                <tr>
-                                    <td><strong>${j.posicao}º</strong></td>
-                                    <td>${j.nome || '?'}</td>
-                                    <td>${j.mesa || '-'}</td>
-                                    <td>${j.pontosPosicao || 0}</td>
-                                    <td>${j.kos || 0}</td>
-                                    <td><strong>${j.pontosTotal || j.pontosPosicao || 0}</strong></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+                    <table class="etapa-table"><thead><tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th></tr></thead>
+                    <tbody>${classificacaoOrdenada.map(j => `<tr><td><strong>${j.posicao}º</strong></td><td>${j.nome || '?'}</td><td>${j.mesa || '-'}</td><td>${j.pontosPosicao || 0}</td><td>${j.kos || 0}</td><td><strong>${j.pontosTotal || j.pontosPosicao || 0}</strong></td></tr>`).join('')}</tbody></table>
                 </div>
             </div>
         `;
@@ -1713,6 +1660,8 @@ function apagarTodosDados() {
         
         document.getElementById('telaAdmin').classList.add('hidden');
         document.getElementById('telaSelecao').classList.remove('hidden');
+        atualizarContadorGeral();
+        atualizarBotoesMesaFinal();
         alert('✅ Todos os dados foram apagados!');
     }
     document.getElementById('modalSenhaApagar').classList.remove('active');
@@ -1738,8 +1687,7 @@ function iniciarCronometro() {
                 cronometroTempo--;
                 const m = Math.floor(cronometroTempo / 60);
                 const s = cronometroTempo % 60;
-                const display = document.getElementById('cronometroDisplay');
-                display.textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                document.getElementById('cronometroDisplay').textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
                 if (cronometroTempo === 0) {
                     clearInterval(cronometroInterval);
                     cronometroAtivo = false;
@@ -1858,6 +1806,7 @@ function aplicarLayout() {
     alert(`✅ Layout aplicado!\nPreta: ${mesasData.preta.length}\nAmarela: ${mesasData.amarela.length}\nTotal: ${totalJogadoresIniciais}`);
     atualizarAdminResumo();
     atualizarAdminEstatisticas();
+    atualizarContadorGeral();
 }
 
 // ========== EXPORTAÇÕES ==========
@@ -1926,7 +1875,7 @@ function inicializarEventos() {
     document.getElementById('btnSelecionarAmarela').onclick = () => { if (!mesaFinalAtiva) { mesaAtual = 'amarela'; iniciarApp(); } };
     document.getElementById('btnVoltarParaSelecao').onclick = () => { if (!mesaFinalAtiva) { pausarCronometro(); document.getElementById('appContainer').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); } };
     document.getElementById('btnIrMesaFinal').onclick = irParaMesaFinal;
-    document.getElementById('btnVoltarMesaFinal').onclick = irParaMesaFinal;
+    document.getElementById('btnMesaFinalTopo').onclick = irParaMesaFinalTopo;
     document.getElementById('btnVoltarMesaFinalSelecao').onclick = voltarDaMesaFinal;
     
     document.getElementById('btnAbrirAdminTopo').onclick = () => { if (!mesaFinalAtiva) document.getElementById('modalSenhaAdmin').classList.add('active'); };
@@ -1995,7 +1944,6 @@ function inicializarEventos() {
     document.getElementById('btnCopiarCSV').onclick = copiarCSV;
 }
 
-// Expor funções globais
 window.adicionarRebuy = adicionarRebuy;
 window.adicionarAddon = adicionarAddon;
 window.abrirCorrecao = abrirCorrecao;
