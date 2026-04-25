@@ -866,7 +866,7 @@
                         <tr><th>Pos</th><th>Jogador</th><th>Pontos</th></tr>
                     </thead>
                     <tbody id="classificacaoInicialBody"></tbody>
-                </table>
+                </tr>
             </div>
             <button class="ver-mais-btn" id="btnVerClassificacaoInicial">VER CLASSIFICAÇÃO COMPLETA</button>
         </div>
@@ -1210,15 +1210,16 @@ const VALOR_REBUY = 30;
 const VALOR_ADDON = 50;
 const TEMPO_INICIAL = 30;
 
-function calcularPontosPosicao(posicao, totalJogadores) {
-    if (totalJogadores === 0) totalJogadores = 20;
-    const basePoints = Math.max(5, totalJogadores - posicao + 1);
-    if (posicao === 1) return basePoints + 15;
-    if (posicao === 2) return basePoints + 10;
-    if (posicao === 3) return basePoints + 7;
-    if (posicao <= 5) return basePoints + 4;
-    if (posicao <= 9) return basePoints + 2;
-    return basePoints;
+// Tabela de pontuação por posição (1º = 27, 2º = 25, 3º = 23, etc)
+const PONTOS_POSICAO = {
+    1: 27, 2: 25, 3: 23, 4: 21, 5: 19,
+    6: 17, 7: 15, 8: 13, 9: 11, 10: 9,
+    11: 7, 12: 6, 13: 5, 14: 5, 15: 5,
+    16: 5, 17: 5, 18: 5, 19: 5, 20: 5
+};
+
+function calcularPontosPorPosicao(posicao) {
+    return PONTOS_POSICAO[posicao] || 5;
 }
 
 let mesaAtual = 'preta';
@@ -1344,12 +1345,19 @@ function verificarMesaFinal() {
         const vivosAtualizados = todosJogadores.filter(j => !j.eliminado);
         if (vivosAtualizados.length < 9) {
             atualizarMesaFinal(vivosAtualizados);
+        } else if (vivosAtualizados.length > 9) {
+            // Se por algum motivo tiver mais de 9, desativa a mesa final
+            mesaFinalAtiva = false;
+            jogadoresMesaFinal = [];
+            document.getElementById('mesaFinalApp').classList.add('hidden');
+            atualizarBotaoMesaFinal();
         }
     }
 }
 
 function ativarMesaFinal(jogadoresVivos) {
     mesaFinalAtiva = true;
+    // Ordena os jogadores por posição original, mas a numeração na mesa final será de 1 a 9
     jogadoresMesaFinal = [...jogadoresVivos];
     jogadoresMesaFinal.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
     atualizarBotaoMesaFinal();
@@ -1388,12 +1396,13 @@ function renderizarMesaFinalGrid() {
         return;
     }
     
+    // Mostra os jogadores com numeração de 1 a N (posição atual na mesa final)
     grid.innerHTML = jogadoresMesaFinal.map((jogador, index) => {
         const foto = getFotoJogador(jogador.nome);
-        const posicaoNumero = jogador.posicao || (index + 1);
+        const posicaoAtualNaMesaFinal = index + 1; // 1, 2, 3... até 9
         return `
             <div class="jogador-card">
-                <div class="jogador-posicao-numero">${posicaoNumero}</div>
+                <div class="jogador-posicao-numero">${posicaoAtualNaMesaFinal}</div>
                 <img class="jogador-foto" src="${foto}" alt="${jogador.nome}">
                 <div class="jogador-info">
                     <div class="jogador-nome">${jogador.nome}</div>
@@ -1416,6 +1425,13 @@ function atualizarMesaFinal(jogadoresVivos) {
     jogadoresMesaFinal = [...jogadoresVivos];
     jogadoresMesaFinal.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
     renderizarMesaFinalGrid();
+    
+    // Verifica se acabou
+    if (jogadoresMesaFinal.length === 0) {
+        finalizarTorneio();
+    } else if (jogadoresMesaFinal.length === 1) {
+        finalizarComCampeao(jogadoresMesaFinal[0]);
+    }
 }
 
 function eliminarDaMesaFinal(jogadorNome) {
@@ -1425,7 +1441,9 @@ function eliminarDaMesaFinal(jogadorNome) {
     const posicaoEliminacao = jogadoresMesaFinal.length;
     const kos = prompt(`Eliminando ${jogadorNome} (${posicaoEliminacao}º lugar)\nQuantos KO's ele fez neste torneio?`, "0");
     const quantidadeKOsFinal = parseInt(kos) || 0;
-    const pontosPosicao = calcularPontosPosicao(posicaoEliminacao, totalJogadoresIniciais);
+    
+    // Usa a tabela de pontuação correta baseada na posição (1º = 27, 2º = 25, etc)
+    const pontosPosicao = calcularPontosPorPosicao(posicaoEliminacao);
     
     const classificacaoItem = {
         nome: jogador.nome,
@@ -1464,7 +1482,7 @@ function eliminarDaMesaFinal(jogadorNome) {
 }
 
 function finalizarComCampeao(campeao) {
-    const pontosPosicao = calcularPontosPosicao(1, totalJogadoresIniciais);
+    const pontosPosicao = calcularPontosPorPosicao(1);
     const classificacaoItem = {
         nome: campeao.nome,
         mesa: mesasData.preta?.find(j => j.nome === campeao.nome) ? 'Preta' : 'Amarela',
@@ -1479,6 +1497,11 @@ function finalizarComCampeao(campeao) {
     classificacaoData.push(classificacaoItem);
     salvarClassificacao();
     mostrarNotificacao(`🏆 CAMPEÃO: ${campeao.nome} 🏆`);
+    
+    // Limpa a mesa final
+    jogadoresMesaFinal = [];
+    renderizarMesaFinalGrid();
+    
     setTimeout(() => {
         alert(`🏆 TORNEIO FINALIZADO! 🏆\n\nCAMPEÃO: ${campeao.nome}\n\nA classificação foi salva!`);
         fecharMesaFinal();
@@ -1686,7 +1709,7 @@ function iniciarNovaEtapa() {
             totalJogadores: totalJogadoresIniciais,
             totalClassificados: classificacaoData.length,
             etapaNumero: config.etapa
-                    };
+        };
         historicoEtapas.unshift(novaEtapa);
         db.ref('historicoEtapas').set(historicoEtapas);
     }
@@ -1904,7 +1927,7 @@ function confirmarEliminacao() {
             contadorEliminados++;
             const posicao = totalJogadoresIniciais - (contadorEliminados - 1);
             const quantidadeKOs = parseInt(document.getElementById('quantidadeKOs').value) || 0;
-            const pontosPosicao = calcularPontosPosicao(posicao, totalJogadoresIniciais);
+            const pontosPosicao = calcularPontosPorPosicao(posicao);
             const classificacaoItem = { 
                 nome: jogador.nome, 
                 mesa: mesaAtual === 'preta' ? 'Preta' : 'Amarela', 
