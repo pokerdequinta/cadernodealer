@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -28,8 +27,6 @@
         .tela-selecao {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
             min-height: 100vh;
             padding: 20px;
             background: #0d1b0d;
@@ -65,33 +62,35 @@
             text-align: center;
             max-width: 500px;
             width: 100%;
+            margin: 0 auto;
         }
         
         .selecao-logo {
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
         
         .selecao-logo img {
-            max-width: 200px;
+            max-width: 180px;
         }
         
         .selecao-titulo {
             font-family: 'Anton';
             color: #d4a121;
-            font-size: 2.5em;
-            margin-bottom: 40px;
+            font-size: 2em;
+            margin-bottom: 30px;
         }
         
         .selecao-botoes {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
+            margin-bottom: 30px;
         }
         
         .selecao-btn {
-            padding: 30px;
+            padding: 25px;
             font-family: 'Anton';
-            font-size: 2em;
+            font-size: 1.8em;
             border: 4px solid #d4a121;
             border-radius: 20px;
             cursor: pointer;
@@ -111,6 +110,65 @@
         .selecao-btn:hover {
             transform: scale(1.05);
             box-shadow: 0 0 30px rgba(212, 161, 33, 0.5);
+        }
+        
+        /* Classificação na página inicial */
+        .classificacao-inicial {
+            background: #0a150a;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 2px solid #d4a121;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .classificacao-inicial h3 {
+            font-family: 'Anton';
+            color: #d4a121;
+            font-size: 1.5em;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .classificacao-inicial-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85em;
+        }
+        
+        .classificacao-inicial-table th {
+            background: #1a3d1a;
+            color: #d4a121;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        .classificacao-inicial-table td {
+            padding: 6px;
+            text-align: center;
+            border-bottom: 1px solid #2d5016;
+        }
+        
+        .classificacao-inicial-table tr:hover {
+            background: rgba(212, 161, 33, 0.1);
+        }
+        
+        .ver-mais-btn {
+            margin-top: 15px;
+            padding: 10px;
+            background: #2d5016;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+        
+        .ver-mais-btn:hover {
+            background: #3a6b1c;
         }
         
         .app-container {
@@ -155,6 +213,8 @@
             margin-bottom: 30px;
             padding-bottom: 20px;
             border-bottom: 2px solid #d4a121;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
         .voltar-btn, .voltar-inicio-btn {
@@ -667,7 +727,7 @@
 
 <!-- TELA DE SELEÇÃO DE MESA -->
 <div class="tela-selecao" id="telaSelecao">
-    <button class="btn-admin-topo" id="btnAbrirAdminTopo">🔐 ADMINISTRAR</button>
+    <button class="btn-admin-topo" id="btnAbrirAdminTopo">🔐 ADMIN</button>
     <div class="selecao-container">
         <div class="selecao-logo">
             <img src="logo pdq.png" alt="Poker de Quinta" onerror="this.style.display='none'">
@@ -676,6 +736,36 @@
         <div class="selecao-botoes">
             <button class="selecao-btn preta" id="btnSelecionarPreta">♠️ MESA PRETA</button>
             <button class="selecao-btn amarela" id="btnSelecionarAmarela">♦️ MESA AMARELA</button>
+        </div>
+        
+        <!-- CLASSIFICAÇÃO NA PÁGINA INICIAL -->
+        <div class="classificacao-inicial" id="classificacaoInicial">
+            <h3>🏆 CLASSIFICAÇÃO ATUAL</h3>
+            <div style="max-height: 250px; overflow-y: auto;">
+                <table class="classificacao-inicial-table">
+                    <thead>
+                        <tr><th>Pos</th><th>Jogador</th><th>Pontos</th></tr>
+                    </thead>
+                    <tbody id="classificacaoInicialBody"></tbody>
+                </table>
+            </div>
+            <button class="ver-mais-btn" id="btnVerClassificacaoInicial">VER CLASSIFICAÇÃO COMPLETA</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL SENHA ADMIN -->
+<div class="modal" id="modalSenhaAdmin">
+    <div class="modal-content">
+        <h3>🔐 ACESSO ADMINISTRATIVO</h3>
+        <p>Digite a senha para acessar a área administrativa:</p>
+        <div class="form-group">
+            <label>Senha</label>
+            <input type="password" id="senhaAdmin" placeholder="Digite a senha">
+        </div>
+        <div class="modal-buttons">
+            <button class="btn btn-danger" id="btnCancelarSenhaAdmin">Cancelar</button>
+            <button class="btn btn-success" id="btnConfirmarSenhaAdmin">Confirmar</button>
         </div>
     </div>
 </div>
@@ -686,7 +776,6 @@
         <div class="admin-header">
             <h1>🔐 ADMINISTRAÇÃO</h1>
             <div>
-                <button class="btn btn-info" id="btnVerClassificacao" style="margin-right: 10px;">🏆 VER CLASSIFICAÇÃO</button>
                 <button class="btn btn-danger btn-apagar-dados" id="btnApagarDados" style="margin-right: 10px;">🗑️ APAGAR TODOS OS DADOS</button>
                 <button class="voltar-btn" id="btnVoltarAdmin">← VOLTAR</button>
             </div>
@@ -884,8 +973,8 @@
     </div>
 </div>
 
-<!-- Modal Senha -->
-<div class="modal" id="modalSenha">
+<!-- Modal Senha Apagar -->
+<div class="modal" id="modalSenhaApagar">
     <div class="modal-content">
         <h3>🔐 SENHA NECESSÁRIA</h3>
         <p>Digite a senha para apagar todos os dados:</p>
@@ -894,8 +983,8 @@
             <input type="password" id="senhaApagar" placeholder="Digite a senha">
         </div>
         <div class="modal-buttons">
-            <button class="btn btn-danger" id="btnCancelarSenha">Cancelar</button>
-            <button class="btn btn-success" id="btnConfirmarSenha">Confirmar</button>
+            <button class="btn btn-danger" id="btnCancelarSenhaApagar">Cancelar</button>
+            <button class="btn btn-success" id="btnConfirmarSenhaApagar">Confirmar</button>
         </div>
     </div>
 </div>
@@ -964,6 +1053,7 @@ document.addEventListener('DOMContentLoaded', function() {
         atualizarInterface();
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
+        atualizarClassificacaoInicial();
         // Calcular quantos já foram eliminados
         const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
         contadorEliminados = todosJogadores.filter(j => j.eliminado).length;
@@ -972,6 +1062,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (snapshot.exists()) classificacaoData = snapshot.val();
         else classificacaoData = [];
         atualizarClassificacao();
+        atualizarClassificacaoInicial();
     });
     
     inicializarEventos();
@@ -994,11 +1085,30 @@ function inicializarEventos() {
         document.getElementById('telaSelecao').classList.remove('hidden');
     };
     
+    // Botão ADMIN com validação de senha
     document.getElementById('btnAbrirAdminTopo').onclick = () => {
-        document.getElementById('telaSelecao').classList.add('hidden');
-        document.getElementById('telaAdmin').classList.remove('hidden');
-        atualizarAdminResumo();
-        atualizarAdminEstatisticas();
+        document.getElementById('modalSenhaAdmin').classList.add('active');
+    };
+    
+    // Modal senha admin
+    document.getElementById('btnCancelarSenhaAdmin').onclick = () => {
+        document.getElementById('modalSenhaAdmin').classList.remove('active');
+        document.getElementById('senhaAdmin').value = '';
+    };
+    
+    document.getElementById('btnConfirmarSenhaAdmin').onclick = () => {
+        const senha = document.getElementById('senhaAdmin').value;
+        if (senha === 'poker2026') {
+            document.getElementById('modalSenhaAdmin').classList.remove('active');
+            document.getElementById('senhaAdmin').value = '';
+            document.getElementById('telaSelecao').classList.add('hidden');
+            document.getElementById('telaAdmin').classList.remove('hidden');
+            atualizarAdminResumo();
+            atualizarAdminEstatisticas();
+        } else {
+            alert('❌ Senha incorreta!');
+            document.getElementById('senhaAdmin').value = '';
+        }
     };
     
     document.getElementById('btnVoltarAdmin').onclick = () => {
@@ -1006,8 +1116,8 @@ function inicializarEventos() {
         document.getElementById('telaSelecao').classList.remove('hidden');
     };
     
-    document.getElementById('btnVerClassificacao').onclick = () => {
-        document.getElementById('telaAdmin').classList.add('hidden');
+    document.getElementById('btnVerClassificacaoInicial').onclick = () => {
+        document.getElementById('telaSelecao').classList.add('hidden');
         document.getElementById('telaClassificacao').classList.remove('hidden');
         atualizarClassificacao();
     };
@@ -1035,14 +1145,25 @@ function inicializarEventos() {
     };
     document.getElementById('btnConfirmarEliminar').onclick = confirmarEliminacao;
     
-    document.getElementById('btnCancelarSenha').onclick = () => {
-        document.getElementById('modalSenha').classList.remove('active');
+    // Modal senha apagar
+    document.getElementById('btnCancelarSenhaApagar').onclick = () => {
+        document.getElementById('modalSenhaApagar').classList.remove('active');
         document.getElementById('senhaApagar').value = '';
     };
-    document.getElementById('btnConfirmarSenha').onclick = verificarSenhaApagar;
+    document.getElementById('btnConfirmarSenhaApagar').onclick = () => {
+        const senha = document.getElementById('senhaApagar').value;
+        if (senha === 'poker2026') {
+            apagarTodosDados();
+            document.getElementById('modalSenhaApagar').classList.remove('active');
+            document.getElementById('senhaApagar').value = '';
+        } else {
+            alert('❌ Senha incorreta!');
+            document.getElementById('senhaApagar').value = '';
+        }
+    };
     
     document.getElementById('btnApagarDados').onclick = () => {
-        document.getElementById('modalSenha').classList.add('active');
+        document.getElementById('modalSenhaApagar').classList.add('active');
     };
     
     // Admin tabs
@@ -1088,18 +1209,6 @@ function inicializarEventos() {
     document.getElementById('btnAdminExportarCompleto').onclick = exportarCSVCompleto;
 }
 
-function verificarSenhaApagar() {
-    const senha = document.getElementById('senhaApagar').value;
-    if (senha === 'poker2026') {
-        apagarTodosDados();
-        document.getElementById('modalSenha').classList.remove('active');
-        document.getElementById('senhaApagar').value = '';
-    } else {
-        alert('❌ Senha incorreta!');
-        document.getElementById('senhaApagar').value = '';
-    }
-}
-
 function apagarTodosDados() {
     if (confirm('⚠️ ATENÇÃO! Isso irá apagar TODOS os dados das mesas e classificação. Confirma?')) {
         mesasData = { preta: [], amarela: [] };
@@ -1111,6 +1220,7 @@ function apagarTodosDados() {
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
         atualizarClassificacao();
+        atualizarClassificacaoInicial();
         if (!document.getElementById('appContainer').classList.contains('hidden')) {
             atualizarGridJogadores();
         }
@@ -1129,6 +1239,24 @@ function atualizarIndicadorMesa() {
     indicator.className = `mesa-indicator ${mesaAtual}`;
     const texto = mesaAtual === 'preta' ? '♠️ MESA PRETA ♠️' : '♦️ MESA AMARELA ♦️';
     indicator.querySelector('.mesa-indicator-text').textContent = texto;
+}
+
+function atualizarClassificacaoInicial() {
+    const tbody = document.getElementById('classificacaoInicialBody');
+    const top5 = [...classificacaoData].sort((a, b) => a.posicao - b.posicao).slice(0, 5);
+    
+    if (top5.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center;">Nenhum jogador classificado ainda</td><tr>';
+        return;
+    }
+    
+    tbody.innerHTML = top5.map(j => `
+        <tr>
+            <td><strong>${j.posicao}º</strong></td>
+            <td>${j.nome}</td>
+            <td><strong style="color: #d4a121;">${j.pontosTotal || j.pontosPosicao}</strong></td>
+        </tr>
+    `).join('');
 }
 
 function toggleCronometro() {
@@ -1319,6 +1447,7 @@ window.atualizarKOs = function(jogadorNome, inputElement) {
         jogadorClassif.pontosTotal = jogadorClassif.pontosPosicao + jogadorClassif.pontosKOs;
         salvarClassificacao();
         atualizarClassificacao();
+        atualizarClassificacaoInicial();
     }
 };
 
@@ -1395,7 +1524,7 @@ function atualizarClassificacao() {
     const classificacaoOrdenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
     
     if (classificacaoOrdenada.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">Nenhum jogador eliminado ainda</td></tr>';
+        tbody.innerHTML = '<｜/polygon｜><td colspan="7" style="text-align: center; padding: 20px;">Nenhum jogador eliminado ainda</td><tr>';
         return;
     }
     
