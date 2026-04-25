@@ -168,6 +168,17 @@
             animation: pulse 1s infinite;
         }
         
+        .btn-voltar-mesa-final {
+            padding: 8px 15px;
+            background: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+        
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -789,7 +800,7 @@
                 <table class="resumo-table">
                     <thead><tr><th>#</th><th>Jogador</th><th>Mesa</th><th>Rebuys</th></tr></thead>
                     <tbody id="adminRankingBody"></tbody>
-                </table>
+                追赶
                 <button class="btn btn-secondary" id="btnAdminExportarCompleto" style="margin-top: 20px; width: 100%;">📊 EXPORTAR COMPLETO</button>
             </div>
             
@@ -833,6 +844,7 @@
             <div>
                 <button class="btn-voltar-mesa" id="btnVoltarParaSelecao">↩️ TROCAR DE MESA</button>
                 <button class="btn-ir-mesa-final" id="btnIrMesaFinal" style="display: none;">🏆 IR PARA MESA FINAL</button>
+                <button class="btn-voltar-mesa-final" id="btnVoltarMesaFinal" style="display: none;">🏆 VOLTAR MESA FINAL</button>
             </div>
         </div>
         <div class="mesa-indicator" id="mesaIndicator">
@@ -989,6 +1001,7 @@ let cronometroInterval = null;
 let cronometroTempoMF = TEMPO_INICIAL;
 let cronometroAtivoMF = false;
 let cronometroIntervalMF = null;
+let audioContext = null;
 
 // FOTOS
 let fotosJogadores = {};
@@ -997,9 +1010,14 @@ let fotosJogadores = {};
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('statusIndicator').textContent = '✅ Conectado';
     
+    // Inicializar áudio (contexto suspenso até primeiro uso)
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
     // Carregar fotos
     db.ref('fotosJogadores').on('value', (snapshot) => {
         if (snapshot.exists()) fotosJogadores = snapshot.val();
+        atualizarGridJogadores();
+        renderizarMesaFinal();
     });
     
     // Carregar etapa
@@ -1048,6 +1066,64 @@ function getFotoJogador(nome) {
     return fotosJogadores[nome] || `https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=d4a121&color=000&size=45`;
 }
 
+function tocarAlertaMesaFinal() {
+    if (!audioContext) return;
+    
+    // Reativar contexto se estiver suspenso
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+    
+    try {
+        // Som 1
+        const osc1 = audioContext.createOscillator();
+        const gain1 = audioContext.createGain();
+        osc1.connect(gain1);
+        gain1.connect(audioContext.destination);
+        osc1.frequency.value = 880;
+        osc1.type = 'sine';
+        gain1.gain.value = 0.3;
+        osc1.start();
+        gain1.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.5);
+        setTimeout(() => osc1.stop(), 500);
+        
+        // Som 2 após 200ms
+        setTimeout(() => {
+            const osc2 = audioContext.createOscillator();
+            const gain2 = audioContext.createGain();
+            osc2.connect(gain2);
+            gain2.connect(audioContext.destination);
+            osc2.frequency.value = 440;
+            osc2.type = 'sine';
+            gain2.gain.value = 0.3;
+            osc2.start();
+            gain2.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.5);
+            setTimeout(() => osc2.stop(), 500);
+        }, 200);
+        
+        // Som 3 após 400ms
+        setTimeout(() => {
+            const osc3 = audioContext.createOscillator();
+            const gain3 = audioContext.createGain();
+            osc3.connect(gain3);
+            gain3.connect(audioContext.destination);
+            osc3.frequency.value = 880;
+            osc3.type = 'sine';
+            gain3.gain.value = 0.3;
+            osc3.start();
+            gain3.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.5);
+            setTimeout(() => osc3.stop(), 500);
+        }, 400);
+    } catch(e) {
+        console.log('Erro no áudio:', e);
+    }
+    
+    // Vibração
+    if (navigator.vibrate) {
+        navigator.vibrate([300, 200, 300, 200, 300]);
+    }
+}
+
 // ========== MESA FINAL ==========
 function verificarMesaFinal() {
     const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
@@ -1057,8 +1133,17 @@ function verificarMesaFinal() {
         mesaFinalAtiva = true;
         jogadoresMesaFinal = [...vivos];
         jogadoresMesaFinal.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
-        document.getElementById('btnIrMesaFinal').style.display = 'inline-block';
+        
+        // Mostrar botões na tela do dealer
+        const btnIrMesaFinal = document.getElementById('btnIrMesaFinal');
+        const btnVoltarMesaFinal = document.getElementById('btnVoltarMesaFinal');
+        if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'inline-block';
+        if (btnVoltarMesaFinal) btnVoltarMesaFinal.style.display = 'inline-block';
+        
         renderizarMesaFinal();
+        
+        // Alerta visual, sonoro e vibração
+        tocarAlertaMesaFinal();
         alert('🎉 MESA FINAL! Restam 9 jogadores! 🎉');
     }
     
@@ -1201,6 +1286,7 @@ function finalizarComCampeao(campeao) {
         db.ref('historicoEtapas').set(historicoEtapas);
     }
     
+    tocarAlertaMesaFinal();
     alert(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)! 🏆`);
     
     jogadoresMesaFinal = [];
@@ -1209,6 +1295,7 @@ function finalizarComCampeao(campeao) {
 }
 
 function finalizarTorneio() {
+    tocarAlertaMesaFinal();
     alert('🏆 TORNEIO FINALIZADO! 🏆');
     setTimeout(() => fecharMesaFinal(), 2000);
 }
@@ -1217,8 +1304,13 @@ function fecharMesaFinal() {
     mesaFinalAtiva = false;
     jogadoresMesaFinal = [];
     document.getElementById('mesaFinalApp').classList.add('hidden');
-    document.getElementById('btnIrMesaFinal').style.display = 'none';
     document.getElementById('telaSelecao').classList.remove('hidden');
+    
+    // Esconder botões
+    const btnIrMesaFinal = document.getElementById('btnIrMesaFinal');
+    const btnVoltarMesaFinal = document.getElementById('btnVoltarMesaFinal');
+    if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'none';
+    if (btnVoltarMesaFinal) btnVoltarMesaFinal.style.display = 'none';
 }
 
 function irParaMesaFinal() {
@@ -1450,6 +1542,12 @@ function iniciarEtapaAdmin() {
         db.ref('mesas').set(mesasData);
         db.ref('classificacao').set(classificacaoData);
         
+        // Esconder botões da mesa final
+        const btnIrMesaFinal = document.getElementById('btnIrMesaFinal');
+        const btnVoltarMesaFinal = document.getElementById('btnVoltarMesaFinal');
+        if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'none';
+        if (btnVoltarMesaFinal) btnVoltarMesaFinal.style.display = 'none';
+        
         // Atualizar interface
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
@@ -1541,7 +1639,6 @@ function atualizarHistoricoEtapas() {
         const data = new Date(etapa.data).toLocaleString('pt-BR');
         const num = historicoEtapas.length - idx;
         
-        // Garantir que a classificação existe e está ordenada
         const classificacaoOrdenada = (etapa.classificacao || [])
             .filter(j => j && j.posicao)
             .sort((a, b) => a.posicao - b.posicao);
@@ -1829,6 +1926,7 @@ function inicializarEventos() {
     document.getElementById('btnSelecionarAmarela').onclick = () => { if (!mesaFinalAtiva) { mesaAtual = 'amarela'; iniciarApp(); } };
     document.getElementById('btnVoltarParaSelecao').onclick = () => { if (!mesaFinalAtiva) { pausarCronometro(); document.getElementById('appContainer').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); } };
     document.getElementById('btnIrMesaFinal').onclick = irParaMesaFinal;
+    document.getElementById('btnVoltarMesaFinal').onclick = irParaMesaFinal;
     document.getElementById('btnVoltarMesaFinalSelecao').onclick = voltarDaMesaFinal;
     
     document.getElementById('btnAbrirAdminTopo').onclick = () => { if (!mesaFinalAtiva) document.getElementById('modalSenhaAdmin').classList.add('active'); };
