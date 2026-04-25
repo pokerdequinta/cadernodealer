@@ -1,3 +1,6 @@
+Aqui está o código completo com todos os ajustes solicitados:
+
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -22,7 +25,6 @@
             min-height: 100vh;
         }
         
-        /* Tela de Seleção */
         .tela-selecao {
             display: flex;
             flex-direction: column;
@@ -76,33 +78,6 @@
             margin-bottom: 30px;
         }
         
-        .selecao-etapa {
-            background: #102810;
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #d4a121;
-        }
-        
-        .selecao-etapa label {
-            font-family: 'Anton', sans-serif;
-            color: #d4a121;
-            font-size: 1.2em;
-            display: block;
-            margin-bottom: 10px;
-        }
-        
-        .selecao-etapa select {
-            width: 100%;
-            padding: 12px;
-            background: #1a3d1a;
-            color: #fff;
-            border: 1px solid #d4a121;
-            border-radius: 8px;
-            font-size: 1.1em;
-            cursor: pointer;
-        }
-        
         .selecao-botoes {
             display: flex;
             flex-direction: column;
@@ -127,7 +102,6 @@
             box-shadow: 0 0 30px rgba(212, 161, 33, 0.5);
         }
         
-        /* App Container (Dealer) */
         .app-container, .mesa-final-app {
             display: flex;
             height: 100vh;
@@ -265,6 +239,7 @@
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #d4a121;
+            background: #2d5016;
         }
         
         .jogador-info { flex: 1; }
@@ -375,7 +350,6 @@
         .cronometro-btn.iniciar { background: #4CAF50; color: #fff; }
         .cronometro-btn.zerar { background: #c72c48; color: #fff; }
         
-        /* Tela Admin */
         .tela-admin {
             min-height: 100vh;
             padding: 20px;
@@ -423,6 +397,30 @@
         .btn-success { background: #4CAF50; color: #fff; }
         .btn-warning { background: #FF6600; color: #fff; }
         .btn-info { background: #2196F3; color: #fff; }
+        
+        .admin-etapa-select {
+            background: #102810;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .admin-etapa-select label {
+            font-weight: bold;
+            color: #d4a121;
+        }
+        
+        .admin-etapa-select select {
+            padding: 10px;
+            background: #1a3d1a;
+            color: #fff;
+            border: 1px solid #d4a121;
+            border-radius: 6px;
+        }
         
         .resumo-table {
             width: 100%;
@@ -672,22 +670,6 @@
         </div>
         <h1 class="selecao-titulo">🎲 SELECIONE A MESA</h1>
         
-        <div class="selecao-etapa">
-            <label>📅 SELECIONE A ETAPA</label>
-            <select id="selectEtapa">
-                <option value="4">4ª ETAPA</option>
-                <option value="5">5ª ETAPA</option>
-                <option value="6">6ª ETAPA</option>
-                <option value="7">7ª ETAPA</option>
-                <option value="8">8ª ETAPA</option>
-                <option value="9">9ª ETAPA</option>
-                <option value="10">10ª ETAPA</option>
-                <option value="11">11ª ETAPA</option>
-                <option value="12">12ª ETAPA</option>
-                <option value="13">13ª ETAPA</option>
-            </select>
-        </div>
-        
         <div class="selecao-botoes">
             <button class="selecao-btn preta" id="btnSelecionarPreta">♠️ MESA PRETA</button>
             <button class="selecao-btn amarela" id="btnSelecionarAmarela">♦️ MESA AMARELA</button>
@@ -720,6 +702,23 @@
                 <button class="btn btn-danger" id="btnApagarDados" style="margin-right: 10px;">🗑️ APAGAR TODOS OS DADOS</button>
                 <button class="voltar-btn" id="btnVoltarAdmin">← VOLTAR</button>
             </div>
+        </div>
+        
+        <div class="admin-etapa-select">
+            <label>📅 SELECIONE A ETAPA PARA INICIAR:</label>
+            <select id="adminSelectEtapa">
+                <option value="4">4ª ETAPA</option>
+                <option value="5">5ª ETAPA</option>
+                <option value="6">6ª ETAPA</option>
+                <option value="7">7ª ETAPA</option>
+                <option value="8">8ª ETAPA</option>
+                <option value="9">9ª ETAPA</option>
+                <option value="10">10ª ETAPA</option>
+                <option value="11">11ª ETAPA</option>
+                <option value="12">12ª ETAPA</option>
+                <option value="13">13ª ETAPA</option>
+            </select>
+            <button class="btn btn-success" id="btnIniciarEtapaAdmin">🚀 INICIAR ETAPA</button>
         </div>
         
         <div class="import-section">
@@ -804,7 +803,6 @@
                 </div>
                 <div id="etapasList" class="etapas-list"></div>
                 <button class="btn btn-secondary" id="btnExportarHistorico" style="margin-top: 15px; width: 100%;">📊 EXPORTAR HISTÓRICO</button>
-                <button class="btn btn-warning" id="btnNovaEtapa" style="margin-top: 10px; width: 100%;">🔄 INICIAR NOVA ETAPA</button>
             </div>
         </div>
     </div>
@@ -893,7 +891,7 @@
     </div>
 </div>
 
-<!-- Modais -->
+<!-- MODAIS -->
 <div class="modal" id="modalCorrigir">
     <div class="modal-content">
         <h3>🔧 Corrigir valores</h3>
@@ -908,8 +906,17 @@
     <div class="modal-content">
         <h3>⚠️ ELIMINAR JOGADOR</h3>
         <p id="eliminarJogadorNome"></p>
-        <div class="form-group"><label>Quantidade de KO's</label><input type="number" id="quantidadeKOs" min="0" value="0"></div>
+        <div class="form-group"><label>Quantidade de KO's que o jogador fez</label><input type="number" id="quantidadeKOs" min="0" value="0"></div>
         <div class="modal-buttons"><button class="btn btn-danger" id="btnCancelarEliminar">Cancelar</button><button class="btn btn-warning" id="btnConfirmarEliminar">Confirmar</button></div>
+    </div>
+</div>
+
+<div class="modal" id="modalEliminarMesaFinal">
+    <div class="modal-content">
+        <h3>⚠️ ELIMINAR JOGADOR DA MESA FINAL</h3>
+        <p id="eliminarMFJogadorNome"></p>
+        <div class="form-group"><label>Quantidade de KO's que o jogador fez</label><input type="number" id="quantidadeKOsMF" min="0" value="0"></div>
+        <div class="modal-buttons"><button class="btn btn-danger" id="btnCancelarEliminarMF">Cancelar</button><button class="btn btn-warning" id="btnConfirmarEliminarMF">Confirmar Eliminação</button></div>
     </div>
 </div>
 
@@ -919,14 +926,6 @@
         <p>Digite a senha para apagar todos os dados:</p>
         <div class="form-group"><label>Senha</label><input type="password" id="senhaApagar" placeholder="Digite a senha"></div>
         <div class="modal-buttons"><button class="btn btn-danger" id="btnCancelarSenhaApagar">Cancelar</button><button class="btn btn-success" id="btnConfirmarSenhaApagar">Confirmar</button></div>
-    </div>
-</div>
-
-<div class="modal" id="modalNovaEtapa">
-    <div class="modal-content">
-        <h3>🔄 INICIAR NOVA ETAPA</h3>
-        <p>A classificação atual será salva no histórico e os dados serão resetados.</p>
-        <div class="modal-buttons"><button class="btn btn-danger" id="btnCancelarNovaEtapa">Cancelar</button><button class="btn btn-success" id="btnConfirmarNovaEtapa">Confirmar</button></div>
     </div>
 </div>
 
@@ -984,6 +983,7 @@ let contadorEliminados = 0;
 let totalJogadoresIniciais = 0;
 let mesaFinalAtiva = false;
 let jogadoresMesaFinal = [];
+let jogadorEliminandoMF = null;
 
 // CRONÔMETROS
 let cronometroTempo = TEMPO_INICIAL;
@@ -992,7 +992,6 @@ let cronometroInterval = null;
 let cronometroTempoMF = TEMPO_INICIAL;
 let cronometroAtivoMF = false;
 let cronometroIntervalMF = null;
-let audioContext = null;
 
 // FOTOS
 let fotosJogadores = {};
@@ -1001,10 +1000,15 @@ let fotosJogadores = {};
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('statusIndicator').textContent = '✅ Conectado';
     
+    // Carregar fotos
+    db.ref('fotosJogadores').on('value', (snapshot) => {
+        if (snapshot.exists()) fotosJogadores = snapshot.val();
+    });
+    
     // Carregar etapa
     db.ref('config').on('value', (snapshot) => {
         if (snapshot.exists()) config = snapshot.val();
-        const selectEtapa = document.getElementById('selectEtapa');
+        const selectEtapa = document.getElementById('adminSelectEtapa');
         if (selectEtapa) selectEtapa.value = config.etapa || 4;
     });
     
@@ -1041,6 +1045,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     inicializarEventos();
 });
+
+// ========== FUNÇÕES AUXILIARES ==========
+function getFotoJogador(nome) {
+    return fotosJogadores[nome] || `https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=d4a121&color=000&size=45`;
+}
 
 // ========== MESA FINAL ==========
 function verificarMesaFinal() {
@@ -1079,7 +1088,7 @@ function renderizarMesaFinal() {
     }
     
     grid.innerHTML = jogadoresMesaFinal.map((j, idx) => {
-        const foto = fotosJogadores[j.nome] || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nome)}&background=d4a121&color=000&size=45`;
+        const foto = getFotoJogador(j.nome);
         return `
             <div class="jogador-card">
                 <div class="jogador-posicao-numero">${idx + 1}</div>
@@ -1092,67 +1101,82 @@ function renderizarMesaFinal() {
                     </div>
                 </div>
                 <div class="jogador-actions">
-                    <button class="action-btn btn-eliminar" onclick="eliminarDaMesaFinal('${j.nome}')">❌ ELIMINAR (${jogadoresMesaFinal.length}º)</button>
+                    <button class="action-btn btn-eliminar" onclick="abrirModalEliminarMF('${j.nome}')">❌ ELIMINAR (${jogadoresMesaFinal.length}º)</button>
                 </div>
             </div>
         `;
     }).join('');
 }
 
-function eliminarDaMesaFinal(nome) {
-    const jogador = jogadoresMesaFinal.find(j => j.nome === nome);
-    if (!jogador) return;
-    
-    const posicao = jogadoresMesaFinal.length;
-    const kos = prompt(`Quantos KO's ${nome} fez?`, "0");
-    const qtdKos = parseInt(kos) || 0;
-    
-    const item = {
-        nome: jogador.nome,
-        mesa: mesasData.preta?.some(m => m.nome === nome) ? 'Preta' : 'Amarela',
-        posicao: posicao,
-        pontosPosicao: getPontosPosicao(posicao),
-        kos: qtdKos,
-        pontosKOs: qtdKos,
-        pontosTotal: getPontosPosicao(posicao) + qtdKos,
-        dataEliminacao: new Date().toISOString(),
-        etapa: config.etapa
-    };
-    
-    classificacaoData.push(item);
-    db.ref('classificacao').set(classificacaoData);
-    
-    // Marcar eliminado nos dados originais
-    const original = [...(mesasData.preta || []), ...(mesasData.amarela || [])].find(j => j.nome === nome);
-    if (original) {
-        original.eliminado = true;
-        original.posicaoFinal = posicao;
-        original.kos = qtdKos;
-        db.ref('mesas').set(mesasData);
+function abrirModalEliminarMF(nome) {
+    jogadorEliminandoMF = nome;
+    document.getElementById('eliminarMFJogadorNome').textContent = nome;
+    document.getElementById('quantidadeKOsMF').value = 0;
+    document.getElementById('modalEliminarMesaFinal').classList.add('active');
+}
+
+function confirmarEliminacaoMF() {
+    if (jogadorEliminandoMF) {
+        const jogador = jogadoresMesaFinal.find(j => j.nome === jogadorEliminandoMF);
+        if (jogador) {
+            const posicao = jogadoresMesaFinal.length;
+            const qtdKos = parseInt(document.getElementById('quantidadeKOsMF').value) || 0;
+            
+            const item = {
+                nome: jogador.nome,
+                mesa: mesasData.preta?.some(m => m.nome === jogador.nome) ? 'Preta' : 'Amarela',
+                posicao: posicao,
+                pontosPosicao: getPontosPosicao(posicao),
+                kos: qtdKos,
+                pontosKOs: qtdKos,
+                pontosTotal: getPontosPosicao(posicao) + qtdKos,
+                dataEliminacao: new Date().toISOString(),
+                etapa: config.etapa
+            };
+            
+            classificacaoData.push(item);
+            db.ref('classificacao').set(classificacaoData);
+            
+            const original = [...(mesasData.preta || []), ...(mesasData.amarela || [])].find(j => j.nome === jogador.nome);
+            if (original) {
+                original.eliminado = true;
+                original.posicaoFinal = posicao;
+                original.kos = qtdKos;
+                db.ref('mesas').set(mesasData);
+            }
+            
+            jogadoresMesaFinal = jogadoresMesaFinal.filter(j => j.nome !== jogador.nome);
+            renderizarMesaFinal();
+            
+            if (jogadoresMesaFinal.length === 0) finalizarTorneio();
+            else if (jogadoresMesaFinal.length === 1) finalizarComCampeao(jogadoresMesaFinal[0]);
+        }
     }
-    
-    jogadoresMesaFinal = jogadoresMesaFinal.filter(j => j.nome !== nome);
-    renderizarMesaFinal();
-    
-    if (jogadoresMesaFinal.length === 0) finalizarTorneio();
-    else if (jogadoresMesaFinal.length === 1) finalizarComCampeao(jogadoresMesaFinal[0]);
+    document.getElementById('modalEliminarMesaFinal').classList.remove('active');
+    jogadorEliminandoMF = null;
 }
 
 function finalizarComCampeao(campeao) {
+    const qtdKos = prompt(`🏆 CAMPEÃO: ${campeao.nome}\nQuantos KO's ele fez no total?`, "0");
+    const kos = parseInt(qtdKos) || 0;
+    
     const item = {
         nome: campeao.nome,
         mesa: mesasData.preta?.find(j => j.nome === campeao.nome) ? 'Preta' : 'Amarela',
         posicao: 1,
         pontosPosicao: getPontosPosicao(1),
-        kos: campeao.kos || 0,
-        pontosKOs: campeao.kos || 0,
-        pontosTotal: getPontosPosicao(1) + (campeao.kos || 0),
+        kos: kos,
+        pontosKOs: kos,
+        pontosTotal: getPontosPosicao(1) + kos,
         dataEliminacao: new Date().toISOString(),
         etapa: config.etapa
     };
     classificacaoData.push(item);
     db.ref('classificacao').set(classificacaoData);
-    alert(`🏆 CAMPEÃO: ${campeao.nome} 🏆`);
+    alert(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)! 🏆`);
+    
+    jogadoresMesaFinal = [];
+    renderizarMesaFinal();
     setTimeout(() => fecharMesaFinal(), 2000);
 }
 
@@ -1206,10 +1230,16 @@ function atualizarContadorOutraMesa() {
     const container = document.getElementById('contadorOutraMesa');
     if (!container) return;
     const outra = mesaAtual === 'preta' ? 'amarela' : 'preta';
-    const jogadores = mesasData[outra] || [];
-    const vivos = jogadores.filter(j => !j.eliminado);
-    const eliminados = jogadores.filter(j => j.eliminado);
-    container.innerHTML = `<div>${outra === 'preta' ? '♠️' : '♦️'} ${outra.toUpperCase()}: 🟢 VIVOS: ${vivos.length} | ❌ ELIMINADOS: ${eliminados.length}</div>`;
+    const jogadoresOutra = mesasData[outra] || [];
+    const jogadoresAtual = mesasData[mesaAtual] || [];
+    const vivosOutra = jogadoresOutra.filter(j => !j.eliminado);
+    const totalJogadores = jogadoresAtual.length + jogadoresOutra.length;
+    const totalVivos = jogadoresAtual.filter(j => !j.eliminado).length + vivosOutra.length;
+    
+    container.innerHTML = `
+        <div>${outra === 'preta' ? '♠️' : '♦️'} ${outra.toUpperCase()}: JOGADORES: ${jogadoresOutra.length} | ELIMINADOS: ${jogadoresOutra.filter(j => j.eliminado).length}</div>
+        <div>📊 TOTAL: ${totalJogadores} JOGADORES | ${totalVivos} JOGANDO</div>
+    `;
 }
 
 function atualizarGridJogadores() {
@@ -1220,7 +1250,7 @@ function atualizarGridJogadores() {
         return;
     }
     grid.innerHTML = jogadores.sort((a,b) => (a.posicao||999)-(b.posicao||999)).map(j => {
-        const foto = fotosJogadores[j.nome] || `https://ui-avatars.com/api/?name=${encodeURIComponent(j.nome)}&background=d4a121&color=000&size=45`;
+        const foto = getFotoJogador(j.nome);
         return `
             <div class="jogador-card ${j.eliminado ? 'eliminado' : ''}">
                 <div class="jogador-posicao-numero">${j.posicao || '?'}</div>
@@ -1239,7 +1269,7 @@ function atualizarGridJogadores() {
                         <button class="action-btn btn-rebuy-duplo" onclick="adicionarRebuy('${j.nome}', 'duplo')">REBUY 2x</button>
                         ${!j.addon ? `<button class="action-btn btn-addon" onclick="adicionarAddon('${j.nome}')">ADDON</button>` : ''}
                         <button class="action-btn btn-corrigir" onclick="abrirCorrecao('${j.nome}')">✏️</button>
-                        <button class="action-btn btn-eliminar" onclick="eliminarJogador('${j.nome}')">❌ ELIMINAR</button>
+                        <button class="action-btn btn-eliminar" onclick="abrirModalEliminar('${j.nome}')">❌ ELIMINAR</button>
                     ` : ''}
                 </div>
             </div>
@@ -1292,14 +1322,11 @@ function salvarCorrecao() {
     jogadorCorrigindo = null;
 }
 
-function eliminarJogador(nome) {
-    const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
-    if (jogador && !jogador.eliminado) {
-        jogadorEliminando = nome;
-        document.getElementById('eliminarJogadorNome').textContent = nome;
-        document.getElementById('quantidadeKOs').value = 0;
-        document.getElementById('modalEliminar').classList.add('active');
-    }
+function abrirModalEliminar(nome) {
+    jogadorEliminando = nome;
+    document.getElementById('eliminarJogadorNome').textContent = nome;
+    document.getElementById('quantidadeKOs').value = 0;
+    document.getElementById('modalEliminar').classList.add('active');
 }
 
 function confirmarEliminacao() {
@@ -1341,6 +1368,38 @@ function confirmarEliminacao() {
 }
 
 // ========== FUNÇÕES ADMIN ==========
+function iniciarEtapaAdmin() {
+    const novaEtapa = parseInt(document.getElementById('adminSelectEtapa').value);
+    if (confirm(`Iniciar ${novaEtapa}ª ETAPA? Os dados atuais serão salvos no histórico.`)) {
+        if (classificacaoData.length > 0) {
+            const nova = {
+                data: new Date().toISOString(),
+                classificacao: [...classificacaoData],
+                totalJogadores: totalJogadoresIniciais,
+                totalClassificados: classificacaoData.length,
+                etapaNumero: config.etapa
+            };
+            historicoEtapas.unshift(nova);
+            db.ref('historicoEtapas').set(historicoEtapas);
+        }
+        
+        config.etapa = novaEtapa;
+        db.ref('config').set(config);
+        
+        mesasData = { preta: [], amarela: [] };
+        classificacaoData = [];
+        contadorEliminados = 0;
+        mesaFinalAtiva = false;
+        jogadoresMesaFinal = [];
+        totalJogadoresIniciais = 0;
+        
+        db.ref('mesas').set(mesasData);
+        db.ref('classificacao').set(classificacaoData);
+        
+        alert(`✅ ${novaEtapa}ª ETAPA iniciada! Importe o layout das mesas.`);
+    }
+}
+
 function atualizarAdminResumo() {
     const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const tbody = document.getElementById('adminResumoBody');
@@ -1441,38 +1500,6 @@ function toggleEtapa(idx) {
     if (el) el.classList.toggle('show');
 }
 
-function iniciarNovaEtapa() {
-    if (classificacaoData.length > 0) {
-        const nova = {
-            data: new Date().toISOString(),
-            classificacao: [...classificacaoData],
-            totalJogadores: totalJogadoresIniciais,
-            totalClassificados: classificacaoData.length,
-            etapaNumero: config.etapa
-        };
-        historicoEtapas.unshift(nova);
-        db.ref('historicoEtapas').set(historicoEtapas);
-    }
-    
-    mesasData = { preta: [], amarela: [] };
-    classificacaoData = [];
-    contadorEliminados = 0;
-    mesaFinalAtiva = false;
-    jogadoresMesaFinal = [];
-    totalJogadoresIniciais = 0;
-    
-    db.ref('mesas').set(mesasData);
-    db.ref('classificacao').set(classificacaoData);
-    
-    document.getElementById('modalNovaEtapa').classList.remove('active');
-    document.getElementById('telaAdmin').classList.add('hidden');
-    document.getElementById('telaSelecao').classList.remove('hidden');
-    document.getElementById('mesaFinalApp').classList.add('hidden');
-    document.getElementById('btnIrMesaFinal').style.display = 'none';
-    
-    alert('✅ Nova etapa iniciada!');
-}
-
 function apagarTodosDados() {
     if (confirm('⚠️ Apagar TODOS os dados?')) {
         mesasData = { preta: [], amarela: [] };
@@ -1492,6 +1519,14 @@ function apagarTodosDados() {
         alert('✅ Todos os dados foram apagados!');
     }
     document.getElementById('modalSenhaApagar').classList.remove('active');
+}
+
+function apagarHistorico() {
+    historicoEtapas = [];
+    db.ref('historicoEtapas').set([]);
+    document.getElementById('modalApagarHistorico').classList.remove('active');
+    alert('✅ Histórico apagado!');
+    atualizarHistoricoEtapas();
 }
 
 // ========== CRONÔMETROS ==========
@@ -1630,8 +1665,8 @@ function aplicarLayout() {
 function exportarCSVSimples() {
     const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     if (todos.length === 0) { alert('Nenhum jogador!'); return; }
-    let csv = 'Nome,Rebuys,Addons\n';
-    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => csv += `"${j.nome}",${j.rebuys||0},${j.addon?1:0}\n`);
+    let csv = '';
+    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => csv += `${j.nome},${j.rebuys||0},${j.addon?1:0}\n`);
     downloadCSV(csv, `rebuy-addon-etapa${config.etapa}.csv`);
 }
 
@@ -1673,7 +1708,7 @@ function exportarHistoricoCSV() {
 function copiarCSV() {
     const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     if (todos.length === 0) { alert('Nenhum jogador!'); return; }
-    let csv = 'Nome,Rebuys,Addons\n';
+    let csv = '';
     todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => csv += `${j.nome},${j.rebuys||0},${j.addon?1:0}\n`);
     navigator.clipboard.writeText(csv).then(() => alert('✅ Copiado!')).catch(() => alert('❌ Erro'));
 }
@@ -1710,6 +1745,8 @@ function inicializarEventos() {
     document.getElementById('btnVoltarAdmin').onclick = () => { document.getElementById('telaAdmin').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); };
     document.getElementById('btnVoltarInicio').onclick = () => { document.getElementById('telaClassificacao').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); };
     
+    document.getElementById('btnIniciarEtapaAdmin').onclick = iniciarEtapaAdmin;
+    
     document.getElementById('btnIniciarCronometro').onclick = () => { if (cronometroAtivo) pausarCronometro(); else iniciarCronometro(); };
     document.getElementById('btnZerarCronometro').onclick = zerarCronometro;
     document.getElementById('btnIniciarCronometroMesaFinal').onclick = () => { if (cronometroAtivoMF) pausarCronometroMF(); else iniciarCronometroMF(); };
@@ -1719,6 +1756,8 @@ function inicializarEventos() {
     document.getElementById('btnSalvarCorrigir').onclick = salvarCorrecao;
     document.getElementById('btnCancelarEliminar').onclick = () => document.getElementById('modalEliminar').classList.remove('active');
     document.getElementById('btnConfirmarEliminar').onclick = confirmarEliminacao;
+    document.getElementById('btnCancelarEliminarMF').onclick = () => document.getElementById('modalEliminarMesaFinal').classList.remove('active');
+    document.getElementById('btnConfirmarEliminarMF').onclick = confirmarEliminacaoMF;
     
     document.getElementById('btnCancelarSenhaApagar').onclick = () => document.getElementById('modalSenhaApagar').classList.remove('active');
     document.getElementById('btnConfirmarSenhaApagar').onclick = () => {
@@ -1728,18 +1767,9 @@ function inicializarEventos() {
     };
     document.getElementById('btnApagarDados').onclick = () => document.getElementById('modalSenhaApagar').classList.add('active');
     
-    document.getElementById('btnNovaEtapa').onclick = () => document.getElementById('modalNovaEtapa').classList.add('active');
-    document.getElementById('btnCancelarNovaEtapa').onclick = () => document.getElementById('modalNovaEtapa').classList.remove('active');
-    document.getElementById('btnConfirmarNovaEtapa').onclick = iniciarNovaEtapa;
     document.getElementById('btnApagarHistorico').onclick = () => document.getElementById('modalApagarHistorico').classList.add('active');
     document.getElementById('btnCancelarApagarHistorico').onclick = () => document.getElementById('modalApagarHistorico').classList.remove('active');
-    document.getElementById('btnConfirmarApagarHistorico').onclick = () => {
-        historicoEtapas = [];
-        db.ref('historicoEtapas').set([]);
-        document.getElementById('modalApagarHistorico').classList.remove('active');
-        alert('✅ Histórico apagado!');
-        atualizarHistoricoEtapas();
-    };
+    document.getElementById('btnConfirmarApagarHistorico').onclick = apagarHistorico;
     
     document.querySelectorAll('.nav-tab-admin').forEach(tab => {
         tab.onclick = () => {
@@ -1763,21 +1793,15 @@ function inicializarEventos() {
     document.getElementById('btnExportarClassificacao').onclick = exportarClassificacaoCSV;
     document.getElementById('btnExportarHistorico').onclick = exportarHistoricoCSV;
     document.getElementById('btnCopiarCSV').onclick = copiarCSV;
-    
-    // Select etapa
-    document.getElementById('selectEtapa').addEventListener('change', (e) => {
-        config.etapa = parseInt(e.target.value);
-        db.ref('config').set(config);
-    });
 }
 
 // Expor funções globais
 window.adicionarRebuy = adicionarRebuy;
 window.adicionarAddon = adicionarAddon;
 window.abrirCorrecao = abrirCorrecao;
-window.eliminarJogador = eliminarJogador;
+window.abrirModalEliminar = abrirModalEliminar;
 window.atualizarKOs = atualizarKOs;
-window.eliminarDaMesaFinal = eliminarDaMesaFinal;
+window.abrirModalEliminarMF = abrirModalEliminarMF;
 window.toggleEtapa = toggleEtapa;
 </script>
 </body>
