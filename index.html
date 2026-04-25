@@ -139,54 +139,6 @@
             box-shadow: 0 0 30px rgba(212, 161, 33, 0.5);
         }
         
-        .classificacao-inicial {
-            background: #0a150a;
-            border-radius: 20px;
-            padding: 20px;
-            margin-top: 20px;
-            border: 2px solid #d4a121;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .classificacao-inicial h3 {
-            font-family: 'Anton';
-            color: #d4a121;
-            font-size: 1.5em;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        
-        .classificacao-inicial-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85em;
-        }
-        
-        .classificacao-inicial-table th,
-        .classificacao-inicial-table td {
-            padding: 8px;
-            text-align: center;
-            border-bottom: 1px solid #2d5016;
-        }
-        
-        .ver-mais-btn {
-            margin-top: 15px;
-            padding: 10px;
-            background: #2d5016;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-        }
-        
-        .ver-mais-btn:hover {
-            background: #3a6b1c;
-        }
-        
         .app-container, .mesa-final-app {
             display: flex;
             height: 100vh;
@@ -857,19 +809,6 @@
             <button class="selecao-btn preta" id="btnSelecionarPreta">♠️ MESA PRETA</button>
             <button class="selecao-btn amarela" id="btnSelecionarAmarela">♦️ MESA AMARELA</button>
         </div>
-        
-        <div class="classificacao-inicial" id="classificacaoInicial">
-            <h3>🏆 CLASSIFICAÇÃO ATUAL</h3>
-            <div style="max-height: 250px; overflow-y: auto;">
-                <table class="classificacao-inicial-table">
-                    <thead>
-                        <tr><th>Pos</th><th>Jogador</th><th>Pontos</th></tr>
-                    </thead>
-                    <tbody id="classificacaoInicialBody"></tbody>
-                </tr>
-            </div>
-            <button class="ver-mais-btn" id="btnVerClassificacaoInicial">VER CLASSIFICAÇÃO COMPLETA</button>
-        </div>
     </div>
 </div>
 
@@ -980,7 +919,7 @@
                         <tr><th>#</th><th>Jogador</th><th>Mesa</th><th>Rebuys</th></tr>
                     </thead>
                     <tbody id="adminRankingBody"></tbody>
-                </table>
+                追赶
                 
                 <button class="btn btn-secondary" id="btnAdminExportarCompleto" style="margin-top: 20px; width: 100%;">📊 EXPORTAR CSV COMPLETO</button>
             </div>
@@ -1078,7 +1017,6 @@
             <h2>🏆 MESA FINAL 🏆</h2>
             <div>
                 <button class="btn-voltar-mesa-final" id="btnVoltarMesaFinalSelecao">↩️ VOLTAR</button>
-                <button class="btn-ir-mesa-final" id="btnVoltarMesaFinal" style="display: none;">🏆 IR PARA MESA FINAL</button>
             </div>
         </div>
         
@@ -1263,9 +1201,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (selectEtapa) selectEtapa.value = config.etapa || 4;
         }
     });
-    db.ref('fotosJogadores').on('value', (snapshot) => { 
-        if (snapshot.exists()) fotosJogadores = snapshot.val(); 
-    });
+    
     db.ref('mesas').on('value', (snapshot) => {
         if (snapshot.exists()) mesasData = snapshot.val();
         else mesasData = { preta: [], amarela: [] };
@@ -1278,19 +1214,19 @@ document.addEventListener('DOMContentLoaded', function() {
         atualizarInterface();
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
-        atualizarClassificacaoInicial();
         atualizarContadorOutraMesa();
         
         contadorEliminados = todosJogadores.filter(j => j.eliminado).length;
         verificarMesaFinal();
         atualizarBotaoMesaFinal();
     });
+    
     db.ref('classificacao').on('value', (snapshot) => {
         if (snapshot.exists()) classificacaoData = snapshot.val();
         else classificacaoData = [];
         atualizarClassificacao();
-        atualizarClassificacaoInicial();
     });
+    
     db.ref('historicoEtapas').on('value', (snapshot) => {
         if (snapshot.exists()) historicoEtapas = snapshot.val();
         else historicoEtapas = [];
@@ -1322,14 +1258,11 @@ function atualizarContadorOutraMesa() {
 
 function atualizarBotaoMesaFinal() {
     const btnIrMesaFinal = document.getElementById('btnIrMesaFinal');
-    const btnVoltarMesaFinal = document.getElementById('btnVoltarMesaFinal');
     
     if (mesaFinalAtiva) {
         if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'inline-block';
-        if (btnVoltarMesaFinal) btnVoltarMesaFinal.style.display = 'inline-block';
     } else {
         if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'none';
-        if (btnVoltarMesaFinal) btnVoltarMesaFinal.style.display = 'none';
     }
 }
 
@@ -1346,7 +1279,6 @@ function verificarMesaFinal() {
         if (vivosAtualizados.length < 9) {
             atualizarMesaFinal(vivosAtualizados);
         } else if (vivosAtualizados.length > 9) {
-            // Se por algum motivo tiver mais de 9, desativa a mesa final
             mesaFinalAtiva = false;
             jogadoresMesaFinal = [];
             document.getElementById('mesaFinalApp').classList.add('hidden');
@@ -1357,7 +1289,6 @@ function verificarMesaFinal() {
 
 function ativarMesaFinal(jogadoresVivos) {
     mesaFinalAtiva = true;
-    // Ordena os jogadores por posição original, mas a numeração na mesa final será de 1 a 9
     jogadoresMesaFinal = [...jogadoresVivos];
     jogadoresMesaFinal.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
     atualizarBotaoMesaFinal();
@@ -1375,12 +1306,10 @@ function irParaMesaFinal() {
 }
 
 function voltarDaMesaFinal() {
-    if (mesaFinalAtiva) {
-        document.getElementById('mesaFinalApp').classList.add('hidden');
-        document.getElementById('appContainer').classList.remove('hidden');
-        atualizarGridJogadores();
-        atualizarContadorOutraMesa();
-    }
+    document.getElementById('mesaFinalApp').classList.add('hidden');
+    document.getElementById('appContainer').classList.remove('hidden');
+    atualizarGridJogadores();
+    atualizarContadorOutraMesa();
 }
 
 function renderizarMesaFinalGrid() {
@@ -1396,10 +1325,9 @@ function renderizarMesaFinalGrid() {
         return;
     }
     
-    // Mostra os jogadores com numeração de 1 a N (posição atual na mesa final)
     grid.innerHTML = jogadoresMesaFinal.map((jogador, index) => {
         const foto = getFotoJogador(jogador.nome);
-        const posicaoAtualNaMesaFinal = index + 1; // 1, 2, 3... até 9
+        const posicaoAtualNaMesaFinal = index + 1;
         return `
             <div class="jogador-card">
                 <div class="jogador-posicao-numero">${posicaoAtualNaMesaFinal}</div>
@@ -1426,7 +1354,6 @@ function atualizarMesaFinal(jogadoresVivos) {
     jogadoresMesaFinal.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
     renderizarMesaFinalGrid();
     
-    // Verifica se acabou
     if (jogadoresMesaFinal.length === 0) {
         finalizarTorneio();
     } else if (jogadoresMesaFinal.length === 1) {
@@ -1441,8 +1368,6 @@ function eliminarDaMesaFinal(jogadorNome) {
     const posicaoEliminacao = jogadoresMesaFinal.length;
     const kos = prompt(`Eliminando ${jogadorNome} (${posicaoEliminacao}º lugar)\nQuantos KO's ele fez neste torneio?`, "0");
     const quantidadeKOsFinal = parseInt(kos) || 0;
-    
-    // Usa a tabela de pontuação correta baseada na posição (1º = 27, 2º = 25, etc)
     const pontosPosicao = calcularPontosPorPosicao(posicaoEliminacao);
     
     const classificacaoItem = {
@@ -1498,7 +1423,6 @@ function finalizarComCampeao(campeao) {
     salvarClassificacao();
     mostrarNotificacao(`🏆 CAMPEÃO: ${campeao.nome} 🏆`);
     
-    // Limpa a mesa final
     jogadoresMesaFinal = [];
     renderizarMesaFinalGrid();
     
@@ -1566,7 +1490,6 @@ function inicializarEventos() {
     };
     document.getElementById('btnIrMesaFinal').onclick = () => irParaMesaFinal();
     document.getElementById('btnVoltarMesaFinalSelecao').onclick = () => voltarDaMesaFinal();
-    document.getElementById('btnVoltarMesaFinal').onclick = () => irParaMesaFinal();
     
     document.getElementById('btnAbrirAdminTopo').onclick = () => {
         if (mesaFinalAtiva) return;
@@ -1595,12 +1518,7 @@ function inicializarEventos() {
         document.getElementById('telaAdmin').classList.add('hidden');
         document.getElementById('telaSelecao').classList.remove('hidden');
     };
-    document.getElementById('btnVerClassificacaoInicial').onclick = () => {
-        if (mesaFinalAtiva) return;
-        document.getElementById('telaSelecao').classList.add('hidden');
-        document.getElementById('telaClassificacao').classList.remove('hidden');
-        atualizarClassificacao();
-    };
+    
     document.getElementById('btnVoltarInicio').onclick = () => {
         document.getElementById('telaClassificacao').classList.add('hidden');
         document.getElementById('telaSelecao').classList.remove('hidden');
@@ -1781,7 +1699,6 @@ function apagarTodosDados() {
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
         atualizarClassificacao();
-        atualizarClassificacaoInicial();
         atualizarHistoricoEtapas();
         atualizarBotaoMesaFinal();
     }
@@ -1802,16 +1719,6 @@ function atualizarIndicadorMesa() {
     indicator.className = `mesa-indicator ${mesaAtual}`;
     const texto = mesaAtual === 'preta' ? '♠️ MESA PRETA ♠️' : '♦️ MESA AMARELA ♦️';
     indicatorText.textContent = texto;
-}
-
-function atualizarClassificacaoInicial() {
-    const tbody = document.getElementById('classificacaoInicialBody');
-    const top5 = [...classificacaoData].sort((a, b) => a.posicao - b.posicao).slice(0, 5);
-    if (top5.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center;">Nenhum jogador classificado ainda</td></tr>';
-        return;
-    }
-    tbody.innerHTML = top5.map(j => `<tr><td><strong>${j.posicao}º</strong></td><td>${j.nome}</td><td><strong style="color: #d4a121;">${j.pontosTotal || j.pontosPosicao}</strong></td></tr>`).join('');
 }
 
 function toggleCronometro() { initAudio(); if (cronometroAtivo) pausarCronometro(); else iniciarCronometro(); }
@@ -1975,7 +1882,814 @@ window.atualizarKOs = function(jogadorNome, inputElement) {
         jogadorClassif.pontosTotal = jogadorClassif.pontosPosicao + kos;
         salvarClassificacao();
         atualizarClassificacao();
-        atualizarClassificacaoInicial();
+    }
+};
+function salvarMesas() { db.ref('mesas').set(mesasData); }
+function salvarClassificacao() { db.ref('classificacao').set(classificacaoData); }
+function getFotoJogador(nome) { return fotosJogadores[nome] || `https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=d4a121&color=000&size=45`; }
+function atualizarInterface() { atualizarGridJogadores(); }
+function atualizarGridJogadores() {
+    const grid = document.getElementById('jogadoresGrid');
+    const jogadores = mesasData[mesaAtual] || [];
+    if (jogadores.length === 0) { grid.innerHTML = '<div class="empty-state" style="text-align: center; padding: 20px; opacity: 0.7;">Nenhum jogador na mesa. Importe pelo modo Administração.</div>'; return; }
+    grid.innerHTML = jogadores.sort((a, b) => (a.posicao || 999) - (b.posicao || 999)).map(j => {
+        const foto = getFotoJogador(j.nome);
+        const eliminadoClass = j.eliminado ? 'eliminado' : '';
+        return `<div class="jogador-card ${eliminadoClass}"><div class="jogador-posicao-numero">${j.posicao || '?'}</div><img class="jogador-foto" src="${foto}"><div class="jogador-info"><div class="jogador-nome">${j.nome}</div><div class="jogador-valores">${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}${j.addon ? '<span class="badge badge-addon">💎 Addon</span>' : ''}${j.eliminado ? `<span class="badge badge-eliminado">❌ Eliminado (${j.posicaoFinal}º)</span>` : ''}</div></div><div class="jogador-actions">${!j.eliminado ? `<button class="action-btn btn-rebuy" onclick="window.adicionarRebuy('${j.nome}', 'simples')">REBUY</button><button class="action-btn btn-rebuy-duplo" onclick="window.adicionarRebuy('${j.nome}', 'duplo')">REBUY 2x</button>${!j.addon ? `<button class="action-btn btn-addon" onclick="window.adicionarAddon('${j.nome}')">ADDON</button>` : ''}<button class="action-btn btn-corrigir" onclick="window.abrirCorrecao('${j.nome}')">✏️</button><button class="action-btn btn-eliminar" onclick="window.eliminarJogador('${j.nome}')">❌ ELIMINAR</button>` : ''}</div></div>`;
+    }).join('');
+}
+function atualizarClassificacao() {
+    const tbody = document.getElementById('classificacaoBody');
+    const classificacaoOrdenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
+    if (classificacaoOrdenada.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">Nenhum jogador eliminado ainda neuq
+                </div>
+        <div class="modal-buttons">
+            <button class="btn btn-danger" id="btnCancelarSenhaApagar">Cancelar</button>
+            <button class="btn btn-success" id="btnConfirmarSenhaApagar">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nova Etapa -->
+<div class="modal" id="modalNovaEtapa">
+    <div class="modal-content">
+        <h3>🔄 INICIAR NOVA ETAPA</h3>
+        <p>Tem certeza que deseja iniciar uma nova etapa?</p>
+        <p style="font-size: 0.9em; opacity: 0.8; margin-top: 10px;">A classificação atual será salva no histórico e os dados serão resetados.</p>
+        <div class="modal-buttons">
+            <button class="btn btn-danger" id="btnCancelarNovaEtapa">Cancelar</button>
+            <button class="btn btn-success" id="btnConfirmarNovaEtapa">Confirmar Nova Etapa</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Apagar Historico -->
+<div class="modal" id="modalApagarHistorico">
+    <div class="modal-content">
+        <h3>🗑️ APAGAR HISTÓRICO</h3>
+        <p>Tem certeza que deseja apagar TODO o histórico de etapas?</p>
+        <p style="font-size: 0.9em; opacity: 0.8; margin-top: 10px;">Esta ação não pode ser desfeita!</p>
+        <div class="modal-buttons">
+            <button class="btn btn-danger" id="btnCancelarApagarHistorico">Cancelar</button>
+            <button class="btn btn-warning" id="btnConfirmarApagarHistorico">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Configuração do Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyD_XXjcjJYM73wLTTzpDgzKCOZnztcJhjE",
+    authDomain: "poker-de-quinta.firebaseapp.com",
+    databaseURL: "https://poker-de-quinta-default-rtdb.firebaseio.com",
+    projectId: "poker-de-quinta",
+    storageBucket: "poker-de-quinta.firebasestorage.app",
+    messagingSenderId: "776724152456",
+    appId: "1:776724152456:web:fbffde9a1c1a7628c61f3d"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const VALOR_BUYIN = 100;
+const VALOR_REBUY = 30;
+const VALOR_ADDON = 50;
+const TEMPO_INICIAL = 30;
+
+// Tabela de pontuação por posição (1º = 27, 2º = 25, 3º = 23, etc)
+const PONTOS_POSICAO = {
+    1: 27, 2: 25, 3: 23, 4: 21, 5: 19,
+    6: 17, 7: 15, 8: 13, 9: 11, 10: 9,
+    11: 7, 12: 6, 13: 5, 14: 5, 15: 5,
+    16: 5, 17: 5, 18: 5, 19: 5, 20: 5
+};
+
+function calcularPontosPorPosicao(posicao) {
+    return PONTOS_POSICAO[posicao] || 5;
+}
+
+let mesaAtual = 'preta';
+let config = { etapa: 4 };
+let mesasData = { preta: [], amarela: [] };
+let classificacaoData = [];
+let historicoEtapas = [];
+let layoutImportado = { preta: [], amarela: [] };
+let arquivoSelecionado = null;
+let jogadorCorrigindo = null;
+let jogadorEliminando = null;
+let contadorEliminados = 0;
+let totalJogadoresIniciais = 0;
+
+let mesaFinalAtiva = false;
+let jogadoresMesaFinal = [];
+
+let cronometroTempo = TEMPO_INICIAL;
+let cronometroAtivo = false;
+let cronometroInterval = null;
+let cronometroTempoMesaFinal = TEMPO_INICIAL;
+let cronometroAtivoMesaFinal = false;
+let cronometroIntervalMesaFinal = null;
+let alarmeTocando = false;
+let audioContext = null;
+let fotosJogadores = {};
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('statusIndicator').textContent = '✅ Conectado';
+    
+    const selectEtapa = document.getElementById('selectEtapa');
+    selectEtapa.addEventListener('change', function() {
+        config.etapa = parseInt(this.value);
+        db.ref('config').set(config);
+    });
+    
+    db.ref('config').on('value', (snapshot) => { 
+        if (snapshot.exists()) {
+            config = snapshot.val();
+            const selectEtapa = document.getElementById('selectEtapa');
+            if (selectEtapa) selectEtapa.value = config.etapa || 4;
+        }
+    });
+    
+    db.ref('mesas').on('value', (snapshot) => {
+        if (snapshot.exists()) mesasData = snapshot.val();
+        else mesasData = { preta: [], amarela: [] };
+        
+        const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+        if (totalJogadoresIniciais === 0 && todosJogadores.length > 0) {
+            totalJogadoresIniciais = todosJogadores.filter(j => !j.eliminado).length;
+        }
+        
+        atualizarInterface();
+        atualizarAdminResumo();
+        atualizarAdminEstatisticas();
+        atualizarContadorOutraMesa();
+        
+        contadorEliminados = todosJogadores.filter(j => j.eliminado).length;
+        verificarMesaFinal();
+        atualizarBotaoMesaFinal();
+    });
+    
+    db.ref('classificacao').on('value', (snapshot) => {
+        if (snapshot.exists()) classificacaoData = snapshot.val();
+        else classificacaoData = [];
+        atualizarClassificacao();
+    });
+    
+    db.ref('historicoEtapas').on('value', (snapshot) => {
+        if (snapshot.exists()) historicoEtapas = snapshot.val();
+        else historicoEtapas = [];
+        atualizarHistoricoEtapas();
+    });
+    
+    inicializarEventos();
+});
+
+function atualizarContadorOutraMesa() {
+    const container = document.getElementById('contadorOutraMesa');
+    if (!container) return;
+    
+    const outraMesa = mesaAtual === 'preta' ? 'amarela' : 'preta';
+    const jogadoresOutraMesa = mesasData[outraMesa] || [];
+    const vivosOutraMesa = jogadoresOutraMesa.filter(j => !j.eliminado);
+    const eliminadosOutraMesa = jogadoresOutraMesa.filter(j => j.eliminado);
+    
+    const nomeOutraMesa = outraMesa === 'preta' ? 'MESA PRETA' : 'MESA AMARELA';
+    const iconeOutraMesa = outraMesa === 'preta' ? '♠️' : '♦️';
+    
+    container.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span>${iconeOutraMesa} ${nomeOutraMesa}</span>
+            <span>🟢 VIVOS: ${vivosOutraMesa.length} | ❌ ELIMINADOS: ${eliminadosOutraMesa.length}</span>
+        </div>
+    `;
+}
+
+function atualizarBotaoMesaFinal() {
+    const btnIrMesaFinal = document.getElementById('btnIrMesaFinal');
+    
+    if (mesaFinalAtiva) {
+        if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'inline-block';
+    } else {
+        if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'none';
+    }
+}
+
+function verificarMesaFinal() {
+    const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+    const jogadoresVivos = todosJogadores.filter(j => !j.eliminado);
+    
+    if (jogadoresVivos.length === 9 && !mesaFinalAtiva) {
+        ativarMesaFinal(jogadoresVivos);
+    }
+    
+    if (mesaFinalAtiva) {
+        const vivosAtualizados = todosJogadores.filter(j => !j.eliminado);
+        if (vivosAtualizados.length < 9) {
+            atualizarMesaFinal(vivosAtualizados);
+        } else if (vivosAtualizados.length > 9) {
+            mesaFinalAtiva = false;
+            jogadoresMesaFinal = [];
+            document.getElementById('mesaFinalApp').classList.add('hidden');
+            atualizarBotaoMesaFinal();
+        }
+    }
+}
+
+function ativarMesaFinal(jogadoresVivos) {
+    mesaFinalAtiva = true;
+    jogadoresMesaFinal = [...jogadoresVivos];
+    jogadoresMesaFinal.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
+    atualizarBotaoMesaFinal();
+    renderizarMesaFinalGrid();
+    mostrarNotificacao('🎉 MESA FINAL! Restam 9 jogadores! 🎉');
+}
+
+function irParaMesaFinal() {
+    if (mesaFinalAtiva) {
+        document.getElementById('appContainer').classList.add('hidden');
+        document.getElementById('mesaFinalApp').classList.remove('hidden');
+        renderizarMesaFinalGrid();
+        pausarCronometro();
+    }
+}
+
+function voltarDaMesaFinal() {
+    document.getElementById('mesaFinalApp').classList.add('hidden');
+    document.getElementById('appContainer').classList.remove('hidden');
+    atualizarGridJogadores();
+    atualizarContadorOutraMesa();
+}
+
+function renderizarMesaFinalGrid() {
+    const grid = document.getElementById('jogadoresMesaFinalGrid');
+    const indicator = document.getElementById('mesaFinalIndicatorText');
+    
+    if (indicator) {
+        indicator.textContent = `🏆 MESA FINAL - ${jogadoresMesaFinal.length} JOGADORES 🏆`;
+    }
+    
+    if (jogadoresMesaFinal.length === 0) {
+        grid.innerHTML = '<div style="text-align: center; padding: 40px; font-size: 1.2em;">🏆 TORNEIO FINALIZADO! 🏆</div>';
+        return;
+    }
+    
+    grid.innerHTML = jogadoresMesaFinal.map((jogador, index) => {
+        const foto = getFotoJogador(jogador.nome);
+        const posicaoAtualNaMesaFinal = index + 1;
+        return `
+            <div class="jogador-card">
+                <div class="jogador-posicao-numero">${posicaoAtualNaMesaFinal}</div>
+                <img class="jogador-foto" src="${foto}" alt="${jogador.nome}">
+                <div class="jogador-info">
+                    <div class="jogador-nome">${jogador.nome}</div>
+                    <div class="jogador-valores">
+                        ${jogador.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${jogador.rebuys}</span>` : ''}
+                        ${jogador.addon ? '<span class="badge badge-addon">💎 Addon</span>' : ''}
+                    </div>
+                </div>
+                <div class="jogador-actions">
+                    <button class="action-btn btn-eliminar" onclick="eliminarDaMesaFinal('${jogador.nome}')">
+                        ❌ ELIMINAR (${jogadoresMesaFinal.length}º lugar)
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function atualizarMesaFinal(jogadoresVivos) {
+    jogadoresMesaFinal = [...jogadoresVivos];
+    jogadoresMesaFinal.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
+    renderizarMesaFinalGrid();
+    
+    if (jogadoresMesaFinal.length === 0) {
+        finalizarTorneio();
+    } else if (jogadoresMesaFinal.length === 1) {
+        finalizarComCampeao(jogadoresMesaFinal[0]);
+    }
+}
+
+function eliminarDaMesaFinal(jogadorNome) {
+    const jogador = jogadoresMesaFinal.find(j => j.nome === jogadorNome);
+    if (!jogador) return;
+    
+    const posicaoEliminacao = jogadoresMesaFinal.length;
+    const kos = prompt(`Eliminando ${jogadorNome} (${posicaoEliminacao}º lugar)\nQuantos KO's ele fez neste torneio?`, "0");
+    const quantidadeKOsFinal = parseInt(kos) || 0;
+    const pontosPosicao = calcularPontosPorPosicao(posicaoEliminacao);
+    
+    const classificacaoItem = {
+        nome: jogador.nome,
+        mesa: jogadoresMesaFinal.some(j => mesasData.preta?.some(m => m.nome === j.nome)) ? 'Preta' : 'Amarela',
+        posicao: posicaoEliminacao,
+        pontosPosicao: pontosPosicao,
+        kos: quantidadeKOsFinal,
+        pontosKOs: quantidadeKOsFinal,
+        pontosTotal: pontosPosicao + quantidadeKOsFinal,
+        dataEliminacao: new Date().toISOString(),
+        etapa: config.etapa
+    };
+    
+    classificacaoData.push(classificacaoItem);
+    salvarClassificacao();
+    
+    const jogadorOriginal = [...(mesasData.preta || []), ...(mesasData.amarela || [])]
+        .find(j => j.nome === jogadorNome);
+    if (jogadorOriginal) {
+        jogadorOriginal.eliminado = true;
+        jogadorOriginal.posicaoFinal = posicaoEliminacao;
+        jogadorOriginal.kos = quantidadeKOsFinal;
+        salvarMesas();
+    }
+    
+    jogadoresMesaFinal = jogadoresMesaFinal.filter(j => j.nome !== jogadorNome);
+    
+    if (jogadoresMesaFinal.length === 0) {
+        finalizarTorneio();
+    } else if (jogadoresMesaFinal.length === 1) {
+        finalizarComCampeao(jogadoresMesaFinal[0]);
+    }
+    
+    renderizarMesaFinalGrid();
+    mostrarNotificacao(`✅ ${jogadorNome} eliminado na ${posicaoEliminacao}ª posição!`);
+}
+
+function finalizarComCampeao(campeao) {
+    const pontosPosicao = calcularPontosPorPosicao(1);
+    const classificacaoItem = {
+        nome: campeao.nome,
+        mesa: mesasData.preta?.find(j => j.nome === campeao.nome) ? 'Preta' : 'Amarela',
+        posicao: 1,
+        pontosPosicao: pontosPosicao,
+        kos: campeao.kos || 0,
+        pontosKOs: campeao.kos || 0,
+        pontosTotal: pontosPosicao + (campeao.kos || 0),
+        dataEliminacao: new Date().toISOString(),
+        etapa: config.etapa
+    };
+    classificacaoData.push(classificacaoItem);
+    salvarClassificacao();
+    mostrarNotificacao(`🏆 CAMPEÃO: ${campeao.nome} 🏆`);
+    
+    jogadoresMesaFinal = [];
+    renderizarMesaFinalGrid();
+    
+    setTimeout(() => {
+        alert(`🏆 TORNEIO FINALIZADO! 🏆\n\nCAMPEÃO: ${campeao.nome}\n\nA classificação foi salva!`);
+        fecharMesaFinal();
+    }, 500);
+}
+
+function finalizarTorneio() {
+    mostrarNotificacao('🏆 TORNEIO FINALIZADO! 🏆');
+    setTimeout(() => {
+        alert('🏆 PARABÉNS! O torneio foi finalizado!\n\nTodas as pontuações foram registradas na classificação.');
+        fecharMesaFinal();
+    }, 500);
+}
+
+function fecharMesaFinal() {
+    mesaFinalAtiva = false;
+    jogadoresMesaFinal = [];
+    pausarCronometroMesaFinal();
+    document.getElementById('mesaFinalApp').classList.add('hidden');
+    document.getElementById('appContainer').classList.add('hidden');
+    document.getElementById('telaSelecao').classList.remove('hidden');
+    atualizarBotaoMesaFinal();
+}
+
+function mostrarNotificacao(mensagem) {
+    const notificacao = document.createElement('div');
+    notificacao.textContent = mensagem;
+    notificacao.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #d4a121;
+        color: #000;
+        padding: 12px 24px;
+        border-radius: 50px;
+        font-weight: bold;
+        z-index: 3000;
+        animation: fadeInOut 3s ease;
+        white-space: nowrap;
+    `;
+    document.body.appendChild(notificacao);
+    setTimeout(() => notificacao.remove(), 3000);
+}
+
+function inicializarEventos() {
+    document.getElementById('btnSelecionarPreta').onclick = () => {
+        if (mesaFinalAtiva) return;
+        mesaAtual = 'preta';
+        iniciarApp();
+    };
+    document.getElementById('btnSelecionarAmarela').onclick = () => {
+        if (mesaFinalAtiva) return;
+        mesaAtual = 'amarela';
+        iniciarApp();
+    };
+    document.getElementById('btnVoltarParaSelecao').onclick = () => {
+        if (mesaFinalAtiva) return;
+        pausarCronometro();
+        document.getElementById('appContainer').classList.add('hidden');
+        document.getElementById('telaSelecao').classList.remove('hidden');
+    };
+    document.getElementById('btnIrMesaFinal').onclick = () => irParaMesaFinal();
+    document.getElementById('btnVoltarMesaFinalSelecao').onclick = () => voltarDaMesaFinal();
+    
+    document.getElementById('btnAbrirAdminTopo').onclick = () => {
+        if (mesaFinalAtiva) return;
+        document.getElementById('modalSenhaAdmin').classList.add('active');
+    };
+    document.getElementById('btnCancelarSenhaAdmin').onclick = () => {
+        document.getElementById('modalSenhaAdmin').classList.remove('active');
+        document.getElementById('senhaAdmin').value = '';
+    };
+    document.getElementById('btnConfirmarSenhaAdmin').onclick = () => {
+        const senha = document.getElementById('senhaAdmin').value;
+        if (senha === 'poker2026') {
+            document.getElementById('modalSenhaAdmin').classList.remove('active');
+            document.getElementById('senhaAdmin').value = '';
+            document.getElementById('telaSelecao').classList.add('hidden');
+            document.getElementById('telaAdmin').classList.remove('hidden');
+            atualizarAdminResumo();
+            atualizarAdminEstatisticas();
+            atualizarHistoricoEtapas();
+        } else {
+            alert('❌ Senha incorreta!');
+            document.getElementById('senhaAdmin').value = '';
+        }
+    };
+    document.getElementById('btnVoltarAdmin').onclick = () => {
+        document.getElementById('telaAdmin').classList.add('hidden');
+        document.getElementById('telaSelecao').classList.remove('hidden');
+    };
+    
+    document.getElementById('btnVoltarInicio').onclick = () => {
+        document.getElementById('telaClassificacao').classList.add('hidden');
+        document.getElementById('telaSelecao').classList.remove('hidden');
+    };
+    document.getElementById('btnExportarClassificacao').onclick = exportarClassificacaoCSV;
+    document.getElementById('btnCopiarCSV').onclick = copiarCSVAreaTransferencia;
+    document.getElementById('btnExportarHistorico').onclick = exportarHistoricoCSV;
+    document.getElementById('btnNovaEtapa').onclick = () => {
+        document.getElementById('modalNovaEtapa').classList.add('active');
+    };
+    document.getElementById('btnCancelarNovaEtapa').onclick = () => {
+        document.getElementById('modalNovaEtapa').classList.remove('active');
+    };
+    document.getElementById('btnConfirmarNovaEtapa').onclick = iniciarNovaEtapa;
+    document.getElementById('btnApagarHistorico').onclick = () => {
+        document.getElementById('modalApagarHistorico').classList.add('active');
+    };
+    document.getElementById('btnCancelarApagarHistorico').onclick = () => {
+        document.getElementById('modalApagarHistorico').classList.remove('active');
+    };
+    document.getElementById('btnConfirmarApagarHistorico').onclick = () => {
+        historicoEtapas = [];
+        db.ref('historicoEtapas').set([]);
+        document.getElementById('modalApagarHistorico').classList.remove('active');
+        alert('✅ Histórico apagado com sucesso!');
+        atualizarHistoricoEtapas();
+    };
+    
+    document.getElementById('btnIniciarCronometro').onclick = toggleCronometro;
+    document.getElementById('btnZerarCronometro').onclick = zerarCronometro;
+    document.getElementById('cronometroDisplay').onclick = toggleCronometro;
+    
+    document.getElementById('btnIniciarCronometroMesaFinal').onclick = toggleCronometroMesaFinal;
+    document.getElementById('btnZerarCronometroMesaFinal').onclick = zerarCronometroMesaFinal;
+    document.getElementById('cronometroDisplayMesaFinal').onclick = toggleCronometroMesaFinal;
+    
+    document.getElementById('btnCancelarCorrigir').onclick = () => {
+        document.getElementById('modalCorrigir').classList.remove('active');
+    };
+    document.getElementById('btnSalvarCorrigir').onclick = salvarCorrecao;
+    document.getElementById('btnCancelarEliminar').onclick = () => {
+        document.getElementById('modalEliminar').classList.remove('active');
+        jogadorEliminando = null;
+    };
+    document.getElementById('btnConfirmarEliminar').onclick = confirmarEliminacao;
+    document.getElementById('btnCancelarSenhaApagar').onclick = () => {
+        document.getElementById('modalSenhaApagar').classList.remove('active');
+        document.getElementById('senhaApagar').value = '';
+    };
+    document.getElementById('btnConfirmarSenhaApagar').onclick = () => {
+        const senha = document.getElementById('senhaApagar').value;
+        if (senha === 'poker2026') {
+            apagarTodosDados();
+            document.getElementById('modalSenhaApagar').classList.remove('active');
+            document.getElementById('senhaApagar').value = '';
+        } else {
+            alert('❌ Senha incorreta!');
+            document.getElementById('senhaApagar').value = '';
+        }
+    };
+    document.getElementById('btnApagarDados').onclick = () => {
+        document.getElementById('modalSenhaApagar').classList.add('active');
+    };
+    
+    document.querySelectorAll('.nav-tab-admin').forEach(tab => {
+        tab.onclick = () => {
+            document.querySelectorAll('.nav-tab-admin').forEach(t => {
+                t.style.background = 'transparent';
+                t.style.color = '#fff';
+            });
+            document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.add('hidden'));
+            tab.style.background = '#d4a121';
+            tab.style.color = '#000';
+            const tabId = tab.getAttribute('data-admin-tab');
+            document.getElementById(`admin-${tabId}`).classList.remove('hidden');
+            if (tabId === 'resumo') atualizarAdminResumo();
+            if (tabId === 'estatisticas') atualizarAdminEstatisticas();
+            if (tabId === 'historico') atualizarHistoricoEtapas();
+        };
+    });
+    
+    document.getElementById('btnEscolherArquivo').onclick = () => {
+        document.getElementById('fileInput').click();
+    };
+    const fileInput = document.getElementById('fileInput');
+    const btnProcessarLayout = document.getElementById('btnProcessarLayout');
+    fileInput.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            arquivoSelecionado = file;
+            btnProcessarLayout.style.display = 'inline-block';
+            document.getElementById('importResult').classList.add('show');
+            document.getElementById('importResult').innerHTML = `📄 ${file.name}`;
+        }
+    };
+    btnProcessarLayout.onclick = processarLayout;
+    document.getElementById('btnAdminExportarCSV').onclick = exportarCSVSimples;
+    document.getElementById('btnAdminExportarCompleto').onclick = exportarCSVCompleto;
+}
+
+function iniciarNovaEtapa() {
+    if (classificacaoData.length > 0) {
+        const novaEtapa = {
+            data: new Date().toISOString(),
+            classificacao: [...classificacaoData],
+            totalJogadores: totalJogadoresIniciais,
+            totalClassificados: classificacaoData.length,
+            etapaNumero: config.etapa
+        };
+        historicoEtapas.unshift(novaEtapa);
+        db.ref('historicoEtapas').set(historicoEtapas);
+    }
+    
+    mesasData = { preta: [], amarela: [] };
+    classificacaoData = [];
+    contadorEliminados = 0;
+    mesaFinalAtiva = false;
+    jogadoresMesaFinal = [];
+    totalJogadoresIniciais = 0;
+    salvarMesas();
+    salvarClassificacao();
+    
+    document.getElementById('modalNovaEtapa').classList.remove('active');
+    document.getElementById('telaAdmin').classList.add('hidden');
+    document.getElementById('telaSelecao').classList.remove('hidden');
+    document.getElementById('mesaFinalApp').classList.add('hidden');
+    document.getElementById('appContainer').classList.add('hidden');
+    atualizarBotaoMesaFinal();
+    
+    alert('✅ Nova etapa iniciada! Todos os dados foram resetados.');
+}
+
+function atualizarHistoricoEtapas() {
+    const container = document.getElementById('etapasList');
+    if (historicoEtapas.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.7;">Nenhuma etapa finalizada ainda.</div>';
+        return;
+    }
+    container.innerHTML = historicoEtapas.map((etapa, index) => {
+        const data = new Date(etapa.data).toLocaleString('pt-BR');
+        const classificacaoOrdenada = [...etapa.classificacao].sort((a, b) => a.posicao - b.posicao);
+        const numeroEtapa = historicoEtapas.length - index;
+        return `
+            <div class="etapa-card">
+                <div class="etapa-header" onclick="toggleEtapa(${index})">
+                    <div><strong>📅 ${numeroEtapa}ª ETAPA</strong><div class="etapa-data">${data}</div></div>
+                    <div>🏆 ${etapa.totalJogadores} jogadores | ${etapa.totalClassificados} classificados</div>
+                </div>
+                <div class="etapa-classificacao" id="etapa-${index}">
+                    <table class="etapa-table"><thead><tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th></tr></thead>
+                    <tbody>${classificacaoOrdenada.map(j => `<tr><td><strong>${j.posicao}º</strong></td><td>${j.nome}</td><td>${j.mesa}</td><td>${j.pontosPosicao}</td><td>${j.kos || 0}</td><td><strong>${j.pontosTotal || j.pontosPosicao}</strong></td></tr>`).join('')}</tbody>赶
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function toggleEtapa(index) {
+    const elemento = document.getElementById(`etapa-${index}`);
+    if (elemento) elemento.classList.toggle('show');
+}
+
+function apagarTodosDados() {
+    if (confirm('⚠️ ATENÇÃO! Isso irá apagar TODOS os dados das mesas, classificação e histórico. Confirma?')) {
+        mesasData = { preta: [], amarela: [] };
+        classificacaoData = [];
+        historicoEtapas = [];
+        contadorEliminados = 0;
+        mesaFinalAtiva = false;
+        jogadoresMesaFinal = [];
+        totalJogadoresIniciais = 0;
+        salvarMesas();
+        salvarClassificacao();
+        db.ref('historicoEtapas').set([]);
+        document.getElementById('mesaFinalApp').classList.add('hidden');
+        document.getElementById('appContainer').classList.add('hidden');
+        alert('✅ Todos os dados foram apagados!');
+        atualizarAdminResumo();
+        atualizarAdminEstatisticas();
+        atualizarClassificacao();
+        atualizarHistoricoEtapas();
+        atualizarBotaoMesaFinal();
+    }
+}
+
+function iniciarApp() {
+    if (mesaFinalAtiva) return;
+    document.getElementById('telaSelecao').classList.add('hidden');
+    document.getElementById('appContainer').classList.remove('hidden');
+    atualizarIndicadorMesa();
+    atualizarGridJogadores();
+    atualizarContadorOutraMesa();
+}
+
+function atualizarIndicadorMesa() {
+    const indicator = document.getElementById('mesaIndicator');
+    const indicatorText = document.getElementById('mesaIndicatorText');
+    indicator.className = `mesa-indicator ${mesaAtual}`;
+    const texto = mesaAtual === 'preta' ? '♠️ MESA PRETA ♠️' : '♦️ MESA AMARELA ♦️';
+    indicatorText.textContent = texto;
+}
+
+function toggleCronometro() { initAudio(); if (cronometroAtivo) pausarCronometro(); else iniciarCronometro(); }
+function iniciarCronometro() {
+    if (!cronometroAtivo && cronometroTempo > 0) {
+        cronometroAtivo = true;
+        document.getElementById('btnIniciarCronometro').textContent = '⏸ PAUSAR';
+        document.getElementById('cronometroDisplay').classList.remove('finished', 'warning');
+        cronometroInterval = setInterval(() => {
+            if (cronometroTempo > 0) {
+                cronometroTempo--;
+                atualizarCronometroDisplay();
+                if (cronometroTempo === 0) { tocarAlarme(); pausarCronometro(); }
+            }
+        }, 1000);
+    }
+}
+function pausarCronometro() {
+    cronometroAtivo = false;
+    document.getElementById('btnIniciarCronometro').textContent = '▶ INICIAR';
+    if (cronometroInterval) { clearInterval(cronometroInterval); cronometroInterval = null; }
+}
+function zerarCronometro() { pausarCronometro(); cronometroTempo = TEMPO_INICIAL; atualizarCronometroDisplay(); document.getElementById('cronometroDisplay').classList.remove('finished', 'warning'); }
+function atualizarCronometroDisplay() {
+    const minutos = Math.floor(cronometroTempo / 60);
+    const segundos = cronometroTempo % 60;
+    const display = document.getElementById('cronometroDisplay');
+    display.textContent = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+    display.classList.remove('warning', 'finished');
+    if (cronometroTempo === 0) display.classList.add('finished');
+    else if (cronometroTempo <= 5) display.classList.add('warning');
+}
+function toggleCronometroMesaFinal() { initAudio(); if (cronometroAtivoMesaFinal) pausarCronometroMesaFinal(); else iniciarCronometroMesaFinal(); }
+function iniciarCronometroMesaFinal() {
+    if (!cronometroAtivoMesaFinal && cronometroTempoMesaFinal > 0) {
+        cronometroAtivoMesaFinal = true;
+        document.getElementById('btnIniciarCronometroMesaFinal').textContent = '⏸ PAUSAR';
+        document.getElementById('cronometroDisplayMesaFinal').classList.remove('finished', 'warning');
+        cronometroIntervalMesaFinal = setInterval(() => {
+            if (cronometroTempoMesaFinal > 0) {
+                cronometroTempoMesaFinal--;
+                atualizarCronometroDisplayMesaFinal();
+                if (cronometroTempoMesaFinal === 0) { tocarAlarme(); pausarCronometroMesaFinal(); }
+            }
+        }, 1000);
+    }
+}
+function pausarCronometroMesaFinal() {
+    cronometroAtivoMesaFinal = false;
+    document.getElementById('btnIniciarCronometroMesaFinal').textContent = '▶ INICIAR';
+    if (cronometroIntervalMesaFinal) { clearInterval(cronometroIntervalMesaFinal); cronometroIntervalMesaFinal = null; }
+}
+function zerarCronometroMesaFinal() { pausarCronometroMesaFinal(); cronometroTempoMesaFinal = TEMPO_INICIAL; atualizarCronometroDisplayMesaFinal(); document.getElementById('cronometroDisplayMesaFinal').classList.remove('finished', 'warning'); }
+function atualizarCronometroDisplayMesaFinal() {
+    const minutos = Math.floor(cronometroTempoMesaFinal / 60);
+    const segundos = cronometroTempoMesaFinal % 60;
+    const display = document.getElementById('cronometroDisplayMesaFinal');
+    display.textContent = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+    display.classList.remove('warning', 'finished');
+    if (cronometroTempoMesaFinal === 0) display.classList.add('finished');
+    else if (cronometroTempoMesaFinal <= 5) display.classList.add('warning');
+}
+function tocarAlarme() {
+    if (!alarmeTocando) {
+        alarmeTocando = true;
+        if (audioContext) { const oscillator = audioContext.createOscillator(); const gainNode = audioContext.createGain(); oscillator.connect(gainNode); gainNode.connect(audioContext.destination); oscillator.frequency.value = 800; oscillator.type = 'square'; gainNode.gain.value = 0.3; oscillator.start(); setTimeout(() => oscillator.stop(), 500); }
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
+        setTimeout(() => alarmeTocando = false, 1000);
+    }
+}
+function initAudio() { if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)(); }
+
+window.adicionarRebuy = function(jogadorNome, tipo) {
+    if (mesaFinalAtiva) return;
+    const quantidade = tipo === 'simples' ? 1 : 2;
+    if (confirm(`Confirmar REBUY ${tipo === 'simples' ? 'SIMPLES' : 'DUPLO'} para ${jogadorNome}?`)) {
+        const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorNome);
+        if (jogador) { jogador.rebuys = (jogador.rebuys || 0) + quantidade; salvarMesas(); }
+    }
+};
+window.adicionarAddon = function(jogadorNome) {
+    if (mesaFinalAtiva) return;
+    if (confirm(`Confirmar ADDON para ${jogadorNome}?`)) {
+        const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorNome);
+        if (jogador) { jogador.addon = true; salvarMesas(); }
+    }
+};
+window.abrirCorrecao = function(jogadorNome) {
+    if (mesaFinalAtiva) return;
+    const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorNome);
+    if (jogador) {
+        jogadorCorrigindo = jogadorNome;
+        document.getElementById('corrigirJogadorNome').textContent = jogadorNome;
+        document.getElementById('corrigirRebuys').value = jogador.rebuys || 0;
+        document.getElementById('corrigirAddon').checked = jogador.addon || false;
+        document.getElementById('modalCorrigir').classList.add('active');
+    }
+};
+window.eliminarJogador = function(jogadorNome) {
+    if (mesaFinalAtiva) return;
+    const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorNome);
+    if (jogador && !jogador.eliminado) {
+        jogadorEliminando = jogadorNome;
+        document.getElementById('eliminarJogadorNome').textContent = jogadorNome;
+        document.getElementById('quantidadeKOs').value = 0;
+        document.getElementById('modalEliminar').classList.add('active');
+    }
+};
+function confirmarEliminacao() {
+    if (jogadorEliminando) {
+        const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorEliminando);
+        if (jogador && !jogador.eliminado) {
+            contadorEliminados++;
+            const posicao = totalJogadoresIniciais - (contadorEliminados - 1);
+            const quantidadeKOs = parseInt(document.getElementById('quantidadeKOs').value) || 0;
+            const pontosPosicao = calcularPontosPorPosicao(posicao);
+            const classificacaoItem = { 
+                nome: jogador.nome, 
+                mesa: mesaAtual === 'preta' ? 'Preta' : 'Amarela', 
+                posicao: posicao, 
+                pontosPosicao: pontosPosicao, 
+                kos: quantidadeKOs, 
+                pontosKOs: quantidadeKOs, 
+                pontosTotal: pontosPosicao + quantidadeKOs, 
+                dataEliminacao: new Date().toISOString(),
+                etapa: config.etapa
+            };
+            classificacaoData.push(classificacaoItem);
+            salvarClassificacao();
+            jogador.eliminado = true;
+            jogador.posicaoFinal = posicao;
+            jogador.kos = quantidadeKOs;
+            salvarMesas();
+            alert(`✅ ${jogador.nome} eliminado na ${posicao}ª posição!`);
+            atualizarGridJogadores();
+            atualizarContadorOutraMesa();
+            verificarMesaFinal();
+        }
+    }
+    document.getElementById('modalEliminar').classList.remove('active');
+    jogadorEliminando = null;
+}
+function salvarCorrecao() {
+    if (jogadorCorrigindo) {
+        const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorCorrigindo);
+        if (jogador) {
+            jogador.rebuys = parseInt(document.getElementById('corrigirRebuys').value) || 0;
+            jogador.addon = document.getElementById('corrigirAddon').checked;
+            salvarMesas();
+        }
+    }
+    document.getElementById('modalCorrigir').classList.remove('active');
+    jogadorCorrigindo = null;
+}
+window.atualizarKOs = function(jogadorNome, inputElement) {
+    const kos = parseInt(inputElement.value) || 0;
+    const jogadorClassif = classificacaoData.find(j => j.nome === jogadorNome);
+    if (jogadorClassif) {
+        jogadorClassif.kos = kos;
+        jogadorClassif.pontosKOs = kos;
+        jogadorClassif.pontosTotal = jogadorClassif.pontosPosicao + kos;
+        salvarClassificacao();
+        atualizarClassificacao();
     }
 };
 function salvarMesas() { db.ref('mesas').set(mesasData); }
