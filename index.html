@@ -80,6 +80,33 @@
             margin-bottom: 30px;
         }
         
+        .selecao-etapa {
+            background: #102810;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #d4a121;
+        }
+        
+        .selecao-etapa label {
+            font-family: 'Anton';
+            color: #d4a121;
+            font-size: 1.2em;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .selecao-etapa select {
+            width: 100%;
+            padding: 12px;
+            background: #1a3d1a;
+            color: #fff;
+            border: 1px solid #d4a121;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+        
         .selecao-botoes {
             display: flex;
             flex-direction: column;
@@ -320,6 +347,14 @@
             text-transform: uppercase;
         }
         
+        .contador-outra-mesa {
+            margin-top: 10px;
+            padding: 8px;
+            background: #00000040;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+        
         .btn {
             padding: 10px 15px;
             border: none;
@@ -339,7 +374,7 @@
         .jogadores-grid {
             display: grid;
             gap: 8px;
-            max-height: calc(100vh - 250px);
+            max-height: calc(100vh - 300px);
             overflow-y: auto;
         }
         
@@ -357,6 +392,14 @@
             opacity: 0.7;
             background: rgba(199, 44, 72, 0.15);
             border-color: #c72c48;
+        }
+        
+        .jogador-posicao-numero {
+            font-family: 'Anton';
+            font-size: 1.2em;
+            color: #d4a121;
+            min-width: 40px;
+            text-align: center;
         }
         
         .jogador-foto {
@@ -701,6 +744,15 @@
             background: #ff0000;
         }
         
+        .btn-apagar-etapas {
+            background: #c72c48;
+            margin-left: 10px;
+        }
+        
+        .btn-apagar-etapas:hover {
+            background: #ff0000;
+        }
+        
         .etapas-list {
             max-height: 400px;
             overflow-y: auto;
@@ -784,6 +836,23 @@
             <img src="logo pdq.png" alt="Poker de Quinta" onerror="this.style.display='none'">
         </div>
         <h1 class="selecao-titulo">🎲 SELECIONE A MESA</h1>
+        
+        <div class="selecao-etapa">
+            <label>📅 SELECIONE A ETAPA</label>
+            <select id="selectEtapa">
+                <option value="4">4ª ETAPA</option>
+                <option value="5">5ª ETAPA</option>
+                <option value="6">6ª ETAPA</option>
+                <option value="7">7ª ETAPA</option>
+                <option value="8">8ª ETAPA</option>
+                <option value="9">9ª ETAPA</option>
+                <option value="10">10ª ETAPA</option>
+                <option value="11">11ª ETAPA</option>
+                <option value="12">12ª ETAPA</option>
+                <option value="13">13ª ETAPA</option>
+            </select>
+        </div>
+        
         <div class="selecao-botoes">
             <button class="selecao-btn preta" id="btnSelecionarPreta">♠️ MESA PRETA</button>
             <button class="selecao-btn amarela" id="btnSelecionarAmarela">♦️ MESA AMARELA</button>
@@ -917,7 +986,10 @@
             </div>
             
             <div id="admin-historico" class="admin-tab-content hidden">
-                <h3>📜 HISTÓRICO DE ETAPAS</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                    <h3>📜 HISTÓRICO DE ETAPAS</h3>
+                    <button class="btn btn-danger btn-apagar-etapas" id="btnApagarHistorico">🗑️ APAGAR HISTÓRICO</button>
+                </div>
                 <div id="etapasList" class="etapas-list"></div>
                 <button class="btn btn-secondary" id="btnExportarHistorico" style="margin-top: 15px; width: 100%;">📊 EXPORTAR HISTÓRICO COMPLETO</button>
                 <button class="btn btn-warning" id="btnNovaEtapa" style="margin-top: 10px; width: 100%;">🔄 INICIAR NOVA ETAPA</button>
@@ -968,9 +1040,10 @@
             </div>
         </div>
         
-        <div class="mesa-indicator preta" id="mesaIndicator">
-            <div class="mesa-indicator-text">♠️ MESA PRETA ♠️</div>
+        <div class="mesa-indicator" id="mesaIndicator">
+            <div class="mesa-indicator-text" id="mesaIndicatorText">♠️ MESA PRETA ♠️</div>
             <div style="font-size: 0.9em; opacity: 0.8;">Você está atuando nesta mesa</div>
+            <div class="contador-outra-mesa" id="contadorOutraMesa"></div>
         </div>
         
         <div class="jogadores-grid" id="jogadoresGrid">
@@ -1004,7 +1077,8 @@
             <img src="logo pdq.png" alt="Poker de Quinta" onerror="this.style.display='none'">
             <h2>🏆 MESA FINAL 🏆</h2>
             <div>
-                <button class="btn-voltar-mesa-final" id="btnVoltarMesaFinalSelecao">↩️ SAIR DA MESA FINAL</button>
+                <button class="btn-voltar-mesa-final" id="btnVoltarMesaFinalSelecao">↩️ VOLTAR</button>
+                <button class="btn-ir-mesa-final" id="btnVoltarMesaFinal" style="display: none;">🏆 IR PARA MESA FINAL</button>
             </div>
         </div>
         
@@ -1103,6 +1177,19 @@
     </div>
 </div>
 
+<!-- Modal Apagar Historico -->
+<div class="modal" id="modalApagarHistorico">
+    <div class="modal-content">
+        <h3>🗑️ APAGAR HISTÓRICO</h3>
+        <p>Tem certeza que deseja apagar TODO o histórico de etapas?</p>
+        <p style="font-size: 0.9em; opacity: 0.8; margin-top: 10px;">Esta ação não pode ser desfeita!</p>
+        <div class="modal-buttons">
+            <button class="btn btn-danger" id="btnCancelarApagarHistorico">Cancelar</button>
+            <button class="btn btn-warning" id="btnConfirmarApagarHistorico">Confirmar</button>
+        </div>
+    </div>
+</div>
+
 <script>
 // Configuração do Firebase
 const firebaseConfig = {
@@ -1135,7 +1222,7 @@ function calcularPontosPosicao(posicao, totalJogadores) {
 }
 
 let mesaAtual = 'preta';
-let config = { etapa: 1 };
+let config = { etapa: 4 };
 let mesasData = { preta: [], amarela: [] };
 let classificacaoData = [];
 let historicoEtapas = [];
@@ -1162,8 +1249,18 @@ let fotosJogadores = {};
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('statusIndicator').textContent = '✅ Conectado';
     
+    const selectEtapa = document.getElementById('selectEtapa');
+    selectEtapa.addEventListener('change', function() {
+        config.etapa = parseInt(this.value);
+        db.ref('config').set(config);
+    });
+    
     db.ref('config').on('value', (snapshot) => { 
-        if (snapshot.exists()) config = snapshot.val(); 
+        if (snapshot.exists()) {
+            config = snapshot.val();
+            const selectEtapa = document.getElementById('selectEtapa');
+            if (selectEtapa) selectEtapa.value = config.etapa || 4;
+        }
     });
     db.ref('fotosJogadores').on('value', (snapshot) => { 
         if (snapshot.exists()) fotosJogadores = snapshot.val(); 
@@ -1181,6 +1278,7 @@ document.addEventListener('DOMContentLoaded', function() {
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
         atualizarClassificacaoInicial();
+        atualizarContadorOutraMesa();
         
         contadorEliminados = todosJogadores.filter(j => j.eliminado).length;
         verificarMesaFinal();
@@ -1201,12 +1299,36 @@ document.addEventListener('DOMContentLoaded', function() {
     inicializarEventos();
 });
 
+function atualizarContadorOutraMesa() {
+    const container = document.getElementById('contadorOutraMesa');
+    if (!container) return;
+    
+    const outraMesa = mesaAtual === 'preta' ? 'amarela' : 'preta';
+    const jogadoresOutraMesa = mesasData[outraMesa] || [];
+    const vivosOutraMesa = jogadoresOutraMesa.filter(j => !j.eliminado);
+    const eliminadosOutraMesa = jogadoresOutraMesa.filter(j => j.eliminado);
+    
+    const nomeOutraMesa = outraMesa === 'preta' ? 'MESA PRETA' : 'MESA AMARELA';
+    const iconeOutraMesa = outraMesa === 'preta' ? '♠️' : '♦️';
+    
+    container.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span>${iconeOutraMesa} ${nomeOutraMesa}</span>
+            <span>🟢 VIVOS: ${vivosOutraMesa.length} | ❌ ELIMINADOS: ${eliminadosOutraMesa.length}</span>
+        </div>
+    `;
+}
+
 function atualizarBotaoMesaFinal() {
     const btnIrMesaFinal = document.getElementById('btnIrMesaFinal');
+    const btnVoltarMesaFinal = document.getElementById('btnVoltarMesaFinal');
+    
     if (mesaFinalAtiva) {
-        btnIrMesaFinal.style.display = 'inline-block';
+        if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'inline-block';
+        if (btnVoltarMesaFinal) btnVoltarMesaFinal.style.display = 'inline-block';
     } else {
-        btnIrMesaFinal.style.display = 'none';
+        if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'none';
+        if (btnVoltarMesaFinal) btnVoltarMesaFinal.style.display = 'none';
     }
 }
 
@@ -1244,6 +1366,15 @@ function irParaMesaFinal() {
     }
 }
 
+function voltarDaMesaFinal() {
+    if (mesaFinalAtiva) {
+        document.getElementById('mesaFinalApp').classList.add('hidden');
+        document.getElementById('appContainer').classList.remove('hidden');
+        atualizarGridJogadores();
+        atualizarContadorOutraMesa();
+    }
+}
+
 function renderizarMesaFinalGrid() {
     const grid = document.getElementById('jogadoresMesaFinalGrid');
     const indicator = document.getElementById('mesaFinalIndicatorText');
@@ -1257,10 +1388,12 @@ function renderizarMesaFinalGrid() {
         return;
     }
     
-    grid.innerHTML = jogadoresMesaFinal.map(jogador => {
+    grid.innerHTML = jogadoresMesaFinal.map((jogador, index) => {
         const foto = getFotoJogador(jogador.nome);
+        const posicaoNumero = jogador.posicao || (index + 1);
         return `
             <div class="jogador-card">
+                <div class="jogador-posicao-numero">${posicaoNumero}</div>
                 <img class="jogador-foto" src="${foto}" alt="${jogador.nome}">
                 <div class="jogador-info">
                     <div class="jogador-nome">${jogador.nome}</div>
@@ -1302,7 +1435,8 @@ function eliminarDaMesaFinal(jogadorNome) {
         kos: quantidadeKOsFinal,
         pontosKOs: quantidadeKOsFinal,
         pontosTotal: pontosPosicao + quantidadeKOsFinal,
-        dataEliminacao: new Date().toISOString()
+        dataEliminacao: new Date().toISOString(),
+        etapa: config.etapa
     };
     
     classificacaoData.push(classificacaoItem);
@@ -1339,7 +1473,8 @@ function finalizarComCampeao(campeao) {
         kos: campeao.kos || 0,
         pontosKOs: campeao.kos || 0,
         pontosTotal: pontosPosicao + (campeao.kos || 0),
-        dataEliminacao: new Date().toISOString()
+        dataEliminacao: new Date().toISOString(),
+        etapa: config.etapa
     };
     classificacaoData.push(classificacaoItem);
     salvarClassificacao();
@@ -1363,6 +1498,7 @@ function fecharMesaFinal() {
     jogadoresMesaFinal = [];
     pausarCronometroMesaFinal();
     document.getElementById('mesaFinalApp').classList.add('hidden');
+    document.getElementById('appContainer').classList.add('hidden');
     document.getElementById('telaSelecao').classList.remove('hidden');
     atualizarBotaoMesaFinal();
 }
@@ -1406,7 +1542,8 @@ function inicializarEventos() {
         document.getElementById('telaSelecao').classList.remove('hidden');
     };
     document.getElementById('btnIrMesaFinal').onclick = () => irParaMesaFinal();
-    document.getElementById('btnVoltarMesaFinalSelecao').onclick = () => fecharMesaFinal();
+    document.getElementById('btnVoltarMesaFinalSelecao').onclick = () => voltarDaMesaFinal();
+    document.getElementById('btnVoltarMesaFinal').onclick = () => irParaMesaFinal();
     
     document.getElementById('btnAbrirAdminTopo').onclick = () => {
         if (mesaFinalAtiva) return;
@@ -1455,6 +1592,19 @@ function inicializarEventos() {
         document.getElementById('modalNovaEtapa').classList.remove('active');
     };
     document.getElementById('btnConfirmarNovaEtapa').onclick = iniciarNovaEtapa;
+    document.getElementById('btnApagarHistorico').onclick = () => {
+        document.getElementById('modalApagarHistorico').classList.add('active');
+    };
+    document.getElementById('btnCancelarApagarHistorico').onclick = () => {
+        document.getElementById('modalApagarHistorico').classList.remove('active');
+    };
+    document.getElementById('btnConfirmarApagarHistorico').onclick = () => {
+        historicoEtapas = [];
+        db.ref('historicoEtapas').set([]);
+        document.getElementById('modalApagarHistorico').classList.remove('active');
+        alert('✅ Histórico apagado com sucesso!');
+        atualizarHistoricoEtapas();
+    };
     
     document.getElementById('btnIniciarCronometro').onclick = toggleCronometro;
     document.getElementById('btnZerarCronometro').onclick = zerarCronometro;
@@ -1534,11 +1684,13 @@ function iniciarNovaEtapa() {
             data: new Date().toISOString(),
             classificacao: [...classificacaoData],
             totalJogadores: totalJogadoresIniciais,
-            totalClassificados: classificacaoData.length
-        };
+            totalClassificados: classificacaoData.length,
+            etapaNumero: config.etapa
+                    };
         historicoEtapas.unshift(novaEtapa);
         db.ref('historicoEtapas').set(historicoEtapas);
     }
+    
     mesasData = { preta: [], amarela: [] };
     classificacaoData = [];
     contadorEliminados = 0;
@@ -1547,11 +1699,14 @@ function iniciarNovaEtapa() {
     totalJogadoresIniciais = 0;
     salvarMesas();
     salvarClassificacao();
+    
     document.getElementById('modalNovaEtapa').classList.remove('active');
     document.getElementById('telaAdmin').classList.add('hidden');
     document.getElementById('telaSelecao').classList.remove('hidden');
     document.getElementById('mesaFinalApp').classList.add('hidden');
+    document.getElementById('appContainer').classList.add('hidden');
     atualizarBotaoMesaFinal();
+    
     alert('✅ Nova etapa iniciada! Todos os dados foram resetados.');
 }
 
@@ -1581,7 +1736,8 @@ function atualizarHistoricoEtapas() {
 }
 
 function toggleEtapa(index) {
-    document.getElementById(`etapa-${index}`).classList.toggle('show');
+    const elemento = document.getElementById(`etapa-${index}`);
+    if (elemento) elemento.classList.toggle('show');
 }
 
 function apagarTodosDados() {
@@ -1597,6 +1753,7 @@ function apagarTodosDados() {
         salvarClassificacao();
         db.ref('historicoEtapas').set([]);
         document.getElementById('mesaFinalApp').classList.add('hidden');
+        document.getElementById('appContainer').classList.add('hidden');
         alert('✅ Todos os dados foram apagados!');
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
@@ -1613,13 +1770,15 @@ function iniciarApp() {
     document.getElementById('appContainer').classList.remove('hidden');
     atualizarIndicadorMesa();
     atualizarGridJogadores();
+    atualizarContadorOutraMesa();
 }
 
 function atualizarIndicadorMesa() {
     const indicator = document.getElementById('mesaIndicator');
+    const indicatorText = document.getElementById('mesaIndicatorText');
     indicator.className = `mesa-indicator ${mesaAtual}`;
     const texto = mesaAtual === 'preta' ? '♠️ MESA PRETA ♠️' : '♦️ MESA AMARELA ♦️';
-    indicator.querySelector('.mesa-indicator-text').textContent = texto;
+    indicatorText.textContent = texto;
 }
 
 function atualizarClassificacaoInicial() {
@@ -1746,7 +1905,17 @@ function confirmarEliminacao() {
             const posicao = totalJogadoresIniciais - (contadorEliminados - 1);
             const quantidadeKOs = parseInt(document.getElementById('quantidadeKOs').value) || 0;
             const pontosPosicao = calcularPontosPosicao(posicao, totalJogadoresIniciais);
-            const classificacaoItem = { nome: jogador.nome, mesa: mesaAtual === 'preta' ? 'Preta' : 'Amarela', posicao: posicao, pontosPosicao: pontosPosicao, kos: quantidadeKOs, pontosKOs: quantidadeKOs, pontosTotal: pontosPosicao + quantidadeKOs, dataEliminacao: new Date().toISOString() };
+            const classificacaoItem = { 
+                nome: jogador.nome, 
+                mesa: mesaAtual === 'preta' ? 'Preta' : 'Amarela', 
+                posicao: posicao, 
+                pontosPosicao: pontosPosicao, 
+                kos: quantidadeKOs, 
+                pontosKOs: quantidadeKOs, 
+                pontosTotal: pontosPosicao + quantidadeKOs, 
+                dataEliminacao: new Date().toISOString(),
+                etapa: config.etapa
+            };
             classificacaoData.push(classificacaoItem);
             salvarClassificacao();
             jogador.eliminado = true;
@@ -1755,6 +1924,7 @@ function confirmarEliminacao() {
             salvarMesas();
             alert(`✅ ${jogador.nome} eliminado na ${posicao}ª posição!`);
             atualizarGridJogadores();
+            atualizarContadorOutraMesa();
             verificarMesaFinal();
         }
     }
@@ -1796,7 +1966,7 @@ function atualizarGridJogadores() {
     grid.innerHTML = jogadores.sort((a, b) => (a.posicao || 999) - (b.posicao || 999)).map(j => {
         const foto = getFotoJogador(j.nome);
         const eliminadoClass = j.eliminado ? 'eliminado' : '';
-        return `<div class="jogador-card ${eliminadoClass}"><img class="jogador-foto" src="${foto}"><div class="jogador-info"><div class="jogador-nome">${j.nome}</div><div class="jogador-valores">${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}${j.addon ? '<span class="badge badge-addon">💎 Addon</span>' : ''}${j.eliminado ? `<span class="badge badge-eliminado">❌ Eliminado (${j.posicaoFinal}º)</span>` : ''}</div></div><div class="jogador-actions">${!j.eliminado ? `<button class="action-btn btn-rebuy" onclick="window.adicionarRebuy('${j.nome}', 'simples')">REBUY</button><button class="action-btn btn-rebuy-duplo" onclick="window.adicionarRebuy('${j.nome}', 'duplo')">REBUY 2x</button>${!j.addon ? `<button class="action-btn btn-addon" onclick="window.adicionarAddon('${j.nome}')">ADDON</button>` : ''}<button class="action-btn btn-corrigir" onclick="window.abrirCorrecao('${j.nome}')">✏️</button><button class="action-btn btn-eliminar" onclick="window.eliminarJogador('${j.nome}')">❌ ELIMINAR</button>` : ''}</div></div>`;
+        return `<div class="jogador-card ${eliminadoClass}"><div class="jogador-posicao-numero">${j.posicao || '?'}</div><img class="jogador-foto" src="${foto}"><div class="jogador-info"><div class="jogador-nome">${j.nome}</div><div class="jogador-valores">${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}${j.addon ? '<span class="badge badge-addon">💎 Addon</span>' : ''}${j.eliminado ? `<span class="badge badge-eliminado">❌ Eliminado (${j.posicaoFinal}º)</span>` : ''}</div></div><div class="jogador-actions">${!j.eliminado ? `<button class="action-btn btn-rebuy" onclick="window.adicionarRebuy('${j.nome}', 'simples')">REBUY</button><button class="action-btn btn-rebuy-duplo" onclick="window.adicionarRebuy('${j.nome}', 'duplo')">REBUY 2x</button>${!j.addon ? `<button class="action-btn btn-addon" onclick="window.adicionarAddon('${j.nome}')">ADDON</button>` : ''}<button class="action-btn btn-corrigir" onclick="window.abrirCorrecao('${j.nome}')">✏️</button><button class="action-btn btn-eliminar" onclick="window.eliminarJogador('${j.nome}')">❌ ELIMINAR</button>` : ''}</div></div>`;
     }).join('');
 }
 function atualizarClassificacao() {
@@ -1935,8 +2105,8 @@ function exportarCSVCompleto() {
 }
 function exportarClassificacaoCSV() {
     if (classificacaoData.length === 0) { alert('Nenhum jogador classificado!'); return; }
-    let csv = 'Posição,Jogador,Mesa,Pontos Posição,KO\'s,Pontos KO\'s,Pontuação Total\n';
-    [...classificacaoData].sort((a, b) => a.posicao - b.posicao).forEach(j => { csv += `${j.posicao},"${j.nome}",${j.mesa},${j.pontosPosicao},${j.kos || 0},${j.pontosKOs || 0},${j.pontosTotal || j.pontosPosicao}\n`; });
+    let csv = 'Posição,Jogador,Mesa,Pontos Posição,KO\'s,Pontos KO\'s,Pontuação Total,Etapa\n';
+    [...classificacaoData].sort((a, b) => a.posicao - b.posicao).forEach(j => { csv += `${j.posicao},"${j.nome}",${j.mesa},${j.pontosPosicao},${j.kos || 0},${j.pontosKOs || 0},${j.pontosTotal || j.pontosPosicao},${j.etapa || config.etapa}\n`; });
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
