@@ -22,6 +22,7 @@
             min-height: 100vh;
         }
         
+        /* Tela de Seleção */
         .tela-selecao {
             display: flex;
             flex-direction: column;
@@ -122,8 +123,10 @@
             50% { transform: scale(1.02); }
         }
         
+        /* App Container - Layout com cabeçalho e jogadores lado a lado */
         .app-container, .mesa-final-app {
             display: flex;
+            flex-direction: column;
             height: 100vh;
             overflow: hidden;
             background: linear-gradient(135deg, #0a1a0a 0%, #0d1b0d 100%);
@@ -131,21 +134,12 @@
         
         .app-container.hidden, .mesa-final-app.hidden { display: none; }
         
-        .left-side {
-            width: 50%;
-            height: 100vh;
-            overflow-y: auto;
+        /* Header fixo no topo */
+        .app-header {
+            flex-shrink: 0;
             padding: 15px;
-            border-right: 3px solid #d4a121;
-            background: rgba(0, 0, 0, 0.2);
-        }
-        
-        .right-side {
-            width: 50%;
-            height: 100vh;
-            overflow-y: auto;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 3px solid #d4a121;
         }
         
         .logo-top {
@@ -153,8 +147,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px;
-            border-bottom: 3px solid #d4a121;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             flex-wrap: wrap;
             gap: 10px;
             background: rgba(0, 0, 0, 0.3);
@@ -207,7 +200,6 @@
             background: rgba(16, 40, 16, 0.9);
             border-radius: 15px;
             padding: 15px;
-            margin-bottom: 20px;
             text-align: center;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(5px);
@@ -266,10 +258,41 @@
             color: #FFD700;
         }
         
+        /* Container dos dois lados de jogadores - lado a lado */
+        .jogadores-lados {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            padding: 15px;
+            gap: 20px;
+        }
+        
+        .lado-esquerdo, .lado-direito {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 10px;
+        }
+        
+        .lado-titulo {
+            font-family: 'Anton', sans-serif;
+            color: #d4a121;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            background: rgba(0,0,0,0.3);
+            padding: 8px;
+            border-radius: 8px;
+        }
+        
         .jogadores-grid {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
         
         .jogador-card {
@@ -311,8 +334,8 @@
         }
         
         .jogador-foto {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #d4a121;
@@ -378,18 +401,7 @@
         .btn-corrigir { background: #FFA500; color: #000; }
         .btn-eliminar { background: #c72c48; color: #fff; }
         
-        .lado-titulo {
-            font-family: 'Anton', sans-serif;
-            color: #d4a121;
-            text-align: center;
-            margin-bottom: 12px;
-            font-size: 1em;
-            text-transform: uppercase;
-            background: rgba(0,0,0,0.3);
-            padding: 6px;
-            border-radius: 8px;
-        }
-        
+        /* Tela Admin */
         .tela-admin {
             min-height: 100vh;
             padding: 20px;
@@ -760,6 +772,7 @@
         ::-webkit-scrollbar-track { background: #0d1b0d; }
         ::-webkit-scrollbar-thumb { background: #d4a121; border-radius: 3px; }
         
+        /* Ajustes para tablet */
         @media (max-width: 1024px) {
             .action-btn {
                 padding: 4px 6px;
@@ -769,12 +782,32 @@
                 font-size: 0.8em;
             }
             .badge {
-                font-size: 0.6em;
-                padding: 2px 6px;
+                font-size: 0.55em;
+                padding: 2px 5px;
             }
-            .lado-titulo {
-                font-size: 0.85em;
+            .jogador-foto {
+                width: 35px;
+                height: 35px;
             }
+        }
+        
+        /* Mesa Final específica */
+        .mesa-final-app .jogadores-lados {
+            flex-direction: column;
+        }
+        
+        .mesa-final-app .lado-esquerdo {
+            width: 100%;
+        }
+        
+        .mesa-final-app .lado-direito {
+            display: none;
+        }
+        
+        .mesa-final-app .jogadores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 10px;
         }
     </style>
 </head>
@@ -782,6 +815,7 @@
 
 <div class="status-indicator" id="statusIndicator">🔄 Conectando...</div>
 
+<!-- TELA DE SELEÇÃO DE MESA -->
 <div class="tela-selecao" id="telaSelecao">
     <button class="btn-admin-topo" id="btnAbrirAdminTopo">🔐 ADMIN</button>
     <div class="selecao-container">
@@ -799,6 +833,7 @@
     </div>
 </div>
 
+<!-- MODAL SENHA ADMIN -->
 <div class="modal" id="modalSenhaAdmin">
     <div class="modal-content">
         <h3>🔐 ACESSO ADMINISTRATIVO</h3>
@@ -814,6 +849,7 @@
     </div>
 </div>
 
+<!-- TELA ADMIN -->
 <div class="tela-admin hidden" id="telaAdmin">
     <div class="admin-container">
         <div class="admin-header">
@@ -938,6 +974,7 @@
     </div>
 </div>
 
+<!-- TELA DE CLASSIFICAÇÃO -->
 <div class="tela-classificacao hidden" id="telaClassificacao">
     <div class="classificacao-container">
         <div class="classificacao-header">
@@ -956,8 +993,9 @@
     </div>
 </div>
 
+<!-- APP PRINCIPAL (DEALER) - LADO A LADO -->
 <div class="app-container hidden" id="appContainer">
-    <div class="left-side">
+    <div class="app-header">
         <div class="logo-top">
             <img src="logo pdq.png" alt="Poker de Quinta" onerror="this.style.display='none'">
             <h2>CONTROLE DE REBUY</h2>
@@ -970,17 +1008,23 @@
             <div class="mesa-indicator-text" id="mesaIndicatorText">♠️ MESA PRETA ♠️</div>
             <div class="contador-geral" id="contadorGeral"></div>
         </div>
-        <div class="lado-titulo">📋 JOGADORES</div>
-        <div class="jogadores-grid" id="jogadoresGridEsquerda"></div>
     </div>
-    <div class="right-side">
-        <div class="lado-titulo">📋 JOGADORES</div>
-        <div class="jogadores-grid" id="jogadoresGridDireita"></div>
+    
+    <div class="jogadores-lados">
+        <div class="lado-esquerdo">
+            <div class="lado-titulo">📋 JOGADORES - ESQUERDA</div>
+            <div class="jogadores-grid" id="jogadoresGridEsquerda"></div>
+        </div>
+        <div class="lado-direito">
+            <div class="lado-titulo">📋 JOGADORES - DIREITA</div>
+            <div class="jogadores-grid" id="jogadoresGridDireita"></div>
+        </div>
     </div>
 </div>
 
+<!-- MESA FINAL -->
 <div class="mesa-final-app hidden" id="mesaFinalApp">
-    <div class="left-side">
+    <div class="app-header">
         <div class="logo-top">
             <img src="logo pdq.png" alt="Poker de Quinta" onerror="this.style.display='none'">
             <h2>🏆 MESA FINAL 🏆</h2>
@@ -992,11 +1036,16 @@
             <div class="mesa-indicator-text" id="mesaFinalIndicatorText">🏆 MESA FINAL</div>
             <div class="contador-geral" id="contadorGeralMF"></div>
         </div>
-        <div class="jogadores-grid" id="jogadoresMesaFinalGrid"></div>
     </div>
-    <div class="right-side"></div>
+    <div class="jogadores-lados">
+        <div class="lado-esquerdo">
+            <div class="jogadores-grid" id="jogadoresMesaFinalGrid"></div>
+        </div>
+        <div class="lado-direito"></div>
+    </div>
 </div>
 
+<!-- MODAIS -->
 <div class="modal" id="modalCorrigir">
     <div class="modal-content">
         <h3>🔧 Corrigir valores</h3>
@@ -1295,7 +1344,20 @@ function renderizarMesaFinal() {
     if (jogadoresMesaFinal.length === 0) { grid.innerHTML = '<div style="text-align:center;padding:40px;">🏆 TORNEIO FINALIZADO! 🏆</div>'; return; }
     grid.innerHTML = jogadoresMesaFinal.map((j, idx) => {
         const isMelhorMao = melhorMaoAtual === j.nome;
-        return `<div class="jogador-card ${isMelhorMao ? 'melhor-mao' : ''}"><div class="jogador-posicao-numero">${idx + 1}</div><img class="jogador-foto" src="${getFotoJogador(j.nome)}"><div class="jogador-info"><div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🏆' : ''}</div><div class="jogador-valores">${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}${j.addon ? `<span class="badge ${isMelhorMao ? 'badge-addon-melhor-mao' : 'badge-addon'}">💎 Addon</span>` : ''}</div></div><div class="jogador-actions"><button class="action-btn btn-eliminar" onclick="abrirModalEliminarMF('${j.nome}')">❌ ELIMINAR</button></div></div>`;
+        return `<div class="jogador-card ${isMelhorMao ? 'melhor-mao' : ''}">
+                    <div class="jogador-posicao-numero">${idx + 1}</div>
+                    <img class="jogador-foto" src="${getFotoJogador(j.nome)}">
+                    <div class="jogador-info">
+                        <div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🏆' : ''}</div>
+                        <div class="jogador-valores">
+                            ${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}
+                            ${j.addon ? `<span class="badge ${isMelhorMao ? 'badge-addon-melhor-mao' : 'badge-addon'}">💎 Addon</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="jogador-actions">
+                        <button class="action-btn btn-eliminar" onclick="abrirModalEliminarMF('${j.nome}')">❌ ELIMINAR</button>
+                    </div>
+                </div>`;
     }).join('');
 }
 
@@ -1421,10 +1483,9 @@ function adicionarRebuy(nome, tipo) {
 function adicionarAddon(nome) { 
     const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
     if (jogador && !jogador.addon && !jogador.eliminado) {
-        const addonGratis = ADDON_GRATIS.includes(nome) || melhorMaoAtual === nome;
         if (confirm(`ADDON para ${nome}?`)) {
             jogador.addon = true;
-            jogador.addonGratis = addonGratis;
+            jogador.addonGratis = ADDON_GRATIS.includes(nome) || melhorMaoAtual === nome;
             db.ref('mesas').set(mesasData);
             alert(`✅ Addon registrado para ${nome}`);
         }
@@ -1561,7 +1622,7 @@ function atualizarAdminEstatisticas() {
     document.getElementById('adminStatTotalAddons').textContent = todos.filter(j => j.addon).length;
     const ranking = [...todos].filter(j => (j.rebuys||0) > 0).sort((a,b) => (b.rebuys||0) - (a.rebuys||0)).slice(0,5);
     const rb = document.getElementById('adminRankingBody');
-    if (ranking.length === 0) rb.innerHTML = '<tr><td colspan="4">Nenhum rebuy</td></tr>';
+    if (ranking.length === 0) rb.innerHTML = '</table><td colspan="4">Nenhum rebuy</td></tr>';
     else rb.innerHTML = ranking.map((j,i) => `<tr><td>${i+1}</td><td>${j.nome}</td><td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}</td><td>${j.rebuys}</td></tr>`).join('');
 }
 
