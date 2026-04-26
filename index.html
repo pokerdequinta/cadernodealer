@@ -129,10 +129,26 @@
         .app-container.hidden, .mesa-final-app.hidden { display: none; }
         
         .left-panel {
-            width: 100%;
+            width: 60%;
             height: 100vh;
             overflow-y: auto;
             padding: 15px;
+            border-right: 2px solid #d4a121;
+        }
+        
+        .right-panel {
+            width: 40%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            background: #0a150a;
+        }
+        
+        /* Ocultar o cronômetro, mas manter a estrutura */
+        .right-panel .timebank-card,
+        .right-panel .cronometro-container {
+            display: none;
         }
         
         .logo-top {
@@ -222,7 +238,7 @@
         .jogadores-grid {
             display: grid;
             gap: 8px;
-            max-height: calc(100vh - 200px);
+            max-height: calc(100vh - 320px);
             overflow-y: auto;
         }
         
@@ -477,7 +493,7 @@
             margin: 0 auto;
         }
         
-        .classificacao-header, .classificacao-header {
+        .classificacao-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -634,6 +650,10 @@
         .timebank-card {
             display: none;
         }
+        
+        .cronometro-container {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -735,7 +755,7 @@
                     <table class="resumo-table" id="adminResumoFinanceiro">
                         <thead><tr><th>Jogador</th><th>Mesa</th><th>Pos.</th><th>Buy-in</th><th>Rebuys</th><th>Addon</th><th>Total</th></tr></thead>
                         <tbody id="adminResumoBody"></tbody>
-                    </table>
+                    }
                 </div>
                 <div class="total-geral" id="adminTotalGeral">TOTAL GERAL: R$ 0,00</div>
                 <button class="btn btn-secondary" id="btnAdminExportarCSV" style="margin-top: 15px; width: 100%;">📊 EXPORTAR CSV</button>
@@ -803,12 +823,12 @@
             <table class="classificacao-table" id="classificacaoTable">
                 <thead><tr><th>Posição</th><th>Jogador</th><th>Mesa</th><th>Pontos Por Posição</th><th>KO's</th><th>Pontos KO's</th><th>Pontuação Total</th></tr></thead>
                 <tbody id="classificacaoBody"></tbody>
-            熊
+            </table>
         </div>
     </div>
 </div>
 
-<!-- APP PRINCIPAL (DEALER) - SEM CRONÔMETRO -->
+<!-- APP PRINCIPAL (DEALER) -->
 <div class="app-container hidden" id="appContainer">
     <div class="left-panel">
         <div class="logo-top">
@@ -826,9 +846,12 @@
         </div>
         <div class="jogadores-grid" id="jogadoresGrid"></div>
     </div>
+    <div class="right-panel">
+        <!-- Painel direito mantido por estrutura, mas vazio/oculto -->
+    </div>
 </div>
 
-<!-- MESA FINAL - SEM CRONÔMETRO -->
+<!-- MESA FINAL -->
 <div class="mesa-final-app hidden" id="mesaFinalApp">
     <div class="left-panel">
         <div class="logo-top">
@@ -844,6 +867,9 @@
             <div class="contador-geral" id="contadorGeralMF"></div>
         </div>
         <div class="jogadores-grid" id="jogadoresMesaFinalGrid"></div>
+    </div>
+    <div class="right-panel">
+        <!-- Painel direito mantido por estrutura, mas vazio/oculto -->
     </div>
 </div>
 
