@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -130,20 +129,10 @@
         .app-container.hidden, .mesa-final-app.hidden { display: none; }
         
         .left-panel {
-            width: 60%;
+            width: 100%;
             height: 100vh;
             overflow-y: auto;
             padding: 15px;
-            border-right: 2px solid #d4a121;
-        }
-        
-        .right-panel {
-            width: 40%;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding: 15px;
-            background: #0a150a;
         }
         
         .logo-top {
@@ -233,7 +222,7 @@
         .jogadores-grid {
             display: grid;
             gap: 8px;
-            max-height: calc(100vh - 320px);
+            max-height: calc(100vh - 200px);
             overflow-y: auto;
         }
         
@@ -311,72 +300,6 @@
         .btn-addon { background: #4CAF50; color: #fff; }
         .btn-corrigir { background: #FFA500; color: #000; }
         .btn-eliminar { background: #c72c48; color: #fff; }
-        
-        .cronometro-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .timebank-card {
-            background: #102810;
-            border: 2px solid #d4a121;
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 20px;
-            text-align: center;
-            width: 100%;
-        }
-        
-        .timebank-title {
-            font-family: 'Anton', sans-serif;
-            color: #d4a121;
-            font-size: 1.2em;
-            margin-bottom: 5px;
-        }
-        
-        .cronometro-display {
-            font-family: 'Anton', sans-serif;
-            font-size: 6em;
-            color: #FFD700;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-            background: #1a1a1a;
-            padding: 20px 40px;
-            border-radius: 20px;
-            border: 3px solid #d4a121;
-            margin-bottom: 30px;
-            cursor: pointer;
-            text-align: center;
-        }
-        
-        .cronometro-display.warning {
-            color: #FF6600;
-            border-color: #FF6600;
-        }
-        
-        .cronometro-display.finished {
-            color: #FF0000;
-            border-color: #FF0000;
-            animation: pulse 1s infinite;
-        }
-        
-        .cronometro-controls {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .cronometro-btn {
-            padding: 15px 30px;
-            font-family: 'Anton', sans-serif;
-            font-size: 1.2em;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-        .cronometro-btn.iniciar { background: #4CAF50; color: #fff; }
-        .cronometro-btn.zerar { background: #c72c48; color: #fff; }
         
         /* Tela Admin */
         .tela-admin {
@@ -707,6 +630,10 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0d1b0d; }
         ::-webkit-scrollbar-thumb { background: #d4a121; border-radius: 3px; }
+        
+        .timebank-card {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -876,12 +803,12 @@
             <table class="classificacao-table" id="classificacaoTable">
                 <thead><tr><th>Posição</th><th>Jogador</th><th>Mesa</th><th>Pontos Por Posição</th><th>KO's</th><th>Pontos KO's</th><th>Pontuação Total</th></tr></thead>
                 <tbody id="classificacaoBody"></tbody>
-            </table>
+            熊
         </div>
     </div>
 </div>
 
-<!-- APP PRINCIPAL (DEALER) -->
+<!-- APP PRINCIPAL (DEALER) - SEM CRONÔMETRO -->
 <div class="app-container hidden" id="appContainer">
     <div class="left-panel">
         <div class="logo-top">
@@ -899,22 +826,9 @@
         </div>
         <div class="jogadores-grid" id="jogadoresGrid"></div>
     </div>
-    <div class="right-panel">
-        <div class="timebank-card">
-            <div class="timebank-title">⏱️ TIMEBANK</div>
-            <div class="timebank-subtitle" style="font-size: 0.8em; opacity: 0.8;">Tempo para decisão</div>
-        </div>
-        <div class="cronometro-container">
-            <div class="cronometro-display" id="cronometroDisplay">00:30</div>
-            <div class="cronometro-controls">
-                <button class="cronometro-btn iniciar" id="btnIniciarCronometro">▶ INICIAR</button>
-                <button class="cronometro-btn zerar" id="btnZerarCronometro">↺ ZERAR</button>
-            </div>
-        </div>
-    </div>
 </div>
 
-<!-- MESA FINAL -->
+<!-- MESA FINAL - SEM CRONÔMETRO -->
 <div class="mesa-final-app hidden" id="mesaFinalApp">
     <div class="left-panel">
         <div class="logo-top">
@@ -930,19 +844,6 @@
             <div class="contador-geral" id="contadorGeralMF"></div>
         </div>
         <div class="jogadores-grid" id="jogadoresMesaFinalGrid"></div>
-    </div>
-    <div class="right-panel">
-        <div class="timebank-card">
-            <div class="timebank-title">⏱️ TIMEBANK</div>
-            <div class="timebank-subtitle" style="font-size: 0.8em; opacity: 0.8;">Tempo para decisão</div>
-        </div>
-        <div class="cronometro-container">
-            <div class="cronometro-display" id="cronometroDisplayMesaFinal">00:30</div>
-            <div class="cronometro-controls">
-                <button class="cronometro-btn iniciar" id="btnIniciarCronometroMesaFinal">▶ INICIAR</button>
-                <button class="cronometro-btn zerar" id="btnZerarCronometroMesaFinal">↺ ZERAR</button>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -1011,7 +912,6 @@ const db = firebase.database();
 const VALOR_BUYIN = 100;
 const VALOR_REBUY = 30;
 const VALOR_ADDON = 50;
-const TEMPO_INICIAL = 30;
 
 const PONTOS_POSICAO = {
     1: 27, 2: 25, 3: 23, 4: 21, 5: 19,
@@ -1038,13 +938,7 @@ let mesaFinalAtiva = false;
 let jogadoresMesaFinal = [];
 let jogadorEliminandoMF = null;
 
-// CRONÔMETROS
-let cronometroTempo = TEMPO_INICIAL;
-let cronometroAtivo = false;
-let cronometroInterval = null;
-let cronometroTempoMF = TEMPO_INICIAL;
-let cronometroAtivoMF = false;
-let cronometroIntervalMF = null;
+// ÁUDIO
 let audioContext = null;
 
 // FOTOS
@@ -1238,7 +1132,7 @@ function finalizarTorneio() { tocarAlertaMesaFinal(); alert('🏆 TORNEIO FINALI
 
 function fecharMesaFinal() { mesaFinalAtiva = false; jogadoresMesaFinal = []; document.getElementById('mesaFinalApp').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); atualizarBotoesMesaFinal(); atualizarContadorGeral(); }
 
-function irParaMesaFinal() { if (mesaFinalAtiva) { document.getElementById('appContainer').classList.add('hidden'); document.getElementById('mesaFinalApp').classList.remove('hidden'); renderizarMesaFinal(); atualizarContadorGeral(); pausarCronometro(); } }
+function irParaMesaFinal() { if (mesaFinalAtiva) { document.getElementById('appContainer').classList.add('hidden'); document.getElementById('mesaFinalApp').classList.remove('hidden'); renderizarMesaFinal(); atualizarContadorGeral(); } }
 
 function irParaMesaFinalTopo() { if (mesaFinalAtiva) { document.getElementById('telaSelecao').classList.add('hidden'); document.getElementById('mesaFinalApp').classList.remove('hidden'); renderizarMesaFinal(); atualizarContadorGeral(); } }
 
@@ -1332,9 +1226,9 @@ function iniciarEtapaAdmin() {
 function atualizarAdminResumo() {
     const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const tbody = document.getElementById('adminResumoBody');
-    if (todos.length === 0) { tbody.innerHTML = '<table><td colspan="7">Nenhum dado</td></tr>'; document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; return; }
+    if (todos.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum dado</td></tr>'; document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; return; }
     let totalGeral = 0;
-    tbody.innerHTML = todos.map(j => { const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'; const total = VALOR_BUYIN + (j.rebuys || 0) * VALOR_REBUY + (j.addon ? VALOR_ADDON : 0); totalGeral += total; return `<tr><td>${j.nome}${j.eliminado ? ' ❌' : ''}${j.eliminado ? ` (${j.posicaoFinal}º)` : ''}</td><td>${mesa}</td><td>${j.posicao || '-'}</td><td>R$ ${VALOR_BUYIN}</td><td>${j.rebuys || 0}</td><td>${j.addon ? '1' : '0'}</td><td><strong>R$ ${total}</strong></td>`; }).join('');
+    tbody.innerHTML = todos.map(j => { const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'; const total = VALOR_BUYIN + (j.rebuys || 0) * VALOR_REBUY + (j.addon ? VALOR_ADDON : 0); totalGeral += total; return `<tr><td>${j.nome}${j.eliminado ? ' ❌' : ''}${j.eliminado ? ` (${j.posicaoFinal}º)` : ''}</td><td>${mesa}</td><td>${j.posicao || '-'}</td><td>R$ ${VALOR_BUYIN}</td><td>${j.rebuys || 0}</td><td>${j.addon ? '1' : '0'}</td><td><strong>R$ ${total}</strong></td></tr>`; }).join('');
     document.getElementById('adminTotalGeral').textContent = `TOTAL GERAL: R$ ${totalGeral},00`;
 }
 
@@ -1354,14 +1248,14 @@ function atualizarAdminEstatisticas() {
     document.getElementById('adminStatTotalAddons').textContent = todos.filter(j => j.addon).length;
     const ranking = [...todos].filter(j => (j.rebuys||0) > 0).sort((a,b) => (b.rebuys||0) - (a.rebuys||0)).slice(0,5);
     const rb = document.getElementById('adminRankingBody');
-    if (ranking.length === 0) rb.innerHTML = '<tr><td colspan="4">Nenhum rebuy</tr>';
+    if (ranking.length === 0) rb.innerHTML = '<tr><td colspan="4">Nenhum rebuy</td></tr>';
     else rb.innerHTML = ranking.map((j,i) => `<tr><td>${i+1}</td><td>${j.nome}</td><td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}</td><td>${j.rebuys}</td></tr>`).join('');
 }
 
 function atualizarClassificacao() {
     const tbody = document.getElementById('classificacaoBody');
     const ordenada = [...classificacaoData].sort((a,b) => a.posicao - b.posicao);
-    if (ordenada.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum jogador eliminado ainda</tr>'; return; }
+    if (ordenada.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum jogador eliminado ainda</td></tr>'; return; }
     tbody.innerHTML = ordenada.map(j => { let cls = ''; if (j.posicao === 1) cls = 'top-1'; else if (j.posicao === 2) cls = 'top-2'; else if (j.posicao === 3) cls = 'top-3'; return `<tr class="${cls}"><td><strong>${j.posicao}º</strong></td><td>${j.nome}</td><td>${j.mesa}</td><td>${j.pontosPosicao}</td><td><input type="number" class="ko-input" value="${j.kos || 0}" onchange="atualizarKOs('${j.nome}', this)" min="0"></td><td>${j.pontosKOs || 0}</td><td><strong style="color:#d4a121;">${j.pontosTotal || j.pontosPosicao}</strong></td></tr>`; }).join('');
 }
 
@@ -1383,19 +1277,6 @@ function toggleEtapa(idx) { const el = document.getElementById(`etapa-${idx}`); 
 function apagarTodosDados() { if (confirm('⚠️ Apagar TODOS os dados?')) { mesasData = { preta: [], amarela: [] }; classificacaoData = []; historicoEtapas = []; contadorEliminados = 0; mesaFinalAtiva = false; jogadoresMesaFinal = []; totalJogadoresIniciais = 0; db.ref('mesas').set(mesasData); db.ref('classificacao').set(classificacaoData); db.ref('historicoEtapas').set([]); document.getElementById('telaAdmin').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); atualizarContadorGeral(); atualizarBotoesMesaFinal(); alert('✅ Todos os dados foram apagados!'); } document.getElementById('modalSenhaApagar').classList.remove('active'); }
 
 function apagarHistorico() { if (confirm('⚠️ Apagar TODO o histórico de etapas?')) { historicoEtapas = []; db.ref('historicoEtapas').set([]); document.getElementById('modalApagarHistorico').classList.remove('active'); alert('✅ Histórico apagado!'); atualizarHistoricoEtapas(); } }
-
-// ========== CRONÔMETROS ==========
-function iniciarCronometro() { if (!cronometroAtivo && cronometroTempo > 0) { cronometroAtivo = true; document.getElementById('btnIniciarCronometro').textContent = '⏸ PAUSAR'; cronometroInterval = setInterval(() => { if (cronometroTempo > 0) { cronometroTempo--; const m = Math.floor(cronometroTempo / 60); const s = cronometroTempo % 60; document.getElementById('cronometroDisplay').textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; if (cronometroTempo === 0) { clearInterval(cronometroInterval); cronometroAtivo = false; document.getElementById('btnIniciarCronometro').textContent = '▶ INICIAR'; if (navigator.vibrate) navigator.vibrate([200,100,200]); } } }, 1000); } }
-
-function pausarCronometro() { cronometroAtivo = false; if (cronometroInterval) clearInterval(cronometroInterval); document.getElementById('btnIniciarCronometro').textContent = '▶ INICIAR'; }
-
-function zerarCronometro() { pausarCronometro(); cronometroTempo = TEMPO_INICIAL; document.getElementById('cronometroDisplay').textContent = '00:30'; }
-
-function iniciarCronometroMF() { if (!cronometroAtivoMF && cronometroTempoMF > 0) { cronometroAtivoMF = true; document.getElementById('btnIniciarCronometroMesaFinal').textContent = '⏸ PAUSAR'; cronometroIntervalMF = setInterval(() => { if (cronometroTempoMF > 0) { cronometroTempoMF--; const m = Math.floor(cronometroTempoMF / 60); const s = cronometroTempoMF % 60; document.getElementById('cronometroDisplayMesaFinal').textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; if (cronometroTempoMF === 0) { clearInterval(cronometroIntervalMF); cronometroAtivoMF = false; document.getElementById('btnIniciarCronometroMesaFinal').textContent = '▶ INICIAR'; if (navigator.vibrate) navigator.vibrate([200,100,200]); } } }, 1000); } }
-
-function pausarCronometroMF() { cronometroAtivoMF = false; if (cronometroIntervalMF) clearInterval(cronometroIntervalMF); document.getElementById('btnIniciarCronometroMesaFinal').textContent = '▶ INICIAR'; }
-
-function zerarCronometroMF() { pausarCronometroMF(); cronometroTempoMF = TEMPO_INICIAL; document.getElementById('cronometroDisplayMesaFinal').textContent = '00:30'; }
 
 // ========== IMPORTAÇÃO LAYOUT ==========
 function processarLayout() { if (!arquivoSelecionado) { alert('Selecione um arquivo!'); return; } const reader = new FileReader(); reader.onload = (e) => { const html = e.target.result; const parser = new DOMParser(); const doc = parser.parseFromString(html, 'text/html'); const rows = doc.querySelectorAll('tr'); layoutImportado = { preta: [], amarela: [] }; rows.forEach(row => { const cells = row.querySelectorAll('td'); if (cells.length >= 3) { const seat = cells[2]?.textContent?.trim() || ''; const matchPreta = seat.match(/MESA\s*PRETA\s*Seat\s*(\d+)/i); const matchAmarela = seat.match(/MESA\s*AMARELA\s*Seat\s*(\d+)/i); let mesa = null, pos = null; if (matchPreta) { mesa = 'preta'; pos = parseInt(matchPreta[1]); } else if (matchAmarela) { mesa = 'amarela'; pos = parseInt(matchAmarela[1]); } if (mesa && pos) { const nome = cells[1]?.textContent?.trim()?.replace(/\.+/g, '').trim(); if (nome) layoutImportado[mesa].push({ posicao: pos, nome }); } } }); layoutImportado.preta.sort((a,b) => a.posicao - b.posicao); layoutImportado.amarela.sort((a,b) => a.posicao - b.posicao); document.getElementById('previewCountPreta').textContent = layoutImportado.preta.length; document.getElementById('previewCountAmarela').textContent = layoutImportado.amarela.length; document.getElementById('previewPreta').innerHTML = layoutImportado.preta.map(p => `<div>Pos ${p.posicao}: ${p.nome}</div>`).join(''); document.getElementById('previewAmarela').innerHTML = layoutImportado.amarela.map(p => `<div>Pos ${p.posicao}: ${p.nome}</div>`).join(''); document.getElementById('previewMesas').style.display = 'grid'; document.getElementById('importResult').style.display = 'block'; document.getElementById('importResult').innerHTML = `✅ Analisado! Preta: ${layoutImportado.preta.length} | Amarela: ${layoutImportado.amarela.length}`; const btn = document.createElement('button'); btn.className = 'btn btn-success'; btn.textContent = '✅ APLICAR LAYOUT'; btn.style.marginTop = '20px'; btn.style.width = '100%'; btn.onclick = aplicarLayout; const old = document.querySelector('#previewMesas + button'); if (old) old.remove(); document.getElementById('previewMesas').after(btn); }; reader.readAsText(arquivoSelecionado); }
@@ -1419,7 +1300,7 @@ function downloadCSV(csv, nome) { const blob = new Blob([csv], { type: 'text/csv
 function inicializarEventos() {
     document.getElementById('btnSelecionarPreta').onclick = () => { if (!mesaFinalAtiva) { mesaAtual = 'preta'; iniciarApp(); } };
     document.getElementById('btnSelecionarAmarela').onclick = () => { if (!mesaFinalAtiva) { mesaAtual = 'amarela'; iniciarApp(); } };
-    document.getElementById('btnVoltarParaSelecao').onclick = () => { if (!mesaFinalAtiva) { pausarCronometro(); document.getElementById('appContainer').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); } };
+    document.getElementById('btnVoltarParaSelecao').onclick = () => { if (!mesaFinalAtiva) { document.getElementById('appContainer').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); } };
     document.getElementById('btnIrMesaFinal').onclick = irParaMesaFinal;
     document.getElementById('btnMesaFinalTopo').onclick = irParaMesaFinalTopo;
     document.getElementById('btnVoltarMesaFinalSelecao').onclick = voltarDaMesaFinal;
@@ -1439,11 +1320,6 @@ function inicializarEventos() {
     document.getElementById('btnApagarDados').onclick = () => document.getElementById('modalSenhaApagar').classList.add('active');
     document.getElementById('btnCancelarSenhaApagar').onclick = () => document.getElementById('modalSenhaApagar').classList.remove('active');
     document.getElementById('btnConfirmarSenhaApagar').onclick = () => { if (document.getElementById('senhaApagar').value === 'poker2026') apagarTodosDados(); else alert('❌ Senha incorreta!'); document.getElementById('senhaApagar').value = ''; };
-    
-    document.getElementById('btnIniciarCronometro').onclick = () => { if (cronometroAtivo) pausarCronometro(); else iniciarCronometro(); };
-    document.getElementById('btnZerarCronometro').onclick = zerarCronometro;
-    document.getElementById('btnIniciarCronometroMesaFinal').onclick = () => { if (cronometroAtivoMF) pausarCronometroMF(); else iniciarCronometroMF(); };
-    document.getElementById('btnZerarCronometroMesaFinal').onclick = zerarCronometroMF;
     
     document.getElementById('btnCancelarCorrigir').onclick = () => document.getElementById('modalCorrigir').classList.remove('active');
     document.getElementById('btnSalvarCorrigir').onclick = salvarCorrecao;
