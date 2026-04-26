@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Caderno do Dealer - Poker de Quinta</title>
     
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -22,7 +22,6 @@
             min-height: 100vh;
         }
         
-        /* Tela de Seleção */
         .tela-selecao {
             display: flex;
             flex-direction: column;
@@ -123,7 +122,6 @@
             50% { transform: scale(1.02); }
         }
         
-        /* App Container - Layout com dois lados */
         .app-container, .mesa-final-app {
             display: flex;
             height: 100vh;
@@ -133,7 +131,6 @@
         
         .app-container.hidden, .mesa-final-app.hidden { display: none; }
         
-        /* Lado Esquerdo - 5 jogadores */
         .left-side {
             width: 50%;
             height: 100vh;
@@ -143,7 +140,6 @@
             background: rgba(0, 0, 0, 0.2);
         }
         
-        /* Lado Direito - 5 jogadores */
         .right-side {
             width: 50%;
             height: 100vh;
@@ -165,11 +161,11 @@
             border-radius: 15px;
         }
         
-        .logo-top img { max-width: 100px; }
+        .logo-top img { max-width: 80px; }
         .logo-top h2 {
             font-family: 'Anton', sans-serif;
             color: #d4a121;
-            font-size: 1.3em;
+            font-size: 1.1em;
             margin: 0;
             text-align: center;
             flex: 1;
@@ -177,14 +173,14 @@
         }
         
         .btn-voltar-mesa, .btn-voltar-mesa-final {
-            padding: 8px 15px;
+            padding: 8px 12px;
             background: #c72c48;
             color: #fff;
             border: none;
             border-radius: 6px;
             font-weight: bold;
             cursor: pointer;
-            font-size: 0.85em;
+            font-size: 0.75em;
             font-family: 'Anton', sans-serif;
             transition: all 0.3s;
         }
@@ -195,14 +191,14 @@
         }
         
         .btn-ir-mesa-final {
-            padding: 8px 15px;
+            padding: 8px 12px;
             background: #d4a121;
             color: #000;
             border: none;
             border-radius: 6px;
             font-weight: bold;
             cursor: pointer;
-            font-size: 0.85em;
+            font-size: 0.75em;
             font-family: 'Anton', sans-serif;
             animation: pulse 1s infinite;
         }
@@ -210,7 +206,7 @@
         .mesa-indicator {
             background: rgba(16, 40, 16, 0.9);
             border-radius: 15px;
-            padding: 20px;
+            padding: 15px;
             margin-bottom: 20px;
             text-align: center;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -229,7 +225,7 @@
         
         .mesa-indicator-text {
             font-family: 'Anton', sans-serif;
-            font-size: 2em;
+            font-size: 1.5em;
             text-transform: uppercase;
             text-shadow: 0 0 15px currentColor;
         }
@@ -238,14 +234,14 @@
         .mesa-indicator.amarela .mesa-indicator-text { color: #FFD700; }
         
         .contador-geral {
-            margin-top: 15px;
-            padding: 12px;
+            margin-top: 12px;
+            padding: 10px;
             background: rgba(0, 0, 0, 0.5);
-            border-radius: 12px;
-            font-size: 0.9em;
+            border-radius: 10px;
+            font-size: 0.75em;
             display: flex;
             justify-content: space-between;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
             font-weight: bold;
         }
@@ -253,36 +249,37 @@
         .contador-mesa {
             flex: 1;
             text-align: center;
-            padding: 8px;
-            border-radius: 8px;
+            padding: 5px;
+            border-radius: 6px;
             font-family: 'Anton', sans-serif;
+            font-size: 0.85em;
         }
         
         .contador-mesa.preta { 
             background: rgba(0,0,0,0.5); 
-            border-left: 4px solid #fff;
+            border-left: 3px solid #fff;
             color: #fff;
         }
         .contador-mesa.amarela { 
             background: rgba(0,0,0,0.5); 
-            border-left: 4px solid #FFD700;
+            border-left: 3px solid #FFD700;
             color: #FFD700;
         }
         
         .jogadores-grid {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
         
         .jogador-card {
             background: rgba(255, 255, 255, 0.08);
             border: 2px solid #d4a121;
             border-radius: 12px;
-            padding: 12px;
+            padding: 10px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             transition: all 0.3s;
             backdrop-filter: blur(5px);
         }
@@ -296,7 +293,7 @@
         
         @keyframes glow {
             0%, 100% { box-shadow: 0 0 10px rgba(212, 161, 33, 0.5); }
-            50% { box-shadow: 0 0 30px rgba(212, 161, 33, 0.8); }
+            50% { box-shadow: 0 0 25px rgba(212, 161, 33, 0.8); }
         }
         
         .jogador-card.eliminado {
@@ -307,73 +304,72 @@
         
         .jogador-posicao-numero {
             font-family: 'Anton', sans-serif;
-            font-size: 1.3em;
+            font-size: 1.1em;
             color: #d4a121;
-            min-width: 45px;
+            min-width: 35px;
             text-align: center;
         }
         
         .jogador-foto {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid #d4a121;
+            border: 2px solid #d4a121;
             background: #2d5016;
         }
         
         .jogador-info { 
             flex: 1;
-            min-width: 120px;
+            min-width: 100px;
         }
         .jogador-nome { 
             font-weight: bold; 
-            font-size: 1em;
+            font-size: 0.9em;
             font-family: 'Anton', sans-serif;
             letter-spacing: 0.5px;
         }
         
         .jogador-valores {
             display: flex;
-            gap: 5px;
-            margin-top: 5px;
+            gap: 4px;
+            margin-top: 4px;
             flex-wrap: wrap;
         }
         
         .badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.7em;
+            padding: 2px 8px;
+            border-radius: 15px;
+            font-size: 0.65em;
             font-weight: bold;
             font-family: 'Anton', sans-serif;
         }
         .badge-rebuy { background: #FF6600; color: #fff; }
         .badge-addon { background: #4CAF50; color: #fff; }
-        .badge-addon-gratis { background: #d4a121; color: #000; }
+        .badge-addon-melhor-mao { background: #FFD700; color: #000; }
         .badge-eliminado { background: #c72c48; color: #fff; }
-        .badge-melhor-mao { background: #FFD700; color: #000; animation: pulse 0.5s infinite; }
         
         .jogador-actions {
             display: flex;
-            gap: 5px;
+            gap: 4px;
             flex-wrap: wrap;
             justify-content: flex-end;
         }
         
         .action-btn {
-            padding: 6px 12px;
+            padding: 5px 8px;
             border: none;
-            border-radius: 6px;
+            border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.7em;
+            font-size: 0.65em;
             white-space: nowrap;
             font-family: 'Anton', sans-serif;
             transition: all 0.2s;
         }
         
         .action-btn:hover {
-            transform: scale(1.05);
+            transform: scale(1.03);
         }
         
         .btn-rebuy { background: #FF6600; color: #fff; }
@@ -382,7 +378,18 @@
         .btn-corrigir { background: #FFA500; color: #000; }
         .btn-eliminar { background: #c72c48; color: #fff; }
         
-        /* Tela Admin */
+        .lado-titulo {
+            font-family: 'Anton', sans-serif;
+            color: #d4a121;
+            text-align: center;
+            margin-bottom: 12px;
+            font-size: 1em;
+            text-transform: uppercase;
+            background: rgba(0,0,0,0.3);
+            padding: 6px;
+            border-radius: 8px;
+        }
+        
         .tela-admin {
             min-height: 100vh;
             padding: 20px;
@@ -753,13 +760,21 @@
         ::-webkit-scrollbar-track { background: #0d1b0d; }
         ::-webkit-scrollbar-thumb { background: #d4a121; border-radius: 3px; }
         
-        .lado-titulo {
-            font-family: 'Anton', sans-serif;
-            color: #d4a121;
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 1.2em;
-            text-transform: uppercase;
+        @media (max-width: 1024px) {
+            .action-btn {
+                padding: 4px 6px;
+                font-size: 0.6em;
+            }
+            .jogador-nome {
+                font-size: 0.8em;
+            }
+            .badge {
+                font-size: 0.6em;
+                padding: 2px 6px;
+            }
+            .lado-titulo {
+                font-size: 0.85em;
+            }
         }
     </style>
 </head>
@@ -767,7 +782,6 @@
 
 <div class="status-indicator" id="statusIndicator">🔄 Conectando...</div>
 
-<!-- TELA DE SELEÇÃO DE MESA -->
 <div class="tela-selecao" id="telaSelecao">
     <button class="btn-admin-topo" id="btnAbrirAdminTopo">🔐 ADMIN</button>
     <div class="selecao-container">
@@ -785,7 +799,6 @@
     </div>
 </div>
 
-<!-- MODAL SENHA ADMIN -->
 <div class="modal" id="modalSenhaAdmin">
     <div class="modal-content">
         <h3>🔐 ACESSO ADMINISTRATIVO</h3>
@@ -801,7 +814,6 @@
     </div>
 </div>
 
-<!-- TELA ADMIN -->
 <div class="tela-admin hidden" id="telaAdmin">
     <div class="admin-container">
         <div class="admin-header">
@@ -812,10 +824,9 @@
             </div>
         </div>
         
-        <!-- Nova Seção: Melhor Mão -->
         <div class="melhor-mao-section">
             <h3>🏆 MELHOR MÃO DA ETAPA ANTERIOR 🏆</h3>
-            <p style="margin-bottom: 10px;">Selecione o jogador que fez a melhor mão - ele ganhará ADDON GRÁTIS (valor zerado)</p>
+            <p style="margin-bottom: 10px;">Selecione o jogador que fez a melhor mão - ele ganhará ADDON GRÁTIS</p>
             <select id="selectMelhorMao" class="melhor-mao-select">
                 <option value="">-- Selecione um jogador --</option>
             </select>
@@ -927,7 +938,6 @@
     </div>
 </div>
 
-<!-- TELA DE CLASSIFICAÇÃO -->
 <div class="tela-classificacao hidden" id="telaClassificacao">
     <div class="classificacao-container">
         <div class="classificacao-header">
@@ -946,32 +956,29 @@
     </div>
 </div>
 
-<!-- APP PRINCIPAL (DEALER) - LADO A LADO -->
 <div class="app-container hidden" id="appContainer">
     <div class="left-side">
         <div class="logo-top">
             <img src="logo pdq.png" alt="Poker de Quinta" onerror="this.style.display='none'">
             <h2>CONTROLE DE REBUY</h2>
             <div>
-                <button class="btn-voltar-mesa" id="btnVoltarParaSelecao">↩️ TROCAR DE MESA</button>
-                <button class="btn-ir-mesa-final" id="btnIrMesaFinal" style="display: none;">🏆 IR PARA MESA FINAL</button>
+                <button class="btn-voltar-mesa" id="btnVoltarParaSelecao">↩️ VOLTAR</button>
+                <button class="btn-ir-mesa-final" id="btnIrMesaFinal" style="display: none;">🏆 FINAL</button>
             </div>
         </div>
         <div class="mesa-indicator" id="mesaIndicator">
             <div class="mesa-indicator-text" id="mesaIndicatorText">♠️ MESA PRETA ♠️</div>
-            <div style="font-size: 0.9em; opacity: 0.8;">Você está atuando nesta mesa</div>
             <div class="contador-geral" id="contadorGeral"></div>
         </div>
-        <div class="lado-titulo">👈 JOGADORES - LADO 1</div>
+        <div class="lado-titulo">📋 JOGADORES</div>
         <div class="jogadores-grid" id="jogadoresGridEsquerda"></div>
     </div>
     <div class="right-side">
-        <div class="lado-titulo">👉 JOGADORES - LADO 2</div>
+        <div class="lado-titulo">📋 JOGADORES</div>
         <div class="jogadores-grid" id="jogadoresGridDireita"></div>
     </div>
 </div>
 
-<!-- MESA FINAL -->
 <div class="mesa-final-app hidden" id="mesaFinalApp">
     <div class="left-side">
         <div class="logo-top">
@@ -983,23 +990,19 @@
         </div>
         <div class="mesa-indicator" style="border-color: #d4a121; background: linear-gradient(135deg, #d4a12120, #00000040);">
             <div class="mesa-indicator-text" id="mesaFinalIndicatorText">🏆 MESA FINAL</div>
-            <div style="font-size: 0.9em; opacity: 0.8;">Elimine os jogadores para definir o campeão</div>
             <div class="contador-geral" id="contadorGeralMF"></div>
         </div>
         <div class="jogadores-grid" id="jogadoresMesaFinalGrid"></div>
     </div>
-    <div class="right-side">
-        <!-- Espaço reservado para futura expansão -->
-    </div>
+    <div class="right-side"></div>
 </div>
 
-<!-- MODAIS -->
 <div class="modal" id="modalCorrigir">
     <div class="modal-content">
         <h3>🔧 Corrigir valores</h3>
         <p id="corrigirJogadorNome"></p>
         <div class="form-group"><label>Rebuys</label><input type="number" id="corrigirRebuys" min="0" value="0"></div>
-        <div class="form-group"><label><input type="checkbox" id="corrigirAddon"> Addon (R$ 50)</label></div>
+        <div class="form-group"><label><input type="checkbox" id="corrigirAddon"> Addon</label></div>
         <div class="modal-buttons"><button class="btn btn-danger" id="btnCancelarCorrigir">Cancelar</button><button class="btn btn-success" id="btnSalvarCorrigir">Salvar</button></div>
     </div>
 </div>
@@ -1040,7 +1043,6 @@
 </div>
 
 <script>
-// FIREBASE CONFIG
 const firebaseConfig = {
     apiKey: "AIzaSyD_XXjcjJYM73wLTTzpDgzKCOZnztcJhjE",
     authDomain: "poker-de-quinta.firebaseapp.com",
@@ -1054,12 +1056,10 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// CONSTANTES
 const VALOR_BUYIN = 100;
 const VALOR_REBUY = 30;
 const VALOR_ADDON = 50;
 
-// Jogadores com Addon zerado (não pagam)
 const ADDON_GRATIS = ['Gaspar', 'Matheus', 'Ricardo Linhares', 'Diego'];
 
 const PONTOS_POSICAO = {
@@ -1071,7 +1071,6 @@ const PONTOS_POSICAO = {
 
 function getPontosPosicao(posicao) { return PONTOS_POSICAO[posicao] || 5; }
 
-// VARIÁVEIS GLOBAIS
 let mesaAtual = 'preta';
 let config = { etapa: 4 };
 let mesasData = { preta: [], amarela: [] };
@@ -1087,17 +1086,11 @@ let mesaFinalAtiva = false;
 let jogadoresMesaFinal = [];
 let jogadorEliminandoMF = null;
 let melhorMaoAtual = null;
-
-// ÁUDIO
 let audioContext = null;
-
-// FOTOS
 let fotosJogadores = {};
 
-// ========== FUNÇÕES DE INICIALIZAÇÃO ==========
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('statusIndicator').textContent = '✅ Conectado';
-    
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
     db.ref('config').on('value', (snapshot) => {
@@ -1155,7 +1148,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function getFotoJogador(nome) {
-    return fotosJogadores[nome] || `https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=d4a121&color=000&size=50`;
+    return fotosJogadores[nome] || `https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=d4a121&color=000&size=45`;
 }
 
 function tocarAlertaMesaFinal() {
@@ -1187,7 +1180,7 @@ function atualizarContadorGeral() {
     const totalJogadores = preta.length + amarela.length;
     const vivos = preta.filter(j => !j.eliminado).length + amarela.filter(j => !j.eliminado).length;
     const eliminados = totalJogadores - vivos;
-    const html = `<div class="contador-mesa preta">♠️ PRETA: ${preta.length} | 🟢 ${preta.filter(j => !j.eliminado).length}</div><div class="contador-mesa amarela">♦️ AMARELA: ${amarela.length} | 🟢 ${amarela.filter(j => !j.eliminado).length}</div><div class="contador-mesa" style="background:#d4a12120;">📊 TOTAL: ${totalJogadores} | 🟢 VIVOS: ${vivos} | ❌ ELIMINADOS: ${eliminados}</div>`;
+    const html = `<div class="contador-mesa preta">♠️ ${preta.length} | 🟢 ${preta.filter(j => !j.eliminado).length}</div><div class="contador-mesa amarela">♦️ ${amarela.length} | 🟢 ${amarela.filter(j => !j.eliminado).length}</div><div style="background:#d4a12120; padding:5px 10px; border-radius:6px;">📊 TOTAL: ${totalJogadores} | 🟢 ${vivos} | ❌ ${eliminados}</div>`;
     const contadorGeral = document.getElementById('contadorGeral');
     const contadorGeralMF = document.getElementById('contadorGeralMF');
     if (contadorGeral) contadorGeral.innerHTML = html;
@@ -1226,7 +1219,7 @@ function atualizarInfoMelhorMao() {
     const infoDiv = document.getElementById('melhorMaoInfo');
     if (melhorMaoAtual) {
         infoDiv.style.display = 'block';
-        infoDiv.innerHTML = `🏆 JOGADOR COM MELHOR MÃO: <strong style="color:#FFD700;">${melhorMaoAtual}</strong> - ADDON GRÁTIS GARANTIDO! 🏆`;
+        infoDiv.innerHTML = `🏆 MELHOR MÃO: <strong style="color:#FFD700;">${melhorMaoAtual}</strong> - ADDON GRÁTIS! 🏆`;
     } else {
         infoDiv.style.display = 'none';
     }
@@ -1241,19 +1234,15 @@ function aplicarMelhorMao() {
         return;
     }
     
-    if (confirm(`Confirmar que ${jogadorNome} fez a MELHOR MÃO da etapa anterior? Ele ganhará ADDON GRÁTIS (não pagará R$ 50,00).`)) {
+    if (confirm(`Confirmar que ${jogadorNome} fez a MELHOR MÃO da etapa anterior? Ele ganhará ADDON GRÁTIS.`)) {
         db.ref('melhorMao').set(jogadorNome);
         
-        // Aplicar addon grátis imediatamente
         let jogadorEncontrado = null;
-        let mesaEncontrada = null;
         
         if (mesasData.preta?.some(j => j.nome === jogadorNome)) {
             jogadorEncontrado = mesasData.preta.find(j => j.nome === jogadorNome);
-            mesaEncontrada = 'preta';
         } else if (mesasData.amarela?.some(j => j.nome === jogadorNome)) {
             jogadorEncontrado = mesasData.amarela.find(j => j.nome === jogadorNome);
-            mesaEncontrada = 'amarela';
         }
         
         if (jogadorEncontrado && !jogadorEncontrado.addon && !jogadorEncontrado.eliminado) {
@@ -1271,7 +1260,6 @@ function aplicarMelhorMao() {
     }
 }
 
-// ========== MESA FINAL ==========
 function verificarMesaFinal() {
     const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const vivos = todosJogadores.filter(j => !j.eliminado);
@@ -1307,7 +1295,7 @@ function renderizarMesaFinal() {
     if (jogadoresMesaFinal.length === 0) { grid.innerHTML = '<div style="text-align:center;padding:40px;">🏆 TORNEIO FINALIZADO! 🏆</div>'; return; }
     grid.innerHTML = jogadoresMesaFinal.map((j, idx) => {
         const isMelhorMao = melhorMaoAtual === j.nome;
-        return `<div class="jogador-card ${isMelhorMao ? 'melhor-mao' : ''}"><div class="jogador-posicao-numero">${idx + 1}</div><img class="jogador-foto" src="${getFotoJogador(j.nome)}"><div class="jogador-info"><div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🏆' : ''}</div><div class="jogador-valores">${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}${j.addon ? `<span class="badge ${j.addonGratis ? 'badge-addon-gratis' : 'badge-addon'}">💎 ${j.addonGratis ? 'Addon Grátis' : 'Addon'}</span>` : ''}</div></div><div class="jogador-actions"><button class="action-btn btn-eliminar" onclick="abrirModalEliminarMF('${j.nome}')">❌ ELIMINAR (${jogadoresMesaFinal.length}º)</button></div></div>`;
+        return `<div class="jogador-card ${isMelhorMao ? 'melhor-mao' : ''}"><div class="jogador-posicao-numero">${idx + 1}</div><img class="jogador-foto" src="${getFotoJogador(j.nome)}"><div class="jogador-info"><div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🏆' : ''}</div><div class="jogador-valores">${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}${j.addon ? `<span class="badge ${isMelhorMao ? 'badge-addon-melhor-mao' : 'badge-addon'}">💎 Addon</span>` : ''}</div></div><div class="jogador-actions"><button class="action-btn btn-eliminar" onclick="abrirModalEliminarMF('${j.nome}')">❌ ELIMINAR</button></div></div>`;
     }).join('');
 }
 
@@ -1363,7 +1351,6 @@ function irParaMesaFinalTopo() { if (mesaFinalAtiva) { document.getElementById('
 
 function voltarDaMesaFinal() { document.getElementById('mesaFinalApp').classList.add('hidden'); document.getElementById('appContainer').classList.remove('hidden'); atualizarGridJogadores(); atualizarContadorGeral(); }
 
-// ========== FUNÇÕES DO DEALER ==========
 function iniciarApp() {
     if (mesaFinalAtiva) return;
     document.getElementById('telaSelecao').classList.add('hidden');
@@ -1392,7 +1379,6 @@ function atualizarGridJogadores() {
     function renderizarLado(jogadoresLista) {
         return jogadoresLista.map(j => {
             const isMelhorMao = melhorMaoAtual === j.nome;
-            const addonGratis = ADDON_GRATIS.includes(j.nome);
             return `<div class="jogador-card ${j.eliminado ? 'eliminado' : ''} ${isMelhorMao ? 'melhor-mao' : ''}">
                         <div class="jogador-posicao-numero">${j.posicao || '?'}</div>
                         <img class="jogador-foto" src="${getFotoJogador(j.nome)}">
@@ -1400,17 +1386,17 @@ function atualizarGridJogadores() {
                             <div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🏆' : ''}</div>
                             <div class="jogador-valores">
                                 ${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}
-                                ${j.addon ? `<span class="badge ${(j.addonGratis || addonGratis) ? 'badge-addon-gratis' : 'badge-addon'}">💎 ${(j.addonGratis || addonGratis) ? 'Addon Grátis' : 'Addon'}</span>` : ''}
-                                ${j.eliminado ? `<span class="badge badge-eliminado">❌ Eliminado (${j.posicaoFinal}º)</span>` : ''}
+                                ${j.addon ? `<span class="badge ${isMelhorMao ? 'badge-addon-melhor-mao' : 'badge-addon'}">💎 Addon</span>` : ''}
+                                ${j.eliminado ? `<span class="badge badge-eliminado">❌ Elim (${j.posicaoFinal}º)</span>` : ''}
                             </div>
                         </div>
                         <div class="jogador-actions">
                             ${!j.eliminado ? `
                                 <button class="action-btn btn-rebuy" onclick="adicionarRebuy('${j.nome}', 'simples')">REBUY</button>
-                                <button class="action-btn btn-rebuy-duplo" onclick="adicionarRebuy('${j.nome}', 'duplo')">REBUY 2x</button>
+                                <button class="action-btn btn-rebuy-duplo" onclick="adicionarRebuy('${j.nome}', 'duplo')">2x</button>
                                 ${!j.addon ? `<button class="action-btn btn-addon" onclick="adicionarAddon('${j.nome}')">ADDON</button>` : ''}
                                 <button class="action-btn btn-corrigir" onclick="abrirCorrecao('${j.nome}')">✏️</button>
-                                <button class="action-btn btn-eliminar" onclick="abrirModalEliminar('${j.nome}')">❌ ELIMINAR</button>
+                                <button class="action-btn btn-eliminar" onclick="abrirModalEliminar('${j.nome}')">❌</button>
                             ` : ''}
                         </div>
                     </div>`;
@@ -1421,34 +1407,65 @@ function atualizarGridJogadores() {
     document.getElementById('jogadoresGridDireita').innerHTML = renderizarLado(ladoDireito);
 }
 
-function adicionarRebuy(nome, tipo) { const qtd = tipo === 'simples' ? 1 : 2; if (confirm(`REBUY ${tipo.toUpperCase()} para ${nome}?`)) { const jogador = mesasData[mesaAtual].find(j => j.nome === nome); if (jogador) { jogador.rebuys = (jogador.rebuys || 0) + qtd; db.ref('mesas').set(mesasData); } } }
+function adicionarRebuy(nome, tipo) { 
+    const qtd = tipo === 'simples' ? 1 : 2; 
+    if (confirm(`REBUY ${tipo.toUpperCase()} para ${nome}?`)) { 
+        const jogador = mesasData[mesaAtual].find(j => j.nome === nome); 
+        if (jogador) { 
+            jogador.rebuys = (jogador.rebuys || 0) + qtd; 
+            db.ref('mesas').set(mesasData); 
+        } 
+    } 
+}
 
 function adicionarAddon(nome) { 
     const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
     if (jogador && !jogador.addon && !jogador.eliminado) {
         const addonGratis = ADDON_GRATIS.includes(nome) || melhorMaoAtual === nome;
-        if (confirm(`ADDON para ${nome}?${addonGratis ? ' (GRÁTIS - não pagará R$ 50,00)' : ''}`)) {
+        if (confirm(`ADDON para ${nome}?`)) {
             jogador.addon = true;
             jogador.addonGratis = addonGratis;
             db.ref('mesas').set(mesasData);
-            if (addonGratis && melhorMaoAtual === nome) {
-                alert(`✅ ${nome} recebeu ADDON GRÁTIS pela MELHOR MÃO!`);
-            } else if (addonGratis) {
-                alert(`✅ ${nome} recebeu ADDON GRÁTIS (jogador isento)!`);
-            } else {
-                alert(`✅ Addon de R$ ${VALOR_ADDON},00 adicionado para ${nome}`);
-            }
+            alert(`✅ Addon registrado para ${nome}`);
         }
     } else if (jogador && jogador.addon) {
         alert(`${nome} já possui addon!`);
     }
 }
 
-function abrirCorrecao(nome) { const jogador = mesasData[mesaAtual].find(j => j.nome === nome); if (jogador) { jogadorCorrigindo = nome; document.getElementById('corrigirJogadorNome').textContent = nome; document.getElementById('corrigirRebuys').value = jogador.rebuys || 0; document.getElementById('corrigirAddon').checked = jogador.addon || false; document.getElementById('modalCorrigir').classList.add('active'); } }
+function abrirCorrecao(nome) { 
+    const jogador = mesasData[mesaAtual].find(j => j.nome === nome); 
+    if (jogador) { 
+        jogadorCorrigindo = nome; 
+        document.getElementById('corrigirJogadorNome').textContent = nome; 
+        document.getElementById('corrigirRebuys').value = jogador.rebuys || 0; 
+        document.getElementById('corrigirAddon').checked = jogador.addon || false; 
+        document.getElementById('modalCorrigir').classList.add('active'); 
+    } 
+}
 
-function salvarCorrecao() { if (jogadorCorrigindo) { const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorCorrigindo); if (jogador) { jogador.rebuys = parseInt(document.getElementById('corrigirRebuys').value) || 0; jogador.addon = document.getElementById('corrigirAddon').checked; jogador.addonGratis = jogador.addon && (ADDON_GRATIS.includes(jogador.nome) || melhorMaoAtual === jogador.nome); db.ref('mesas').set(mesasData); } } document.getElementById('modalCorrigir').classList.remove('active'); jogadorCorrigindo = null; }
+function salvarCorrecao() { 
+    if (jogadorCorrigindo) { 
+        const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorCorrigindo); 
+        if (jogador) { 
+            jogador.rebuys = parseInt(document.getElementById('corrigirRebuys').value) || 0; 
+            jogador.addon = document.getElementById('corrigirAddon').checked;
+            if(jogador.addon && (ADDON_GRATIS.includes(jogador.nome) || melhorMaoAtual === jogador.nome)) {
+                jogador.addonGratis = true;
+            }
+            db.ref('mesas').set(mesasData); 
+        } 
+    } 
+    document.getElementById('modalCorrigir').classList.remove('active'); 
+    jogadorCorrigindo = null; 
+}
 
-function abrirModalEliminar(nome) { jogadorEliminando = nome; document.getElementById('eliminarJogadorNome').textContent = nome; document.getElementById('quantidadeKOs').value = 0; document.getElementById('modalEliminar').classList.add('active'); }
+function abrirModalEliminar(nome) { 
+    jogadorEliminando = nome; 
+    document.getElementById('eliminarJogadorNome').textContent = nome; 
+    document.getElementById('quantidadeKOs').value = 0; 
+    document.getElementById('modalEliminar').classList.add('active'); 
+}
 
 function confirmarEliminacao() {
     if (jogadorEliminando) {
@@ -1474,7 +1491,6 @@ function confirmarEliminacao() {
     jogadorEliminando = null;
 }
 
-// ========== FUNÇÕES ADMIN ==========
 function iniciarEtapaAdmin() {
     const novaEtapa = parseInt(document.getElementById('adminSelectEtapa').value);
     if (confirm(`Iniciar ${novaEtapa}ª ETAPA? Os dados atuais serão salvos no histórico.`)) {
@@ -1575,7 +1591,6 @@ function apagarTodosDados() { if (confirm('⚠️ Apagar TODOS os dados?')) { me
 
 function apagarHistorico() { if (confirm('⚠️ Apagar TODO o histórico de etapas?')) { historicoEtapas = []; db.ref('historicoEtapas').set([]); document.getElementById('modalApagarHistorico').classList.remove('active'); alert('✅ Histórico apagado!'); atualizarHistoricoEtapas(); } }
 
-// ========== IMPORTAÇÃO LAYOUT ==========
 function processarLayout() { if (!arquivoSelecionado) { alert('Selecione um arquivo!'); return; } const reader = new FileReader(); reader.onload = (e) => { const html = e.target.result; const parser = new DOMParser(); const doc = parser.parseFromString(html, 'text/html'); const rows = doc.querySelectorAll('tr'); layoutImportado = { preta: [], amarela: [] }; rows.forEach(row => { const cells = row.querySelectorAll('td'); if (cells.length >= 3) { const seat = cells[2]?.textContent?.trim() || ''; const matchPreta = seat.match(/MESA\s*PRETA\s*Seat\s*(\d+)/i); const matchAmarela = seat.match(/MESA\s*AMARELA\s*Seat\s*(\d+)/i); let mesa = null, pos = null; if (matchPreta) { mesa = 'preta'; pos = parseInt(matchPreta[1]); } else if (matchAmarela) { mesa = 'amarela'; pos = parseInt(matchAmarela[1]); } if (mesa && pos) { const nome = cells[1]?.textContent?.trim()?.replace(/\.+/g, '').trim(); if (nome) layoutImportado[mesa].push({ posicao: pos, nome }); } } }); layoutImportado.preta.sort((a,b) => a.posicao - b.posicao); layoutImportado.amarela.sort((a,b) => a.posicao - b.posicao); document.getElementById('previewCountPreta').textContent = layoutImportado.preta.length; document.getElementById('previewCountAmarela').textContent = layoutImportado.amarela.length; document.getElementById('previewPreta').innerHTML = layoutImportado.preta.map(p => `<div>Pos ${p.posicao}: ${p.nome}</div>`).join(''); document.getElementById('previewAmarela').innerHTML = layoutImportado.amarela.map(p => `<div>Pos ${p.posicao}: ${p.nome}</div>`).join(''); document.getElementById('previewMesas').style.display = 'grid'; document.getElementById('importResult').style.display = 'block'; document.getElementById('importResult').innerHTML = `✅ Analisado! Preta: ${layoutImportado.preta.length} | Amarela: ${layoutImportado.amarela.length}`; const btn = document.createElement('button'); btn.className = 'btn btn-success'; btn.textContent = '✅ APLICAR LAYOUT'; btn.style.marginTop = '20px'; btn.style.width = '100%'; btn.onclick = aplicarLayout; const old = document.querySelector('#previewMesas + button'); if (old) old.remove(); document.getElementById('previewMesas').after(btn); }; reader.readAsText(arquivoSelecionado); }
 
 function aplicarLayout() { 
@@ -1593,7 +1608,6 @@ function aplicarLayout() {
     atualizarSelectMelhorMao();
 }
 
-// ========== EXPORTAÇÕES ==========
 function exportarCSVSimples() { const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])]; if (todos.length === 0) { alert('Nenhum jogador!'); return; } let csv = ''; todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => csv += `${j.nome},${j.rebuys||0},${j.addon?1:0}\n`); downloadCSV(csv, `rebuy-addon-etapa${config.etapa}.csv`); }
 
 function exportarCSVCompleto() { const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])]; if (todos.length === 0) { alert('Nenhum jogador!'); return; } let csv = 'Nome,Mesa,Posição,Buy-in,Rebuys,Addon,Total\n'; let total = 0; todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => { const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'; const addonGratis = ADDON_GRATIS.includes(j.nome) || j.addonGratis; const t = VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + (j.addon && !addonGratis ? VALOR_ADDON : 0); total += t; csv += `"${j.nome}",${mesa},${j.posicao||''},${VALOR_BUYIN},${j.rebuys||0},${j.addon ? (addonGratis ? 'Grátis' : 'Sim') : 'Não'},${t}\n`; }); csv += `\n"TOTAL GERAL",,,,,,${total}\n`; downloadCSV(csv, `caixa-completo-etapa${config.etapa}.csv`); }
@@ -1606,7 +1620,6 @@ function copiarCSV() { const todos = [...(mesasData.preta || []), ...(mesasData.
 
 function downloadCSV(csv, nome) { const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = nome; link.click(); }
 
-// ========== EVENTOS ==========
 function inicializarEventos() {
     document.getElementById('btnSelecionarPreta').onclick = () => { if (!mesaFinalAtiva) { mesaAtual = 'preta'; iniciarApp(); } };
     document.getElementById('btnSelecionarAmarela').onclick = () => { if (!mesaFinalAtiva) { mesaAtual = 'amarela'; iniciarApp(); } };
@@ -1614,13 +1627,11 @@ function inicializarEventos() {
     document.getElementById('btnIrMesaFinal').onclick = irParaMesaFinal;
     document.getElementById('btnMesaFinalTopo').onclick = irParaMesaFinalTopo;
     document.getElementById('btnVoltarMesaFinalSelecao').onclick = voltarDaMesaFinal;
-    
     document.getElementById('btnAbrirAdminTopo').onclick = () => { if (!mesaFinalAtiva) document.getElementById('modalSenhaAdmin').classList.add('active'); };
     document.getElementById('btnCancelarSenhaAdmin').onclick = () => { document.getElementById('modalSenhaAdmin').classList.remove('active'); document.getElementById('senhaAdmin').value = ''; };
     document.getElementById('btnConfirmarSenhaAdmin').onclick = () => { if (document.getElementById('senhaAdmin').value === 'poker2026') { document.getElementById('modalSenhaAdmin').classList.remove('active'); document.getElementById('telaSelecao').classList.add('hidden'); document.getElementById('telaAdmin').classList.remove('hidden'); atualizarAdminResumo(); atualizarAdminEstatisticas(); atualizarHistoricoEtapas(); atualizarSelectMelhorMao(); } else alert('❌ Senha incorreta!'); document.getElementById('senhaAdmin').value = ''; };
     document.getElementById('btnVoltarAdmin').onclick = () => { document.getElementById('telaAdmin').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); };
     document.getElementById('btnVoltarInicio').onclick = () => { document.getElementById('telaClassificacao').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); };
-    
     document.getElementById('btnExportarClassificacao').onclick = exportarClassificacaoCSV;
     document.getElementById('btnExportarHistorico').onclick = exportarHistoricoCSV;
     document.getElementById('btnIniciarEtapaAdmin').onclick = iniciarEtapaAdmin;
@@ -1630,20 +1641,16 @@ function inicializarEventos() {
     document.getElementById('btnApagarDados').onclick = () => document.getElementById('modalSenhaApagar').classList.add('active');
     document.getElementById('btnCancelarSenhaApagar').onclick = () => document.getElementById('modalSenhaApagar').classList.remove('active');
     document.getElementById('btnConfirmarSenhaApagar').onclick = () => { if (document.getElementById('senhaApagar').value === 'poker2026') apagarTodosDados(); else alert('❌ Senha incorreta!'); document.getElementById('senhaApagar').value = ''; };
-    
     document.getElementById('btnAplicarMelhorMao').onclick = aplicarMelhorMao;
-    
     document.getElementById('btnCancelarCorrigir').onclick = () => document.getElementById('modalCorrigir').classList.remove('active');
     document.getElementById('btnSalvarCorrigir').onclick = salvarCorrecao;
     document.getElementById('btnCancelarEliminar').onclick = () => document.getElementById('modalEliminar').classList.remove('active');
     document.getElementById('btnConfirmarEliminar').onclick = confirmarEliminacao;
     document.getElementById('btnCancelarEliminarMF').onclick = () => document.getElementById('modalEliminarMesaFinal').classList.remove('active');
     document.getElementById('btnConfirmarEliminarMF').onclick = confirmarEliminacaoMF;
-    
     document.getElementById('btnEscolherArquivo').onclick = () => document.getElementById('fileInput').click();
     document.getElementById('fileInput').onchange = (e) => { if (e.target.files[0]) { arquivoSelecionado = e.target.files[0]; document.getElementById('btnProcessarLayout').style.display = 'inline-block'; } };
     document.getElementById('btnProcessarLayout').onclick = processarLayout;
-    
     document.getElementById('btnAdminExportarCSV').onclick = exportarCSVSimples;
     document.getElementById('btnAdminExportarCompleto').onclick = exportarCSVCompleto;
     document.getElementById('btnCopiarCSV').onclick = copiarCSV;
