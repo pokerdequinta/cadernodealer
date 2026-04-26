@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -391,6 +390,42 @@
         .btn-addon { background: #4CAF50; color: #fff; }
         .btn-corrigir { background: #FFA500; color: #000; }
         .btn-eliminar { background: #c72c48; color: #fff; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            margin: 20px;
+        }
+        
+        .empty-state h3 {
+            font-family: 'Anton', sans-serif;
+            color: #d4a121;
+            margin-bottom: 15px;
+        }
+        
+        .empty-state p {
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        
+        .btn-ir-admin {
+            background: #d4a121;
+            color: #000;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Anton', sans-serif;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-ir-admin:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(212, 161, 33, 0.5);
+        }
         
         .tela-admin {
             min-height: 100vh;
@@ -917,7 +952,7 @@
                     <table class="resumo-table" id="adminResumoFinanceiro">
                         <thead><tr><th>Jogador</th><th>Mesa</th><th>Pos.</th><th>Buy-in</th><th>Rebuys</th><th>Addon</th><th>Total</th></tr></thead>
                         <tbody id="adminResumoBody"></tbody>
-                    }
+                    </table>
                 </div>
                 <div class="total-geral" id="adminTotalGeral">TOTAL GERAL: R$ 0,00</div>
                 <button class="btn btn-secondary" id="btnAdminExportarCSV" style="margin-top: 15px; width: 100%;">📊 EXPORTAR CSV</button>
@@ -1484,7 +1519,14 @@ function atualizarGridJogadores() {
     if (!gridEsquerda || !gridDireita) return;
     
     if (jogadores.length === 0) {
-        gridEsquerda.innerHTML = '<div style="text-align:center;padding:20px;">Nenhum jogador. Importe o layout pelo Admin.</div>';
+        const emptyMessage = `
+            <div class="empty-state">
+                <h3>📋 NENHUM JOGADOR CADASTRADO</h3>
+                <p>Você precisa importar o layout das mesas primeiro.</p>
+                <button class="btn-ir-admin" onclick="fecharAppEIrAdmin()">🔐 IR PARA ADMINISTRAÇÃO</button>
+            </div>
+        `;
+        gridEsquerda.innerHTML = emptyMessage;
         gridDireita.innerHTML = '';
         return;
     }
@@ -1523,6 +1565,12 @@ function atualizarGridJogadores() {
     
     gridEsquerda.innerHTML = renderizarLado(ladoEsquerdo);
     gridDireita.innerHTML = renderizarLado(ladoDireito);
+}
+
+function fecharAppEIrAdmin() {
+    document.getElementById('appContainer').classList.add('hidden');
+    document.getElementById('telaSelecao').classList.remove('hidden');
+    document.getElementById('modalSenhaAdmin').classList.add('active');
 }
 
 function adicionarRebuy(nome, tipo) { 
@@ -1643,7 +1691,7 @@ function atualizarAdminResumo() {
     const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const tbody = document.getElementById('adminResumoBody');
     if (!tbody) return;
-    if (todos.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum dado</td> </tr>'; document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; return; }
+    if (todos.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum dado<th> '; document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; return; }
     let totalGeral = 0;
     tbody.innerHTML = todos.map(j => { 
         const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'; 
@@ -1692,7 +1740,7 @@ function atualizarAdminEstatisticas() {
     
     const ranking = [...todos].filter(j => (j.rebuys||0) > 0).sort((a,b) => (b.rebuys||0) - (a.rebuys||0)).slice(0,5);
     if (rankingBody) {
-        if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy</td> </tr>';
+        if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy<th> ';
         else rankingBody.innerHTML = ranking.map((j,i) => `<tr>
                 <td>${i+1}</td>
                 <td>${j.nome}</td>
@@ -1706,8 +1754,8 @@ function atualizarClassificacao() {
     const tbody = document.getElementById('classificacaoBody');
     if (!tbody) return;
     const ordenada = [...classificacaoData].sort((a,b) => a.posicao - b.posicao);
-    if (ordenada.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum jogador eliminado ainda</td> </tr>'; return; }
-    tbody.innerHTML = ordenada.map(j => { let cls = ''; if (j.posicao === 1) cls = 'top-1'; else if (j.posicao === 2) cls = 'top-2'; else if (j.posicao === 3) cls = 'top-3'; return `<tr class="${cls}"><td><strong>${j.posicao}º</strong></td><td>${j.nome}</td><td>${j.mesa}</td><td>${j.pontosPosicao}</td><td><input type="number" class="ko-input" value="${j.kos || 0}" onchange="atualizarKOs('${j.nome}', this)" min="0"></td><td>${j.pontosKOs || 0}</td><td><strong style="color:#d4a121;">${j.pontosTotal || j.pontosPosicao}</strong></td></tr>`; }).join('');
+    if (ordenada.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum jogador eliminado ainda<th> '; return; }
+    tbody.innerHTML = ordenada.map(j => { let cls = ''; if (j.posicao === 1) cls = 'top-1'; else if (j.posicao === 2) cls = 'top-2'; else if (j.posicao === 3) cls = 'top-3'; return `<tr class="${cls}"><td><strong>${j.posicao}º</strong></td><td>${j.nome}</td><td>${j.mesa}</td><td>${j.pontosPosicao}</td><td><input type="number" class="ko-input" value="${j.kos || 0}" onchange="atualizarKOs('${j.nome}', this)" min="0"></tr><td>${j.pontosKOs || 0}</td><td><strong style="color:#d4a121;">${j.pontosTotal || j.pontosPosicao}</strong></td></tr>`; }).join('');
 }
 
 function atualizarKOs(nome, input) { const kos = parseInt(input.value) || 0; const j = classificacaoData.find(j => j.nome === nome); if (j) { j.kos = kos; j.pontosKOs = kos; j.pontosTotal = j.pontosPosicao + kos; db.ref('classificacao').set(classificacaoData); atualizarClassificacao(); } }
@@ -1854,6 +1902,7 @@ window.abrirModalEliminar = abrirModalEliminar;
 window.atualizarKOs = atualizarKOs;
 window.abrirModalEliminarMF = abrirModalEliminarMF;
 window.toggleEtapa = toggleEtapa;
+window.fecharAppEIrAdmin = fecharAppEIrAdmin;
 </script>
 </body>
 </html>
