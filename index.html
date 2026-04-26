@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -22,7 +23,6 @@
             min-height: 100vh;
         }
         
-        /* Tela de Seleção */
         .tela-selecao {
             display: flex;
             flex-direction: column;
@@ -123,7 +123,6 @@
             50% { transform: scale(1.02); }
         }
         
-        /* App Container - Layout com cabeçalho e jogadores lado a lado */
         .app-container, .mesa-final-app {
             display: flex;
             flex-direction: column;
@@ -134,7 +133,6 @@
         
         .app-container.hidden, .mesa-final-app.hidden { display: none; }
         
-        /* Header fixo no topo */
         .app-header {
             flex-shrink: 0;
             padding: 15px;
@@ -196,7 +194,6 @@
             animation: pulse 1s infinite;
         }
         
-        /* Cards de estatísticas */
         .stats-cards {
             display: flex;
             gap: 15px;
@@ -247,10 +244,6 @@
             gap: 20px;
         }
         
-        .stat-card-numeros span {
-            display: inline-block;
-        }
-        
         .vivos { color: #4CAF50; }
         .eliminados { color: #c72c48; }
         .total-num { color: #d4a121; }
@@ -269,7 +262,6 @@
             text-transform: uppercase;
         }
         
-        /* Container dos dois lados de jogadores - lado a lado */
         .jogadores-lados {
             display: flex;
             flex: 1;
@@ -400,7 +392,6 @@
         .btn-corrigir { background: #FFA500; color: #000; }
         .btn-eliminar { background: #c72c48; color: #fff; }
         
-        /* Tela Admin */
         .tela-admin {
             min-height: 100vh;
             padding: 20px;
@@ -771,7 +762,6 @@
         ::-webkit-scrollbar-track { background: #0d1b0d; }
         ::-webkit-scrollbar-thumb { background: #d4a121; border-radius: 3px; }
         
-        /* Ajustes para tablet */
         @media (max-width: 1024px) {
             .action-btn {
                 padding: 4px 8px;
@@ -798,7 +788,6 @@
             }
         }
         
-        /* Mesa Final específica */
         .mesa-final-app .jogadores-lados {
             flex-direction: column;
         }
@@ -826,7 +815,6 @@
 
 <div class="status-indicator" id="statusIndicator">🔄 Conectando...</div>
 
-<!-- TELA DE SELEÇÃO DE MESA -->
 <div class="tela-selecao" id="telaSelecao">
     <button class="btn-admin-topo" id="btnAbrirAdminTopo">🔐 ADMIN</button>
     <div class="selecao-container">
@@ -844,7 +832,6 @@
     </div>
 </div>
 
-<!-- MODAL SENHA ADMIN -->
 <div class="modal" id="modalSenhaAdmin">
     <div class="modal-content">
         <h3>🔐 ACESSO ADMINISTRATIVO</h3>
@@ -860,7 +847,6 @@
     </div>
 </div>
 
-<!-- TELA ADMIN -->
 <div class="tela-admin hidden" id="telaAdmin">
     <div class="admin-container">
         <div class="admin-header">
@@ -985,7 +971,6 @@
     </div>
 </div>
 
-<!-- TELA DE CLASSIFICAÇÃO -->
 <div class="tela-classificacao hidden" id="telaClassificacao">
     <div class="classificacao-container">
         <div class="classificacao-header">
@@ -1004,7 +989,6 @@
     </div>
 </div>
 
-<!-- APP PRINCIPAL (DEALER) - LADO A LADO -->
 <div class="app-container hidden" id="appContainer">
     <div class="app-header">
         <div class="logo-top">
@@ -1016,9 +1000,8 @@
             </div>
         </div>
         
-        <!-- Cards de estatísticas -->
         <div class="stats-cards" id="statsCards">
-            <div class="stat-card preta" id="statCardPreta">
+            <div class="stat-card preta">
                 <div class="stat-card-titulo">♠️ MESA PRETA</div>
                 <div class="stat-card-numeros">
                     <span class="vivos" id="pretaVivos">0</span>
@@ -1029,7 +1012,7 @@
                 </div>
                 <div style="font-size: 0.7em; opacity: 0.8;">🟢 Vivos | ❌ Eliminados | 📊 Total</div>
             </div>
-            <div class="stat-card amarela" id="statCardAmarela">
+            <div class="stat-card amarela">
                 <div class="stat-card-titulo">♦️ MESA AMARELA</div>
                 <div class="stat-card-numeros">
                     <span class="vivos" id="amarelaVivos">0</span>
@@ -1040,7 +1023,7 @@
                 </div>
                 <div style="font-size: 0.7em; opacity: 0.8;">🟢 Vivos | ❌ Eliminados | 📊 Total</div>
             </div>
-            <div class="stat-card total" id="statCardTotal">
+            <div class="stat-card total">
                 <div class="stat-card-titulo">🏆 TOTAL TORNEIO</div>
                 <div class="stat-card-numeros">
                     <span class="vivos" id="totalVivos">0</span>
@@ -1068,7 +1051,6 @@
     </div>
 </div>
 
-<!-- MESA FINAL -->
 <div class="mesa-final-app hidden" id="mesaFinalApp">
     <div class="app-header">
         <div class="logo-top">
@@ -1090,7 +1072,6 @@
     </div>
 </div>
 
-<!-- MODAIS -->
 <div class="modal" id="modalCorrigir">
     <div class="modal-content">
         <h3>🔧 Corrigir valores</h3>
@@ -1284,17 +1265,25 @@ function atualizarStatsCards() {
     const totalEliminados = pretaEliminados + amarelaEliminados;
     const totalGeral = pretaTotal + amarelaTotal;
     
-    document.getElementById('pretaVivos').textContent = pretaVivos;
-    document.getElementById('pretaEliminados').textContent = pretaEliminados;
-    document.getElementById('pretaTotal').textContent = pretaTotal;
+    const pretaVivosEl = document.getElementById('pretaVivos');
+    const pretaEliminadosEl = document.getElementById('pretaEliminados');
+    const pretaTotalEl = document.getElementById('pretaTotal');
+    const amarelaVivosEl = document.getElementById('amarelaVivos');
+    const amarelaEliminadosEl = document.getElementById('amarelaEliminados');
+    const amarelaTotalEl = document.getElementById('amarelaTotal');
+    const totalVivosEl = document.getElementById('totalVivos');
+    const totalEliminadosEl = document.getElementById('totalEliminados');
+    const totalGeralEl = document.getElementById('totalGeralJogadores');
     
-    document.getElementById('amarelaVivos').textContent = amarelaVivos;
-    document.getElementById('amarelaEliminados').textContent = amarelaEliminados;
-    document.getElementById('amarelaTotal').textContent = amarelaTotal;
-    
-    document.getElementById('totalVivos').textContent = totalVivos;
-    document.getElementById('totalEliminados').textContent = totalEliminados;
-    document.getElementById('totalGeralJogadores').textContent = totalGeral;
+    if (pretaVivosEl) pretaVivosEl.textContent = pretaVivos;
+    if (pretaEliminadosEl) pretaEliminadosEl.textContent = pretaEliminados;
+    if (pretaTotalEl) pretaTotalEl.textContent = pretaTotal;
+    if (amarelaVivosEl) amarelaVivosEl.textContent = amarelaVivos;
+    if (amarelaEliminadosEl) amarelaEliminadosEl.textContent = amarelaEliminados;
+    if (amarelaTotalEl) amarelaTotalEl.textContent = amarelaTotal;
+    if (totalVivosEl) totalVivosEl.textContent = totalVivos;
+    if (totalEliminadosEl) totalEliminadosEl.textContent = totalEliminados;
+    if (totalGeralEl) totalGeralEl.textContent = totalGeral;
 }
 
 function atualizarBotoesMesaFinal() {
@@ -1327,10 +1316,10 @@ function atualizarSelectMelhorMao() {
 
 function atualizarInfoMelhorMao() {
     const infoDiv = document.getElementById('melhorMaoInfo');
-    if (melhorMaoAtual) {
+    if (melhorMaoAtual && infoDiv) {
         infoDiv.style.display = 'block';
         infoDiv.innerHTML = `🏆 MELHOR MÃO: <strong style="color:#FFD700;">${melhorMaoAtual}</strong> - ADDON GRÁTIS! 🏆`;
-    } else {
+    } else if (infoDiv) {
         infoDiv.style.display = 'none';
     }
 }
@@ -1401,6 +1390,7 @@ function verificarMesaFinal() {
 function renderizarMesaFinal() {
     const grid = document.getElementById('jogadoresMesaFinalGrid');
     const indicator = document.getElementById('mesaFinalIndicatorText');
+    if (!grid) return;
     if (indicator) indicator.textContent = `🏆 MESA FINAL - ${jogadoresMesaFinal.length} JOGADORES 🏆`;
     if (jogadoresMesaFinal.length === 0) { grid.innerHTML = '<div style="text-align:center;padding:40px;">🏆 TORNEIO FINALIZADO! 🏆</div>'; return; }
     grid.innerHTML = jogadoresMesaFinal.map((j, idx) => {
@@ -1480,17 +1470,22 @@ function iniciarApp() {
     document.getElementById('appContainer').classList.remove('hidden');
     const indicator = document.getElementById('mesaIndicator');
     const text = document.getElementById('mesaIndicatorText');
-    indicator.className = `mesa-indicator ${mesaAtual}`;
-    text.textContent = mesaAtual === 'preta' ? '♠️ MESA PRETA ♠️' : '♦️ MESA AMARELA ♦️';
+    if (indicator) indicator.className = `mesa-indicator ${mesaAtual}`;
+    if (text) text.textContent = mesaAtual === 'preta' ? '♠️ MESA PRETA ♠️' : '♦️ MESA AMARELA ♦️';
     atualizarGridJogadores();
     atualizarStatsCards();
 }
 
 function atualizarGridJogadores() {
     const jogadores = mesasData[mesaAtual] || [];
+    const gridEsquerda = document.getElementById('jogadoresGridEsquerda');
+    const gridDireita = document.getElementById('jogadoresGridDireita');
+    
+    if (!gridEsquerda || !gridDireita) return;
+    
     if (jogadores.length === 0) {
-        document.getElementById('jogadoresGridEsquerda').innerHTML = '<div style="text-align:center;padding:20px;">Nenhum jogador. Importe o layout pelo Admin.</div>';
-        document.getElementById('jogadoresGridDireita').innerHTML = '';
+        gridEsquerda.innerHTML = '<div style="text-align:center;padding:20px;">Nenhum jogador. Importe o layout pelo Admin.</div>';
+        gridDireita.innerHTML = '';
         return;
     }
     
@@ -1526,8 +1521,8 @@ function atualizarGridJogadores() {
         }).join('');
     }
     
-    document.getElementById('jogadoresGridEsquerda').innerHTML = renderizarLado(ladoEsquerdo);
-    document.getElementById('jogadoresGridDireita').innerHTML = renderizarLado(ladoDireito);
+    gridEsquerda.innerHTML = renderizarLado(ladoEsquerdo);
+    gridDireita.innerHTML = renderizarLado(ladoDireito);
 }
 
 function adicionarRebuy(nome, tipo) { 
@@ -1544,10 +1539,9 @@ function adicionarRebuy(nome, tipo) {
 function adicionarAddon(nome) { 
     const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
     if (jogador && !jogador.addon && !jogador.eliminado) {
-        const addonGratis = ADDON_GRATIS.includes(nome) || melhorMaoAtual === nome;
         if (confirm(`ADDON para ${nome}?`)) {
             jogador.addon = true;
-            jogador.addonGratis = addonGratis;
+            jogador.addonGratis = ADDON_GRATIS.includes(nome) || melhorMaoAtual === nome;
             db.ref('mesas').set(mesasData);
             alert(`✅ Addon registrado para ${nome}`);
         }
@@ -1648,7 +1642,8 @@ function iniciarEtapaAdmin() {
 function atualizarAdminResumo() {
     const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const tbody = document.getElementById('adminResumoBody');
-    if (todos.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum dado</td><tr>'; document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; return; }
+    if (!tbody) return;
+    if (todos.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum dado</td> </tr>'; document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; return; }
     let totalGeral = 0;
     tbody.innerHTML = todos.map(j => { 
         const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'; 
@@ -1672,39 +1667,67 @@ function atualizarAdminEstatisticas() {
     const preta = mesasData.preta || [];
     const amarela = mesasData.amarela || [];
     const todos = [...preta, ...amarela];
-    document.getElementById('adminStatPretaJogadores').textContent = preta.length;
-    document.getElementById('adminStatPretaRebuys').textContent = preta.reduce((s,j) => s + (j.rebuys||0), 0);
-    document.getElementById('adminStatPretaAddons').textContent = preta.filter(j => j.addon).length;
-    document.getElementById('adminStatPretaTotal').textContent = `R$ ${preta.reduce((s,j) => { const addonGratis = ADDON_GRATIS.includes(j.nome) || j.addonGratis; return s + VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + (j.addon && !addonGratis ? VALOR_ADDON : 0); }, 0)}`;
-    document.getElementById('adminStatAmarelaJogadores').textContent = amarela.length;
-    document.getElementById('adminStatAmarelaRebuys').textContent = amarela.reduce((s,j) => s + (j.rebuys||0), 0);
-    document.getElementById('adminStatAmarelaAddons').textContent = amarela.filter(j => j.addon).length;
-    document.getElementById('adminStatAmarelaTotal').textContent = `R$ ${amarela.reduce((s,j) => { const addonGratis = ADDON_GRATIS.includes(j.nome) || j.addonGratis; return s + VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + (j.addon && !addonGratis ? VALOR_ADDON : 0); }, 0)}`;
-    document.getElementById('adminStatTotalRebuys').textContent = todos.reduce((s,j) => s + (j.rebuys||0), 0);
-    document.getElementById('adminStatTotalAddons').textContent = todos.filter(j => j.addon).length;
+    const pretaVivos = document.getElementById('adminStatPretaJogadores');
+    const pretaRebuys = document.getElementById('adminStatPretaRebuys');
+    const pretaAddons = document.getElementById('adminStatPretaAddons');
+    const pretaTotal = document.getElementById('adminStatPretaTotal');
+    const amarelaVivos = document.getElementById('adminStatAmarelaJogadores');
+    const amarelaRebuys = document.getElementById('adminStatAmarelaRebuys');
+    const amarelaAddons = document.getElementById('adminStatAmarelaAddons');
+    const amarelaTotal = document.getElementById('adminStatAmarelaTotal');
+    const totalRebuys = document.getElementById('adminStatTotalRebuys');
+    const totalAddons = document.getElementById('adminStatTotalAddons');
+    const rankingBody = document.getElementById('adminRankingBody');
+    
+    if (pretaVivos) pretaVivos.textContent = preta.length;
+    if (pretaRebuys) pretaRebuys.textContent = preta.reduce((s,j) => s + (j.rebuys||0), 0);
+    if (pretaAddons) pretaAddons.textContent = preta.filter(j => j.addon).length;
+    if (pretaTotal) pretaTotal.textContent = `R$ ${preta.reduce((s,j) => { const addonGratis = ADDON_GRATIS.includes(j.nome) || j.addonGratis; return s + VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + (j.addon && !addonGratis ? VALOR_ADDON : 0); }, 0)}`;
+    if (amarelaVivos) amarelaVivos.textContent = amarela.length;
+    if (amarelaRebuys) amarelaRebuys.textContent = amarela.reduce((s,j) => s + (j.rebuys||0), 0);
+    if (amarelaAddons) amarelaAddons.textContent = amarela.filter(j => j.addon).length;
+    if (amarelaTotal) amarelaTotal.textContent = `R$ ${amarela.reduce((s,j) => { const addonGratis = ADDON_GRATIS.includes(j.nome) || j.addonGratis; return s + VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + (j.addon && !addonGratis ? VALOR_ADDON : 0); }, 0)}`;
+    if (totalRebuys) totalRebuys.textContent = todos.reduce((s,j) => s + (j.rebuys||0), 0);
+    if (totalAddons) totalAddons.textContent = todos.filter(j => j.addon).length;
+    
     const ranking = [...todos].filter(j => (j.rebuys||0) > 0).sort((a,b) => (b.rebuys||0) - (a.rebuys||0)).slice(0,5);
-    const rb = document.getElementById('adminRankingBody');
-    if (ranking.length === 0) rb.innerHTML = '<tr><td colspan="4">Nenhum rebuy</td></tr>';
-    else rb.innerHTML = ranking.map((j,i) => `<tr><td>${i+1}</td>.html${j.nome}</td>.html${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}</td>.html${j.rebuys}</td></tr>`).join('');
+    if (rankingBody) {
+        if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy</td> </tr>';
+        else rankingBody.innerHTML = ranking.map((j,i) => `<tr>
+                <td>${i+1}</td>
+                <td>${j.nome}</td>
+                <td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}</td>
+                <td>${j.rebuys}</td>
+            </tr>`).join('');
+    }
 }
 
 function atualizarClassificacao() {
     const tbody = document.getElementById('classificacaoBody');
+    if (!tbody) return;
     const ordenada = [...classificacaoData].sort((a,b) => a.posicao - b.posicao);
-    if (ordenada.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum jogador eliminado ainda<li> '; return; }
-    tbody.innerHTML = ordenada.map(j => { let cls = ''; if (j.posicao === 1) cls = 'top-1'; else if (j.posicao === 2) cls = 'top-2'; else if (j.posicao === 3) cls = 'top-3'; return `<tr class="${cls}"><td><strong>${j.posicao}º</strong></td>.html${j.nome}</td><td>${j.mesa}</td><td>${j.pontosPosicao}</td><td><input type="number" class="ko-input" value="${j.kos || 0}" onchange="atualizarKOs('${j.nome}', this)" min="0"></td><td>${j.pontosKOs || 0}</td><td><strong style="color:#d4a121;">${j.pontosTotal || j.pontosPosicao}</strong></td></tr>`; }).join('');
+    if (ordenada.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum jogador eliminado ainda</td> </tr>'; return; }
+    tbody.innerHTML = ordenada.map(j => { let cls = ''; if (j.posicao === 1) cls = 'top-1'; else if (j.posicao === 2) cls = 'top-2'; else if (j.posicao === 3) cls = 'top-3'; return `<tr class="${cls}"><td><strong>${j.posicao}º</strong></td><td>${j.nome}</td><td>${j.mesa}</td><td>${j.pontosPosicao}</td><td><input type="number" class="ko-input" value="${j.kos || 0}" onchange="atualizarKOs('${j.nome}', this)" min="0"></td><td>${j.pontosKOs || 0}</td><td><strong style="color:#d4a121;">${j.pontosTotal || j.pontosPosicao}</strong></td></tr>`; }).join('');
 }
 
 function atualizarKOs(nome, input) { const kos = parseInt(input.value) || 0; const j = classificacaoData.find(j => j.nome === nome); if (j) { j.kos = kos; j.pontosKOs = kos; j.pontosTotal = j.pontosPosicao + kos; db.ref('classificacao').set(classificacaoData); atualizarClassificacao(); } }
 
 function atualizarHistoricoEtapas() {
     const container = document.getElementById('etapasList');
+    if (!container) return;
     if (!historicoEtapas || historicoEtapas.length === 0) { container.innerHTML = '<div style="text-align:center;padding:20px;">Nenhuma etapa finalizada ainda.</div>'; return; }
     container.innerHTML = historicoEtapas.map((etapa, idx) => {
         const data = new Date(etapa.data).toLocaleString('pt-BR');
         const num = historicoEtapas.length - idx;
         const classificacaoOrdenada = (etapa.classificacao || []).filter(j => j && j.posicao).sort((a, b) => a.posicao - b.posicao);
-        return `<div class="etapa-card"><div class="etapa-header" onclick="toggleEtapa(${idx})"><div><strong>📅 ${num}ª ETAPA</strong><div class="etapa-data">${data}</div></div><div>🏆 ${etapa.totalJogadores || 0} jogadores | ${classificacaoOrdenada.length} classificados</div></div><div class="etapa-classificacao" id="etapa-${idx}"><table class="etapa-table"><thead><tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th></tr></thead><tbody>${classificacaoOrdenada.map(j => `<tr><td><strong>${j.posicao}º</strong></td><td>${j.nome || '?'}</td><td>${j.mesa || '-'}</td><td>${j.pontosPosicao || 0}</td><td>${j.kos || 0}</td><td><strong>${j.pontosTotal || j.pontosPosicao || 0}</strong></td></tr>`).join('')}</tbody></table></div></div>`;
+        return `<div class="etapa-card"><div class="etapa-header" onclick="toggleEtapa(${idx})"><div><strong>📅 ${num}ª ETAPA</strong><div class="etapa-data">${data}</div></div><div>🏆 ${etapa.totalJogadores || 0} jogadores | ${classificacaoOrdenada.length} classificados</div></div><div class="etapa-classificacao" id="etapa-${idx}"><table class="etapa-table"><thead><tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th></tr></thead><tbody>${classificacaoOrdenada.map(j => `<tr>
+                        <td><strong>${j.posicao}º</strong></td>
+                        <td>${j.nome || '?'}</td>
+                        <td>${j.mesa || '-'}</td>
+                        <td>${j.pontosPosicao || 0}</td>
+                        <td>${j.kos || 0}</td>
+                        <td><strong>${j.pontosTotal || j.pontosPosicao || 0}</strong></td>
+                    </tr>`).join('')}</tbody>}</div></div>`;
     }).join('');
 }
 
@@ -1744,46 +1767,81 @@ function copiarCSV() { const todos = [...(mesasData.preta || []), ...(mesasData.
 function downloadCSV(csv, nome) { const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = nome; link.click(); }
 
 function inicializarEventos() {
-    document.getElementById('btnSelecionarPreta').onclick = () => { if (!mesaFinalAtiva) { mesaAtual = 'preta'; iniciarApp(); } };
-    document.getElementById('btnSelecionarAmarela').onclick = () => { if (!mesaFinalAtiva) { mesaAtual = 'amarela'; iniciarApp(); } };
-    document.getElementById('btnVoltarParaSelecao').onclick = () => { if (!mesaFinalAtiva) { document.getElementById('appContainer').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); } };
-    document.getElementById('btnIrMesaFinal').onclick = irParaMesaFinal;
-    document.getElementById('btnMesaFinalTopo').onclick = irParaMesaFinalTopo;
-    document.getElementById('btnVoltarMesaFinalSelecao').onclick = voltarDaMesaFinal;
-    document.getElementById('btnAbrirAdminTopo').onclick = () => { if (!mesaFinalAtiva) document.getElementById('modalSenhaAdmin').classList.add('active'); };
-    document.getElementById('btnCancelarSenhaAdmin').onclick = () => { document.getElementById('modalSenhaAdmin').classList.remove('active'); document.getElementById('senhaAdmin').value = ''; };
-    document.getElementById('btnConfirmarSenhaAdmin').onclick = () => { if (document.getElementById('senhaAdmin').value === 'poker2026') { document.getElementById('modalSenhaAdmin').classList.remove('active'); document.getElementById('telaSelecao').classList.add('hidden'); document.getElementById('telaAdmin').classList.remove('hidden'); atualizarAdminResumo(); atualizarAdminEstatisticas(); atualizarHistoricoEtapas(); atualizarSelectMelhorMao(); } else alert('❌ Senha incorreta!'); document.getElementById('senhaAdmin').value = ''; };
-    document.getElementById('btnVoltarAdmin').onclick = () => { document.getElementById('telaAdmin').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); };
-    document.getElementById('btnVoltarInicio').onclick = () => { document.getElementById('telaClassificacao').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); };
-    document.getElementById('btnExportarClassificacao').onclick = exportarClassificacaoCSV;
-    document.getElementById('btnExportarHistorico').onclick = exportarHistoricoCSV;
-    document.getElementById('btnIniciarEtapaAdmin').onclick = iniciarEtapaAdmin;
-    document.getElementById('btnApagarHistorico').onclick = () => document.getElementById('modalApagarHistorico').classList.add('active');
-    document.getElementById('btnCancelarApagarHistorico').onclick = () => document.getElementById('modalApagarHistorico').classList.remove('active');
-    document.getElementById('btnConfirmarApagarHistorico').onclick = apagarHistorico;
-    document.getElementById('btnApagarDados').onclick = () => document.getElementById('modalSenhaApagar').classList.add('active');
-    document.getElementById('btnCancelarSenhaApagar').onclick = () => document.getElementById('modalSenhaApagar').classList.remove('active');
-    document.getElementById('btnConfirmarSenhaApagar').onclick = () => { if (document.getElementById('senhaApagar').value === 'poker2026') apagarTodosDados(); else alert('❌ Senha incorreta!'); document.getElementById('senhaApagar').value = ''; };
-    document.getElementById('btnAplicarMelhorMao').onclick = aplicarMelhorMao;
-    document.getElementById('btnCancelarCorrigir').onclick = () => document.getElementById('modalCorrigir').classList.remove('active');
-    document.getElementById('btnSalvarCorrigir').onclick = salvarCorrecao;
-    document.getElementById('btnCancelarEliminar').onclick = () => document.getElementById('modalEliminar').classList.remove('active');
-    document.getElementById('btnConfirmarEliminar').onclick = confirmarEliminacao;
-    document.getElementById('btnCancelarEliminarMF').onclick = () => document.getElementById('modalEliminarMesaFinal').classList.remove('active');
-    document.getElementById('btnConfirmarEliminarMF').onclick = confirmarEliminacaoMF;
-    document.getElementById('btnEscolherArquivo').onclick = () => document.getElementById('fileInput').click();
-    document.getElementById('fileInput').onchange = (e) => { if (e.target.files[0]) { arquivoSelecionado = e.target.files[0]; document.getElementById('btnProcessarLayout').style.display = 'inline-block'; } };
-    document.getElementById('btnProcessarLayout').onclick = processarLayout;
-    document.getElementById('btnAdminExportarCSV').onclick = exportarCSVSimples;
-    document.getElementById('btnAdminExportarCompleto').onclick = exportarCSVCompleto;
-    document.getElementById('btnCopiarCSV').onclick = copiarCSV;
+    const btnPreta = document.getElementById('btnSelecionarPreta');
+    const btnAmarela = document.getElementById('btnSelecionarAmarela');
+    const btnVoltar = document.getElementById('btnVoltarParaSelecao');
+    const btnIrFinal = document.getElementById('btnIrMesaFinal');
+    const btnFinalTopo = document.getElementById('btnMesaFinalTopo');
+    const btnVoltarFinal = document.getElementById('btnVoltarMesaFinalSelecao');
+    const btnAdmin = document.getElementById('btnAbrirAdminTopo');
+    const btnCancelSenha = document.getElementById('btnCancelarSenhaAdmin');
+    const btnConfirmSenha = document.getElementById('btnConfirmarSenhaAdmin');
+    const btnVoltarAdmin = document.getElementById('btnVoltarAdmin');
+    const btnVoltarInicio = document.getElementById('btnVoltarInicio');
+    const btnExportClass = document.getElementById('btnExportarClassificacao');
+    const btnExportHist = document.getElementById('btnExportarHistorico');
+    const btnIniciarEtapa = document.getElementById('btnIniciarEtapaAdmin');
+    const btnApagarHist = document.getElementById('btnApagarHistorico');
+    const btnCancelApagarHist = document.getElementById('btnCancelarApagarHistorico');
+    const btnConfirmApagarHist = document.getElementById('btnConfirmarApagarHistorico');
+    const btnApagarDados = document.getElementById('btnApagarDados');
+    const btnCancelApagar = document.getElementById('btnCancelarSenhaApagar');
+    const btnConfirmApagar = document.getElementById('btnConfirmarSenhaApagar');
+    const btnMelhorMao = document.getElementById('btnAplicarMelhorMao');
+    const btnCancelCorrigir = document.getElementById('btnCancelarCorrigir');
+    const btnSalvarCorrigir = document.getElementById('btnSalvarCorrigir');
+    const btnCancelEliminar = document.getElementById('btnCancelarEliminar');
+    const btnConfirmEliminar = document.getElementById('btnConfirmarEliminar');
+    const btnCancelEliminarMF = document.getElementById('btnCancelarEliminarMF');
+    const btnConfirmEliminarMF = document.getElementById('btnConfirmarEliminarMF');
+    const btnEscolherArquivo = document.getElementById('btnEscolherArquivo');
+    const btnProcessarLayout = document.getElementById('btnProcessarLayout');
+    const btnExportCSV = document.getElementById('btnAdminExportarCSV');
+    const btnExportCompleto = document.getElementById('btnAdminExportarCompleto');
+    const btnCopiar = document.getElementById('btnCopiarCSV');
+    const fileInput = document.getElementById('fileInput');
+    
+    if (btnPreta) btnPreta.onclick = () => { if (!mesaFinalAtiva) { mesaAtual = 'preta'; iniciarApp(); } };
+    if (btnAmarela) btnAmarela.onclick = () => { if (!mesaFinalAtiva) { mesaAtual = 'amarela'; iniciarApp(); } };
+    if (btnVoltar) btnVoltar.onclick = () => { if (!mesaFinalAtiva) { document.getElementById('appContainer').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); } };
+    if (btnIrFinal) btnIrFinal.onclick = irParaMesaFinal;
+    if (btnFinalTopo) btnFinalTopo.onclick = irParaMesaFinalTopo;
+    if (btnVoltarFinal) btnVoltarFinal.onclick = voltarDaMesaFinal;
+    if (btnAdmin) btnAdmin.onclick = () => { if (!mesaFinalAtiva) document.getElementById('modalSenhaAdmin').classList.add('active'); };
+    if (btnCancelSenha) btnCancelSenha.onclick = () => { document.getElementById('modalSenhaAdmin').classList.remove('active'); document.getElementById('senhaAdmin').value = ''; };
+    if (btnConfirmSenha) btnConfirmSenha.onclick = () => { if (document.getElementById('senhaAdmin').value === 'poker2026') { document.getElementById('modalSenhaAdmin').classList.remove('active'); document.getElementById('telaSelecao').classList.add('hidden'); document.getElementById('telaAdmin').classList.remove('hidden'); atualizarAdminResumo(); atualizarAdminEstatisticas(); atualizarHistoricoEtapas(); atualizarSelectMelhorMao(); } else alert('❌ Senha incorreta!'); document.getElementById('senhaAdmin').value = ''; };
+    if (btnVoltarAdmin) btnVoltarAdmin.onclick = () => { document.getElementById('telaAdmin').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); };
+    if (btnVoltarInicio) btnVoltarInicio.onclick = () => { document.getElementById('telaClassificacao').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); };
+    if (btnExportClass) btnExportClass.onclick = exportarClassificacaoCSV;
+    if (btnExportHist) btnExportHist.onclick = exportarHistoricoCSV;
+    if (btnIniciarEtapa) btnIniciarEtapa.onclick = iniciarEtapaAdmin;
+    if (btnApagarHist) btnApagarHist.onclick = () => document.getElementById('modalApagarHistorico').classList.add('active');
+    if (btnCancelApagarHist) btnCancelApagarHist.onclick = () => document.getElementById('modalApagarHistorico').classList.remove('active');
+    if (btnConfirmApagarHist) btnConfirmApagarHist.onclick = apagarHistorico;
+    if (btnApagarDados) btnApagarDados.onclick = () => document.getElementById('modalSenhaApagar').classList.add('active');
+    if (btnCancelApagar) btnCancelApagar.onclick = () => document.getElementById('modalSenhaApagar').classList.remove('active');
+    if (btnConfirmApagar) btnConfirmApagar.onclick = () => { if (document.getElementById('senhaApagar').value === 'poker2026') apagarTodosDados(); else alert('❌ Senha incorreta!'); document.getElementById('senhaApagar').value = ''; };
+    if (btnMelhorMao) btnMelhorMao.onclick = aplicarMelhorMao;
+    if (btnCancelCorrigir) btnCancelCorrigir.onclick = () => document.getElementById('modalCorrigir').classList.remove('active');
+    if (btnSalvarCorrigir) btnSalvarCorrigir.onclick = salvarCorrecao;
+    if (btnCancelEliminar) btnCancelEliminar.onclick = () => document.getElementById('modalEliminar').classList.remove('active');
+    if (btnConfirmEliminar) btnConfirmEliminar.onclick = confirmarEliminacao;
+    if (btnCancelEliminarMF) btnCancelEliminarMF.onclick = () => document.getElementById('modalEliminarMesaFinal').classList.remove('active');
+    if (btnConfirmEliminarMF) btnConfirmEliminarMF.onclick = confirmarEliminacaoMF;
+    if (btnEscolherArquivo && fileInput) btnEscolherArquivo.onclick = () => fileInput.click();
+    if (fileInput) fileInput.onchange = (e) => { if (e.target.files[0]) { arquivoSelecionado = e.target.files[0]; if (btnProcessarLayout) btnProcessarLayout.style.display = 'inline-block'; } };
+    if (btnProcessarLayout) btnProcessarLayout.onclick = processarLayout;
+    if (btnExportCSV) btnExportCSV.onclick = exportarCSVSimples;
+    if (btnExportCompleto) btnExportCompleto.onclick = exportarCSVCompleto;
+    if (btnCopiar) btnCopiar.onclick = copiarCSV;
     
     document.querySelectorAll('.nav-tab-admin').forEach(tab => {
         tab.onclick = () => {
             document.querySelectorAll('.nav-tab-admin').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.add('hidden'));
             tab.classList.add('active');
-            document.getElementById(`admin-${tab.dataset.adminTab}`).classList.remove('hidden');
+            const tabId = document.getElementById(`admin-${tab.dataset.adminTab}`);
+            if (tabId) tabId.classList.remove('hidden');
             if (tab.dataset.adminTab === 'historico') atualizarHistoricoEtapas();
         };
     });
