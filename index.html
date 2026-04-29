@@ -1253,7 +1253,13 @@ function getAddonValor(nome, addonAtivado) {
 
 function getAddonTexto(nome, addonAtivado) {
     if (!addonAtivado) return '0';
-    if (melhorMaoAtual === nome) return 'GRÁTIS';
+    return '1';
+}
+
+function getAddonParaExportacao(nome, addonAtivado) {
+    if (!addonAtivado) return '0';
+    if (melhorMaoAtual === nome) return '0';
+    if (ADDON_GRATIS.includes(nome)) return '1';
     return '1';
 }
 
@@ -1841,7 +1847,7 @@ function mostrarTelaClassificacao() {
     const tbody = document.getElementById('classificacaoBody');
     if (tbody) {
         if (ordenada.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5">Nenhum jogador eliminado ainda</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5">Nenhum jogador eliminado ainda<td> ';
         } else {
             tbody.innerHTML = ordenada.map(j => {
                 const pontosTotais = j.pontosPosicao + (j.kos || 0);
@@ -1973,7 +1979,7 @@ function atualizarAdminResumo() {
     const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const tbody = document.getElementById('adminResumoBody');
     if (!tbody) return;
-    if (todos.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum dado</td></tr>'; document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; return; }
+    if (todos.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum dado<th> '; document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; return; }
     let totalGeral = 0;
     tbody.innerHTML = todos.map(j => { 
         const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'; 
@@ -2023,7 +2029,7 @@ function atualizarAdminEstatisticas() {
     
     const ranking = [...todos].filter(j => (j.rebuys||0) > 0).sort((a,b) => (b.rebuys||0) - (a.rebuys||0)).slice(0,5);
     if (rankingBody) {
-        if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy</td></table>';
+        if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy<th> ';
         else rankingBody.innerHTML = ranking.map((j,i) => `<tr>
                     <td>${i+1}</td>
                     <td>${j.nome}</td>
@@ -2075,17 +2081,70 @@ function aplicarLayout() {
     atualizarSelectMelhorMao();
 }
 
-function exportarCSVSimples() { const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])]; if (todos.length === 0) { alert('Nenhum jogador!'); return; } let csv = 'Nome,Rebuys,Addon\n'; todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => { const addonGratis = isAddonGratis(j.nome); const addonValor = j.addon ? (addonGratis ? 'GRÁTIS' : 'Sim') : 'Não'; csv += `${j.nome},${j.rebuys||0},${addonValor}\n`; }); downloadCSV(csv, `rebuy-addon-etapa${config.etapa}.csv`); }
+function exportarCSVSimples() {
+    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+    if (todos.length === 0) {
+        alert('Nenhum jogador!');
+        return;
+    }
+    
+    let csv = '';
+    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => {
+        const addonExport = getAddonParaExportacao(j.nome, j.addon);
+        csv += `${j.nome},${j.rebuys || 0},${addonExport}\n`;
+    });
+    
+    downloadCSV(csv, `rebuy-addon-etapa${config.etapa}.csv`);
+}
 
-function exportarCSVCompleto() { const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])]; if (todos.length === 0) { alert('Nenhum jogador!'); return; } let csv = 'Nome,Mesa,Posição,Buy-in,Rebuys,Addon,Total\n'; let total = 0; todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => { const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'; const valorAddon = getAddonValor(j.nome, j.addon); const t = VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + valorAddon; total += t; const addonTexto = getAddonTexto(j.nome, j.addon); csv += `"${j.nome}",${mesa},${j.posicao||''},${VALOR_BUYIN},${j.rebuys||0},${addonTexto},${t}\n`; }); csv += `\n"TOTAL GERAL",,,,,,${total}\n`; downloadCSV(csv, `caixa-completo-etapa${config.etapa}.csv`); }
+function exportarCSVCompleto() {
+    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+    if (todos.length === 0) {
+        alert('Nenhum jogador!');
+        return;
+    }
+    
+    let csv = '';
+    let total = 0;
+    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => {
+        const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela';
+        const valorAddon = getAddonValor(j.nome, j.addon);
+        const t = VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + valorAddon;
+        total += t;
+        const addonExport = getAddonParaExportacao(j.nome, j.addon);
+        csv += `"${j.nome}",${mesa},${j.posicao||''},${VALOR_BUYIN},${j.rebuys||0},${addonExport},${t}\n`;
+    });
+    csv += `\n"TOTAL GERAL",,,,,,${total}\n`;
+    downloadCSV(csv, `caixa-completo-etapa${config.etapa}.csv`);
+}
 
-function exportarClassificacaoCSV() { if (classificacaoData.length === 0) { alert('Nenhum classificado!'); return; } let csv = 'Posição,Jogador,Mesa,Pontos Posição,KO\'s,Pontos KO\'s,Pontuação Total,Etapa\n'; [...classificacaoData].sort((a,b) => a.posicao - b.posicao).forEach(j => csv += `${j.posicao},"${j.nome}",${j.mesa},${j.pontosPosicao},${j.kos||0},${j.pontosKOs||0},${j.pontosTotal||j.pontosPosicao},${j.etapa||config.etapa}\n`); downloadCSV(csv, `classificacao-etapa${config.etapa}.csv`); }
+function copiarCSV() {
+    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+    if (todos.length === 0) {
+        alert('Nenhum jogador!');
+        return;
+    }
+    
+    let csv = '';
+    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => {
+        const addonExport = getAddonParaExportacao(j.nome, j.addon);
+        csv += `${j.nome},${j.rebuys || 0},${addonExport}\n`;
+    });
+    
+    navigator.clipboard.writeText(csv).then(() => {
+        alert('✅ Dados copiados para área de transferência!\n\nFormato: Nome,Rebuys,Addon');
+    }).catch(() => {
+        alert('❌ Erro ao copiar. Tente novamente.');
+    });
+}
 
-function exportarHistoricoCSV() { if (historicoEtapas.length === 0) { alert('Nenhuma etapa!'); return; } let csv = 'Etapa,Data,Jogador,Posição,Mesa,Pontos Posição,KO\'s,Pontos Total\n'; historicoEtapas.forEach((etapa, idx) => { const data = new Date(etapa.data).toLocaleString('pt-BR'); const num = etapa.etapaNumero || (historicoEtapas.length - idx + 3); [...etapa.classificacao].sort((a,b) => a.posicao - b.posicao).forEach(j => { csv += `${num},"${data}","${j.nome}",${j.posicao},"${j.mesa}",${j.pontosPosicao},${j.kos||0},${j.pontosTotal||j.pontosPosicao}\n`; }); }); downloadCSV(csv, 'historico-etapas.csv'); }
-
-function copiarCSV() { const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])]; if (todos.length === 0) { alert('Nenhum jogador!'); return; } let csv = 'Nome,Rebuys,Addon\n'; todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => { const addonGratis = isAddonGratis(j.nome); const addonValor = j.addon ? (addonGratis ? 'GRÁTIS' : 'Sim') : 'Não'; csv += `${j.nome},${j.rebuys||0},${addonValor}\n`; }); navigator.clipboard.writeText(csv).then(() => alert('✅ Copiado!')).catch(() => alert('❌ Erro')); }
-
-function downloadCSV(csv, nome) { const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = nome; link.click(); }
+function downloadCSV(csv, nome) { 
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); 
+    const link = document.createElement('a'); 
+    link.href = URL.createObjectURL(blob); 
+    link.download = nome; 
+    link.click(); 
+}
 
 function inicializarEventos() {
     const logoAdmin = document.getElementById('logoAdmin');
