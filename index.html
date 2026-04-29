@@ -343,6 +343,7 @@
         }
         .badge-rebuy { background: #FF6600; color: #fff; }
         .badge-addon { background: #4CAF50; color: #fff; }
+        .badge-addon-gratis { background: #FFD700; color: #000; }
         .badge-addon-melhor-mao { background: #FFD700; color: #000; }
         .badge-eliminado { background: #c72c48; color: #fff; }
         
@@ -534,6 +535,7 @@
             color: #d4a121;
             padding: 8px;
             text-align: left;
+            font-family: 'Anton', sans-serif;
         }
         .resumo-table td {
             padding: 6px 8px;
@@ -648,15 +650,35 @@
             color: #d4a121;
             padding: 12px;
             text-align: center;
+            font-family: 'Anton', sans-serif;
+            font-size: 1.1em;
         }
         .classificacao-table td {
             padding: 10px;
             text-align: center;
             border-bottom: 1px solid #2d5016;
+            font-family: 'Anton', sans-serif;
         }
         .top-1 { background: rgba(255, 215, 0, 0.2); }
         .top-2 { background: rgba(192, 192, 192, 0.2); }
         .top-3 { background: rgba(205, 127, 50, 0.2); }
+        
+        .classificacao-foto {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #d4a121;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        
+        .classificacao-nome {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
         
         .ko-input {
             width: 60px;
@@ -691,6 +713,7 @@
             cursor: pointer;
             flex-wrap: wrap;
             gap: 10px;
+            font-family: 'Anton', sans-serif;
         }
         
         .etapa-data {
@@ -713,6 +736,7 @@
             background: #1a3d1a;
             padding: 6px;
             text-align: center;
+            font-family: 'Anton', sans-serif;
         }
         .etapa-table td {
             padding: 5px;
@@ -748,6 +772,7 @@
             font-weight: bold;
             display: block;
             margin-bottom: 5px;
+            font-family: 'Anton', sans-serif;
         }
         .form-group input {
             width: 100%;
@@ -828,6 +853,10 @@
         .mesa-final-app .stats-cards {
             display: none;
         }
+        
+        .carta-icon {
+            font-size: 1.2em;
+        }
     </style>
 </head>
 <body>
@@ -876,7 +905,7 @@
         </div>
         
         <div class="melhor-mao-section">
-            <h3>🏆 MELHOR MÃO DA ETAPA ANTERIOR 🏆</h3>
+            <h3>🃏 MELHOR MÃO DA ETAPA ANTERIOR 🃏</h3>
             <p style="margin-bottom: 10px;">Selecione o jogador que fez a melhor mão - ele ganhará ADDON GRÁTIS</p>
             <select id="selectMelhorMao" class="melhor-mao-select">
                 <option value="">-- Selecione um jogador --</option>
@@ -995,7 +1024,7 @@
 <div class="tela-classificacao hidden" id="telaClassificacao">
     <div class="classificacao-container">
         <div class="classificacao-header">
-            <h1>🏆 CLASSIFICAÇÃO DA ETAPA</h1>
+            <h1>🃏 CLASSIFICAÇÃO DA ETAPA 🃏</h1>
             <div>
                 <button class="btn btn-success" id="btnSalvarEtapa" style="margin-right: 10px;">💾 SALVAR ETAPA</button>
                 <button class="btn btn-info" id="btnEnviarWhatsApp" style="margin-right: 10px;">📱 ENVIAR PARA WHATSAPP</button>
@@ -1034,7 +1063,7 @@
                     <span>|</span>
                     <span class="total-num" id="pretaTotal">0</span>
                 </div>
-                <div style="font-size: 0.7em; opacity: 0.8;">🟢 Vivos | ❌ Eliminados | 📊 Total</div>
+                <div style="font-size: 0.7em; opacity: 0.8;">🟢 Jogando | ❌ Eliminados | 📊 Total</div>
             </div>
             <div class="stat-card amarela">
                 <div class="stat-card-titulo">♦️ MESA AMARELA</div>
@@ -1045,7 +1074,7 @@
                     <span>|</span>
                     <span class="total-num" id="amarelaTotal">0</span>
                 </div>
-                <div style="font-size: 0.7em; opacity: 0.8;">🟢 Vivos | ❌ Eliminados | 📊 Total</div>
+                <div style="font-size: 0.7em; opacity: 0.8;">🟢 Jogando | ❌ Eliminados | 📊 Total</div>
             </div>
             <div class="stat-card total">
                 <div class="stat-card-titulo">🏆 TOTAL TORNEIO</div>
@@ -1189,7 +1218,29 @@ let audioContext = null;
 let fotosJogadores = {};
 
 function isAddonGratis(nome) {
-    return ADDON_GRATIS.includes(nome) || melhorMaoAtual === nome;
+    // Melhor mão sempre é GRÁTIS
+    if (melhorMaoAtual === nome) return true;
+    // Jogadores específicos têm addon grátis
+    return ADDON_GRATIS.includes(nome);
+}
+
+function isAddonGratisPermanente(nome) {
+    // Apenas os jogadores específicos têm addon grátis permanente
+    return ADDON_GRATIS.includes(nome);
+}
+
+function getAddonTexto(nome, addonAtivado) {
+    if (!addonAtivado) return '0';
+    if (melhorMaoAtual === nome) return 'GRÁTIS';
+    if (ADDON_GRATIS.includes(nome)) return '1';
+    return '1';
+}
+
+function getAddonValor(nome, addonAtivado) {
+    if (!addonAtivado) return 0;
+    if (melhorMaoAtual === nome) return 0;
+    if (ADDON_GRATIS.includes(nome)) return 0;
+    return VALOR_ADDON;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -1244,6 +1295,8 @@ document.addEventListener('DOMContentLoaded', function() {
         else melhorMaoAtual = null;
         atualizarGridJogadores();
         atualizarInfoMelhorMao();
+        atualizarAdminResumo();
+        atualizarAdminEstatisticas();
     });
     
     inicializarEventos();
@@ -1345,7 +1398,7 @@ function atualizarInfoMelhorMao() {
     const infoDiv = document.getElementById('melhorMaoInfo');
     if (melhorMaoAtual && infoDiv) {
         infoDiv.style.display = 'block';
-        infoDiv.innerHTML = `🏆 MELHOR MÃO: <strong style="color:#FFD700;">${melhorMaoAtual}</strong> - ADDON GRÁTIS! 🏆`;
+        infoDiv.innerHTML = `🃏 MELHOR MÃO: <strong style="color:#FFD700;">${melhorMaoAtual}</strong> - ADDON GRÁTIS! 🃏`;
     } else if (infoDiv) {
         infoDiv.style.display = 'none';
     }
@@ -1426,10 +1479,10 @@ function renderizarMesaFinal() {
                     <div class="jogador-posicao-numero">${idx + 1}</div>
                     <img class="jogador-foto" src="${getFotoJogador(j.nome)}">
                     <div class="jogador-info">
-                        <div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🏆' : ''}</div>
+                        <div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🃏' : ''}</div>
                         <div class="jogador-valores">
                             ${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}
-                            ${j.addon ? `<span class="badge ${isMelhorMao ? 'badge-addon-melhor-mao' : 'badge-addon'}">💎 Addon</span>` : ''}
+                            ${j.addon ? `<span class="badge ${isMelhorMao ? 'badge-addon-melhor-mao' : (isAddonGratisPermanente(j.nome) ? 'badge-addon-gratis' : 'badge-addon')}">💎 Addon ${isAddonGratis(j.nome) ? 'GRÁTIS' : ''}</span>` : ''}
                         </div>
                     </div>
                     <div class="jogador-actions">
@@ -1531,14 +1584,16 @@ function atualizarGridJogadores() {
     function renderizarLado(jogadoresLista) {
         return jogadoresLista.map(j => {
             const isMelhorMao = melhorMaoAtual === j.nome;
+            const addonGratis = isAddonGratis(j.nome);
+            const addonTexto = j.addon ? (addonGratis ? 'GRÁTIS' : '') : '';
             return `<div class="jogador-card ${j.eliminado ? 'eliminado' : ''} ${isMelhorMao ? 'melhor-mao' : ''}">
                         <div class="jogador-posicao-numero">${j.posicao || '?'}</div>
                         <img class="jogador-foto" src="${getFotoJogador(j.nome)}">
                         <div class="jogador-info">
-                            <div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🏆' : ''}</div>
+                            <div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🃏' : ''}</div>
                             <div class="jogador-valores">
                                 ${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}
-                                ${j.addon ? `<span class="badge ${isMelhorMao ? 'badge-addon-melhor-mao' : 'badge-addon'}">💎 Addon</span>` : ''}
+                                ${j.addon ? `<span class="badge ${isMelhorMao ? 'badge-addon-melhor-mao' : (addonGratis ? 'badge-addon-gratis' : 'badge-addon')}">💎 Addon ${addonTexto}</span>` : ''}
                                 ${j.eliminado ? `<span class="badge badge-eliminado">❌ Elim (${j.posicaoFinal}º)</span>` : ''}
                             </div>
                         </div>
@@ -1663,9 +1718,13 @@ function mostrarTelaClassificacao() {
         } else {
             tbody.innerHTML = ordenada.map(j => {
                 const pontosTotais = j.pontosPosicao + (j.kos || 0);
+                const fotoUrl = getFotoJogador(j.nome);
                 return `<tr class="${j.posicao === 1 ? 'top-1' : j.posicao === 2 ? 'top-2' : j.posicao === 3 ? 'top-3' : ''}">
                             <td><strong>${j.posicao}º</strong></td>
-                            <td>${j.nome}</td>
+                            <td class="classificacao-nome">
+                                <img class="classificacao-foto" src="${fotoUrl}" onerror="this.style.display='none'">
+                                ${j.nome}
+                            </td>
                             <td>${j.pontosPosicao}</td>
                             <td>${j.kos || 0}</td>
                             <td><strong style="color:#d4a121;">${pontosTotais}</strong></td>
@@ -1713,7 +1772,7 @@ function enviarClassificacaoWhatsApp() {
         return;
     }
     
-    let mensagem = `🏆 *CLASSIFICAÇÃO ${config.etapa}ª ETAPA - POKER DE QUINTA* 🏆\n\n`;
+    let mensagem = `🃏 *CLASSIFICAÇÃO ${config.etapa}ª ETAPA - POKER DE QUINTA* 🃏\n\n`;
     ordenada.forEach(j => {
         const pontosTotais = j.pontosPosicao + (j.kos || 0);
         mensagem += `${j.posicao}º - ${j.nome} - ${j.pontosPosicao} pts + ${j.kos || 0} KO = *${pontosTotais} pts*\n`;
@@ -1799,10 +1858,15 @@ function atualizarAdminResumo() {
     tbody.innerHTML = todos.map(j => { 
         const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'; 
         const addonGratis = isAddonGratis(j.nome);
-        const valorAddon = (j.addon && !addonGratis) ? VALOR_ADDON : 0;
+        const valorAddon = getAddonValor(j.nome, j.addon);
         const total = VALOR_BUYIN + (j.rebuys || 0) * VALOR_REBUY + valorAddon;
         totalGeral += total; 
-        const addonTexto = j.addon ? (addonGratis ? 'Não' : '1') : '0';
+        let addonTexto = '0';
+        if (j.addon) {
+            if (melhorMaoAtual === j.nome) addonTexto = 'GRÁTIS';
+            else if (ADDON_GRATIS.includes(j.nome)) addonTexto = '1';
+            else addonTexto = '1';
+        }
         return `<tr>
                     <td>${j.nome}${j.eliminado ? ' ❌' : ''}${j.eliminado ? ` (${j.posicaoFinal}º)` : ''}</td>
                     <td>${mesa}</td>
@@ -1835,11 +1899,11 @@ function atualizarAdminEstatisticas() {
     if (pretaVivos) pretaVivos.textContent = preta.length;
     if (pretaRebuys) pretaRebuys.textContent = preta.reduce((s,j) => s + (j.rebuys||0), 0);
     if (pretaAddons) pretaAddons.textContent = preta.filter(j => j.addon).length;
-    if (pretaTotal) pretaTotal.textContent = `R$ ${preta.reduce((s,j) => { const addonGratis = isAddonGratis(j.nome); const valorAddon = (j.addon && !addonGratis) ? VALOR_ADDON : 0; return s + VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + valorAddon; }, 0)}`;
+    if (pretaTotal) pretaTotal.textContent = `R$ ${preta.reduce((s,j) => { const valorAddon = getAddonValor(j.nome, j.addon); return s + VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + valorAddon; }, 0)}`;
     if (amarelaVivos) amarelaVivos.textContent = amarela.length;
     if (amarelaRebuys) amarelaRebuys.textContent = amarela.reduce((s,j) => s + (j.rebuys||0), 0);
     if (amarelaAddons) amarelaAddons.textContent = amarela.filter(j => j.addon).length;
-    if (amarelaTotal) amarelaTotal.textContent = `R$ ${amarela.reduce((s,j) => { const addonGratis = isAddonGratis(j.nome); const valorAddon = (j.addon && !addonGratis) ? VALOR_ADDON : 0; return s + VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + valorAddon; }, 0)}`;
+    if (amarelaTotal) amarelaTotal.textContent = `R$ ${amarela.reduce((s,j) => { const valorAddon = getAddonValor(j.nome, j.addon); return s + VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + valorAddon; }, 0)}`;
     if (totalRebuys) totalRebuys.textContent = todos.reduce((s,j) => s + (j.rebuys||0), 0);
     if (totalAddons) totalAddons.textContent = todos.filter(j => j.addon).length;
     
@@ -1870,7 +1934,7 @@ function atualizarHistoricoEtapas() {
                             <td>${j.pontosPosicao || 0}</td>
                             <td>${j.kos || 0}</td>
                             <td><strong>${j.pontosTotal || j.pontosPosicao || 0}</strong></td>
-                        </tr>`).join('')}</tbody></table></div></div>`;
+                        </tr>`).join('')}</tbody>}</div></div>`;
     }).join('');
 }
 
@@ -1897,15 +1961,15 @@ function aplicarLayout() {
     atualizarSelectMelhorMao();
 }
 
-function exportarCSVSimples() { const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])]; if (todos.length === 0) { alert('Nenhum jogador!'); return; } let csv = 'Nome,Rebuys,Addon\n'; todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => { const addonGratis = isAddonGratis(j.nome); const addonValor = j.addon ? (addonGratis ? 'Não' : 'Sim') : 'Não'; csv += `${j.nome},${j.rebuys||0},${addonValor}\n`; }); downloadCSV(csv, `rebuy-addon-etapa${config.etapa}.csv`); }
+function exportarCSVSimples() { const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])]; if (todos.length === 0) { alert('Nenhum jogador!'); return; } let csv = 'Nome,Rebuys,Addon\n'; todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => { const addonGratis = isAddonGratis(j.nome); const addonValor = j.addon ? (addonGratis ? 'GRÁTIS' : 'Sim') : 'Não'; csv += `${j.nome},${j.rebuys||0},${addonValor}\n`; }); downloadCSV(csv, `rebuy-addon-etapa${config.etapa}.csv`); }
 
-function exportarCSVCompleto() { const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])]; if (todos.length === 0) { alert('Nenhum jogador!'); return; } let csv = 'Nome,Mesa,Posição,Buy-in,Rebuys,Addon,Total\n'; let total = 0; todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => { const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'; const addonGratis = isAddonGratis(j.nome); const valorAddon = (j.addon && !addonGratis) ? VALOR_ADDON : 0; const t = VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + valorAddon; total += t; const addonTexto = j.addon ? (addonGratis ? 'Não' : 'Sim') : 'Não'; csv += `"${j.nome}",${mesa},${j.posicao||''},${VALOR_BUYIN},${j.rebuys||0},${addonTexto},${t}\n`; }); csv += `\n"TOTAL GERAL",,,,,,${total}\n`; downloadCSV(csv, `caixa-completo-etapa${config.etapa}.csv`); }
+function exportarCSVCompleto() { const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])]; if (todos.length === 0) { alert('Nenhum jogador!'); return; } let csv = 'Nome,Mesa,Posição,Buy-in,Rebuys,Addon,Total\n'; let total = 0; todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => { const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'; const addonGratis = isAddonGratis(j.nome); const valorAddon = getAddonValor(j.nome, j.addon); const t = VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + valorAddon; total += t; const addonTexto = j.addon ? (addonGratis ? 'GRÁTIS' : 'Sim') : 'Não'; csv += `"${j.nome}",${mesa},${j.posicao||''},${VALOR_BUYIN},${j.rebuys||0},${addonTexto},${t}\n`; }); csv += `\n"TOTAL GERAL",,,,,,${total}\n`; downloadCSV(csv, `caixa-completo-etapa${config.etapa}.csv`); }
 
 function exportarClassificacaoCSV() { if (classificacaoData.length === 0) { alert('Nenhum classificado!'); return; } let csv = 'Posição,Jogador,Mesa,Pontos Posição,KO\'s,Pontos KO\'s,Pontuação Total,Etapa\n'; [...classificacaoData].sort((a,b) => a.posicao - b.posicao).forEach(j => csv += `${j.posicao},"${j.nome}",${j.mesa},${j.pontosPosicao},${j.kos||0},${j.pontosKOs||0},${j.pontosTotal||j.pontosPosicao},${j.etapa||config.etapa}\n`); downloadCSV(csv, `classificacao-etapa${config.etapa}.csv`); }
 
 function exportarHistoricoCSV() { if (historicoEtapas.length === 0) { alert('Nenhuma etapa!'); return; } let csv = 'Etapa,Data,Jogador,Posição,Mesa,Pontos Posição,KO\'s,Pontos Total\n'; historicoEtapas.forEach((etapa, idx) => { const data = new Date(etapa.data).toLocaleString('pt-BR'); const num = historicoEtapas.length - idx; [...etapa.classificacao].sort((a,b) => a.posicao - b.posicao).forEach(j => { csv += `${num},"${data}","${j.nome}",${j.posicao},"${j.mesa}",${j.pontosPosicao},${j.kos||0},${j.pontosTotal||j.pontosPosicao}\n`; }); }); downloadCSV(csv, 'historico-etapas.csv'); }
 
-function copiarCSV() { const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])]; if (todos.length === 0) { alert('Nenhum jogador!'); return; } let csv = 'Nome,Rebuys,Addon\n'; todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => { const addonGratis = isAddonGratis(j.nome); const addonValor = j.addon ? (addonGratis ? 'Não' : 'Sim') : 'Não'; csv += `${j.nome},${j.rebuys||0},${addonValor}\n`; }); navigator.clipboard.writeText(csv).then(() => alert('✅ Copiado!')).catch(() => alert('❌ Erro')); }
+function copiarCSV() { const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])]; if (todos.length === 0) { alert('Nenhum jogador!'); return; } let csv = 'Nome,Rebuys,Addon\n'; todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => { const addonGratis = isAddonGratis(j.nome); const addonValor = j.addon ? (addonGratis ? 'GRÁTIS' : 'Sim') : 'Não'; csv += `${j.nome},${j.rebuys||0},${addonValor}\n`; }); navigator.clipboard.writeText(csv).then(() => alert('✅ Copiado!')).catch(() => alert('❌ Erro')); }
 
 function downloadCSV(csv, nome) { const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = nome; link.click(); }
 
