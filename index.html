@@ -862,6 +862,16 @@
         .carta-icon {
             font-size: 1.2em;
         }
+        
+        .proxima-etapa-info {
+            background: #1a3d1a;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 10px;
+            text-align: center;
+            font-family: 'Anton', sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -933,8 +943,11 @@
                 <option value="12">12ª ETAPA</option>
                 <option value="13">13ª ETAPA</option>
             </select>
-            <button class="btn btn-success" id="btnIniciarEtapaAdmin">🚀 INICIAR ETAPA</button>
-            <button class="btn btn-warning" id="btnFinalizarEtapaMostrarClassificacao">🏆 FINALIZAR ETAPA E MOSTRAR CLASSIFICAÇÃO</button>
+            <button class="btn btn-success" id="btnIniciarEtapaAdmin">🚀 INICIAR ETAPA SELECIONADA</button>
+        </div>
+        
+        <div id="proximaEtapaInfo" class="proxima-etapa-info" style="display: none;">
+            ⏭️ PRÓXIMA ETAPA DISPONÍVEL: <strong id="proximaEtapaNumero"></strong> - Clique em "INICIAR ETAPA SELECIONADA" para começar
         </div>
         
         <div class="import-section">
@@ -1031,7 +1044,7 @@
         <div class="classificacao-header">
             <h1>🃏 CLASSIFICAÇÃO DA ETAPA 🃏</h1>
             <div>
-                <button class="btn btn-success" id="btnSalvarEtapa" style="margin-right: 10px;">💾 SALVAR ETAPA</button>
+                <button class="btn btn-warning" id="btnSalvarEProximaEtapa" style="margin-right: 10px;">💾 SALVAR E IR PARA PRÓXIMA ETAPA</button>
                 <button class="btn btn-info" id="btnEnviarWhatsApp" style="margin-right: 10px;">📱 ENVIAR PARA WHATSAPP</button>
                 <button class="voltar-inicio-btn" id="btnVoltarInicio" style="padding: 12px 25px; background: #c72c48; color: #fff; border: none; border-radius: 8px; cursor: pointer;">← VOLTAR</button>
             </div>
@@ -1223,19 +1236,16 @@ let audioContext = null;
 let fotosJogadores = {};
 
 function isAddonGratis(nome) {
-    // Apenas a melhor mão tem destaque visual de GRÁTIS
     if (melhorMaoAtual === nome) return true;
     return false;
 }
 
 function isAddonSemValor(nome) {
-    // Jogadores específicos têm addon sem valor (não cobrado, mas sem destaque visual)
     return ADDON_GRATIS.includes(nome);
 }
 
 function getAddonValor(nome, addonAtivado) {
     if (!addonAtivado) return 0;
-    // Melhor mão e jogadores específicos não pagam addon
     if (melhorMaoAtual === nome) return 0;
     if (ADDON_GRATIS.includes(nome)) return 0;
     return VALOR_ADDON;
@@ -1247,6 +1257,101 @@ function getAddonTexto(nome, addonAtivado) {
     return '1';
 }
 
+function salvarEtapaNoHistorico() {
+    if (classificacaoData.length > 0 && totalJogadoresIniciais > 0) {
+        const etapaAtual = config.etapa;
+        historicoEtapas.unshift({ 
+            data: new Date().toISOString(), 
+            classificacao: classificacaoData.map(j => ({ 
+                nome: j.nome, 
+                mesa: j.mesa, 
+                posicao: j.posicao, 
+                pontosPosicao: j.pontosPosicao, 
+                kos: j.kos || 0, 
+                pontosKOs: j.pontosKOs || 0, 
+                pontosTotal: j.pontosTotal || (j.pontosPosicao + (j.kos || 0)), 
+                dataEliminacao: j.dataEliminacao, 
+                etapa: j.etapa || etapaAtual 
+            })), 
+            totalJogadores: totalJogadoresIniciais, 
+            totalClassificados: classificacaoData.length, 
+            etapaNumero: etapaAtual 
+        });
+        db.ref('historicoEtapas').set(historicoEtapas);
+        return true;
+    }
+    return false;
+}
+
+function prepararProximaEtapa() {
+    const proximaEtapa = config.etapa + 1;
+    if (proximaEtapa <= 13) {
+        const infoDiv = document.getElementById('proximaEtapaInfo');
+        const spanProxima = document.getElementById('proximaEtapaNumero');
+        if (infoDiv && spanProxima) {
+            spanProxima.textContent = `${proximaEtapa}ª ETAPA`;
+            infoDiv.style.display = 'block';
+        }
+        
+        const selectEtapa = document.getElementById('adminSelectEtapa');
+        if (selectEtapa) {
+            selectEtapa.value = proximaEtapa;
+        }
+    } else {
+        const infoDiv = document.getElementById('proximaEtapaInfo');
+        if (infoDiv) {
+            infoDiv.style.display = 'none';
+        }
+    }
+}
+
+function finalizarETAPARegistrarProxima(mostrarMensagem = true) {
+    const salvou = salvarEtapaNoHistorico();
+    
+    if (salvou) {
+        if (mostrarMensagem) {
+            alert(`✅ ${config.etapa}ª ETAPA salva no histórico com sucesso!`);
+        }
+        
+        prepararProximaEtapa();
+        
+        mesasData = { preta: [], amarela: [] };
+        classificacaoData = [];
+        contadorEliminados = 0;
+        mesaFinalAtiva = false;
+        jogadoresMesaFinal = [];
+        totalJogadoresIniciais = 0;
+        melhorMaoAtual = null;
+        
+        db.ref('mesas').set(mesasData);
+        db.ref('classificacao').set(classificacaoData);
+        db.ref('melhorMao').set(null);
+        
+        atualizarAdminResumo();
+        atualizarAdminEstatisticas();
+        atualizarHistoricoEtapas();
+        atualizarStatsCards();
+        atualizarBotoesMesaFinal();
+        atualizarSelectMelhorMao();
+        
+        if (mostrarMensagem) {
+            const proxima = config.etapa + 1;
+            if (proxima <= 13) {
+                alert(`🎯 PRÓXIMA ETAPA: ${proxima}ª ETAPA!\n\nClique em "INICIAR ETAPA SELECIONADA" no painel administrativo para começar a próxima etapa.`);
+            } else {
+                alert(`🏆 PARABÉNS! Temporada concluída até a 13ª etapa!`);
+            }
+        }
+        
+        return true;
+    } else {
+        if (mostrarMensagem) {
+            alert('Nenhum dado para salvar! É necessário ter eliminações registradas.');
+        }
+        return false;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('statusIndicator').textContent = '✅ Conectado';
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -1256,6 +1361,17 @@ document.addEventListener('DOMContentLoaded', function() {
         else { config = { etapa: 4 }; db.ref('config').set(config); }
         const selectEtapa = document.getElementById('adminSelectEtapa');
         if (selectEtapa) selectEtapa.value = config.etapa || 4;
+        
+        const infoDiv = document.getElementById('proximaEtapaInfo');
+        if (infoDiv && mesasData && (mesasData.preta?.length === 0 && mesasData.amarela?.length === 0)) {
+            if (config.etapa <= 13) {
+                const spanProxima = document.getElementById('proximaEtapaNumero');
+                if (spanProxima) spanProxima.textContent = `${config.etapa}ª ETAPA`;
+                infoDiv.style.display = 'block';
+            } else {
+                infoDiv.style.display = 'none';
+            }
+        }
     });
     
     db.ref('fotosJogadores').on('value', (snapshot) => {
@@ -1281,6 +1397,11 @@ document.addEventListener('DOMContentLoaded', function() {
         verificarMesaFinal();
         atualizarBotoesMesaFinal();
         atualizarSelectMelhorMao();
+        
+        const todosVivos = todosJogadores.filter(j => !j.eliminado);
+        if (todosVivos.length === 0 && totalJogadoresIniciais > 0 && classificacaoData.length > 0) {
+            finalizarETAPARegistrarProxima(true);
+        }
     });
     
     db.ref('classificacao').on('value', (snapshot) => {
@@ -1734,7 +1855,7 @@ function mostrarTelaClassificacao() {
                             <td>${j.pontosPosicao}</td>
                             <td>${j.kos || 0}</td>
                             <td><strong style="color:#d4a121;">${pontosTotais}</strong></td>
-                         </tr>`;
+                        </tr>`;
             }).join('');
         }
     }
@@ -1745,29 +1866,11 @@ function mostrarTelaClassificacao() {
     document.getElementById('telaClassificacao').classList.remove('hidden');
 }
 
-function salvarEtapa() {
-    if (classificacaoData.length > 0) {
-        historicoEtapas.unshift({ 
-            data: new Date().toISOString(), 
-            classificacao: classificacaoData.map(j => ({ 
-                nome: j.nome, 
-                mesa: j.mesa, 
-                posicao: j.posicao, 
-                pontosPosicao: j.pontosPosicao, 
-                kos: j.kos || 0, 
-                pontosKOs: j.pontosKOs || 0, 
-                pontosTotal: j.pontosTotal || (j.pontosPosicao + (j.kos || 0)), 
-                dataEliminacao: j.dataEliminacao, 
-                etapa: j.etapa || config.etapa 
-            })), 
-            totalJogadores: totalJogadoresIniciais, 
-            totalClassificados: classificacaoData.length, 
-            etapaNumero: config.etapa 
-        });
-        db.ref('historicoEtapas').set(historicoEtapas);
-        alert(`✅ ${config.etapa}ª ETAPA salva no histórico!`);
-    } else {
-        alert('Nenhum jogador eliminado para salvar!');
+function salvarEProximaEtapa() {
+    if (finalizarETAPARegistrarProxima(true)) {
+        document.getElementById('telaClassificacao').classList.add('hidden');
+        document.getElementById('telaSelecao').classList.remove('hidden');
+        document.getElementById('telaAdmin').classList.add('hidden');
     }
 }
 
@@ -1792,14 +1895,17 @@ function enviarClassificacaoWhatsApp() {
 
 function iniciarEtapaAdmin() {
     const novaEtapa = parseInt(document.getElementById('adminSelectEtapa').value);
-    if (confirm(`Iniciar ${novaEtapa}ª ETAPA? Os dados atuais serão salvos no histórico.`)) {
+    
+    if (confirm(`INICIAR ${novaEtapa}ª ETAPA?\n\nIsso irá:\n- Salvar a etapa atual no histórico (se houver dados)\n- Limpar todos os dados atuais\n- Preparar o sistema para a nova etapa\n\nDeseja continuar?`)) {
+        
         if (classificacaoData.length > 0 || totalJogadoresIniciais > 0) {
-            historicoEtapas.unshift({ data: new Date().toISOString(), classificacao: classificacaoData.map(j => ({ nome: j.nome, mesa: j.mesa, posicao: j.posicao, pontosPosicao: j.pontosPosicao, kos: j.kos || 0, pontosKOs: j.pontosKOs || 0, pontosTotal: j.pontosTotal || j.pontosPosicao, dataEliminacao: j.dataEliminacao, etapa: j.etapa || config.etapa })), totalJogadores: totalJogadoresIniciais, totalClassificados: classificacaoData.length, etapaNumero: config.etapa });
-            db.ref('historicoEtapas').set(historicoEtapas);
+            salvarEtapaNoHistorico();
             alert(`✅ ${config.etapa}ª ETAPA salva no histórico!`);
         }
+        
         config.etapa = novaEtapa;
         db.ref('config').set(config);
+        
         mesasData = { preta: [], amarela: [] };
         classificacaoData = [];
         contadorEliminados = 0;
@@ -1807,16 +1913,22 @@ function iniciarEtapaAdmin() {
         jogadoresMesaFinal = [];
         totalJogadoresIniciais = 0;
         melhorMaoAtual = null;
+        
         db.ref('mesas').set(mesasData);
         db.ref('classificacao').set(classificacaoData);
         db.ref('melhorMao').set(null);
+        
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
         atualizarHistoricoEtapas();
         atualizarStatsCards();
         atualizarBotoesMesaFinal();
         atualizarSelectMelhorMao();
-        alert(`✅ ${novaEtapa}ª ETAPA iniciada! Importe o layout das mesas.`);
+        
+        const infoDiv = document.getElementById('proximaEtapaInfo');
+        if (infoDiv) infoDiv.style.display = 'none';
+        
+        alert(`✅ ${novaEtapa}ª ETAPA iniciada!\n\nImporte o layout das mesas para começar.`);
     }
 }
 
@@ -1825,7 +1937,7 @@ function finalizarEtapaMostrarClassificacao() {
     const vivos = todosJogadores.filter(j => !j.eliminado);
     
     if (vivos.length > 0) {
-        if (confirm(`Ainda existem ${vivos.length} jogadores vivos. Deseja finalizar a etapa mesmo assim? Os jogadores vivos serão eliminados na ordem atual.`)) {
+        if (confirm(`Ainda existem ${vivos.length} jogadores vivos. Deseja finalizar a etapa mesmo assim? Os jogadores vivos serão eliminados na ordem atual e a etapa será salva.`)) {
             const jogadoresOrdenados = [...vivos].sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
             for (let i = 0; i < jogadoresOrdenados.length; i++) {
                 const jogador = jogadoresOrdenados[i];
@@ -1848,9 +1960,11 @@ function finalizarEtapaMostrarClassificacao() {
             }
             db.ref('classificacao').set(classificacaoData);
             db.ref('mesas').set(mesasData);
+            finalizarETAPARegistrarProxima(true);
             mostrarTelaClassificacao();
         }
     } else {
+        finalizarETAPARegistrarProxima(true);
         mostrarTelaClassificacao();
     }
 }
@@ -1909,7 +2023,7 @@ function atualizarAdminEstatisticas() {
     
     const ranking = [...todos].filter(j => (j.rebuys||0) > 0).sort((a,b) => (b.rebuys||0) - (a.rebuys||0)).slice(0,5);
     if (rankingBody) {
-        if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy</td></tr>';
+        if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy</td></table>';
         else rankingBody.innerHTML = ranking.map((j,i) => `<tr>
                     <td>${i+1}</td>
                     <td>${j.nome}</td>
@@ -1934,7 +2048,7 @@ function atualizarHistoricoEtapas() {
                             <td>${j.pontosPosicao || 0}</td>
                             <td>${j.kos || 0}</td>
                             <td><strong>${j.pontosTotal || j.pontosPosicao || 0}</strong></td>
-                        </tr>`).join('')}</tbody></table></div></div>`;
+                        </tr>`).join('')}</tbody>}</div></div>`;
     }).join('');
 }
 
@@ -1985,7 +2099,7 @@ function inicializarEventos() {
     const btnConfirmSenha = document.getElementById('btnConfirmarSenhaAdmin');
     const btnVoltarAdmin = document.getElementById('btnVoltarAdmin');
     const btnVoltarInicio = document.getElementById('btnVoltarInicio');
-    const btnSalvarEtapa = document.getElementById('btnSalvarEtapa');
+    const btnSalvarEProxima = document.getElementById('btnSalvarEProximaEtapa');
     const btnEnviarWhatsApp = document.getElementById('btnEnviarWhatsApp');
     const btnFinalizarEtapa = document.getElementById('btnFinalizarEtapaMostrarClassificacao');
     const btnExportHist = document.getElementById('btnExportarHistorico');
@@ -2021,7 +2135,7 @@ function inicializarEventos() {
     if (btnConfirmSenha) btnConfirmSenha.onclick = () => { if (document.getElementById('senhaAdmin').value === 'poker2026') { document.getElementById('modalSenhaAdmin').classList.remove('active'); document.getElementById('telaSelecao').classList.add('hidden'); document.getElementById('telaAdmin').classList.remove('hidden'); atualizarAdminResumo(); atualizarAdminEstatisticas(); atualizarHistoricoEtapas(); atualizarSelectMelhorMao(); } else alert('❌ Senha incorreta!'); document.getElementById('senhaAdmin').value = ''; };
     if (btnVoltarAdmin) btnVoltarAdmin.onclick = () => { document.getElementById('telaAdmin').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); };
     if (btnVoltarInicio) btnVoltarInicio.onclick = () => { document.getElementById('telaClassificacao').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); };
-    if (btnSalvarEtapa) btnSalvarEtapa.onclick = salvarEtapa;
+    if (btnSalvarEProxima) btnSalvarEProxima.onclick = salvarEProximaEtapa;
     if (btnEnviarWhatsApp) btnEnviarWhatsApp.onclick = enviarClassificacaoWhatsApp;
     if (btnFinalizarEtapa) btnFinalizarEtapa.onclick = finalizarEtapaMostrarClassificacao;
     if (btnExportHist) btnExportHist.onclick = exportarHistoricoCSV;
