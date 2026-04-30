@@ -868,14 +868,14 @@
         <div class="selecao-logo" id="logoAdmin">
             <img src="logo pdq.png" alt="Poker de Quinta" onerror="this.style.display='none'">
         </div>
-        <h1 class="selecao-titulo">🎲 SELECIONE A MESA</h1>
+        <h1 class="selecao-titulo">🃏 SELECIONE A MESA 🃏</h1>
         
         <div class="selecao-botoes">
             <button class="selecao-btn preta" id="btnSelecionarPreta">♠️ MESA PRETA</button>
             <button class="selecao-btn amarela" id="btnSelecionarAmarela">♦️ MESA AMARELA</button>
         </div>
         
-        <button class="btn-mesa-final-topo" id="btnMesaFinalTopo" style="display: none;">🏆 IR PARA MESA FINAL 🏆</button>
+        <button class="btn-mesa-final-topo" id="btnMesaFinalTopo" style="display: none;">🃏 IR PARA MESA FINAL 🃏</button>
     </div>
 </div>
 
@@ -905,7 +905,7 @@
         </div>
         
         <div class="melhor-mao-section">
-            <h3>🏆 MELHOR MÃO DA ETAPA ANTERIOR 🏆</h3>
+            <h3>🃏 MELHOR MÃO DA ETAPA ANTERIOR 🃏</h3>
             <p style="margin-bottom: 10px;">Selecione o jogador que fez a melhor mão - ele ganhará ADDON GRÁTIS</p>
             <select id="selectMelhorMao" class="melhor-mao-select">
                 <option value="">-- Selecione um jogador --</option>
@@ -929,7 +929,7 @@
                 <option value="13">13ª ETAPA</option>
             </select>
             <button class="btn btn-success" id="btnIniciarEtapaAdmin">🚀 INICIAR ETAPA</button>
-            <button class="btn btn-warning" id="btnFinalizarEtapaMostrarClassificacao">🏆 FINALIZAR ETAPA E MOSTRAR CLASSIFICAÇÃO</button>
+            <button class="btn btn-warning" id="btnFinalizarEtapaMostrarClassificacao">🃏 FINALIZAR ETAPA E MOSTRAR CLASSIFICAÇÃO 🃏</button>
         </div>
         
         <div class="import-section">
@@ -1001,7 +1001,7 @@
                         <div class="stats-value" id="adminStatTotalAddons">0</div>
                     </div>
                 </div>
-                <h4>🏆 RANKING DE REBUYS</h4>
+                <h4>🃏 RANKING DE REBUYS</h4>
                 <table class="resumo-table">
                     <thead><tr><th>#</th><th>Jogador</th><th>Mesa</th><th>Rebuys</th></tr></thead>
                     <tbody id="adminRankingBody"></tbody>
@@ -1024,7 +1024,7 @@
 <div class="tela-classificacao hidden" id="telaClassificacao">
     <div class="classificacao-container">
         <div class="classificacao-header">
-            <h1>🏆 CLASSIFICAÇÃO DA ETAPA 🏆</h1>
+            <h1>🃏 CLASSIFICAÇÃO DA ETAPA 🃏</h1>
             <div>
                 <button class="btn btn-success" id="btnSalvarEtapa" style="margin-right: 10px;">💾 SALVAR ETAPA</button>
                 <button class="btn btn-info" id="btnEnviarWhatsApp" style="margin-right: 10px;">📱 ENVIAR PARA WHATSAPP</button>
@@ -1049,7 +1049,7 @@
             <h2>CONTROLE DE REBUY</h2>
             <div>
                 <button class="btn-voltar-mesa" id="btnVoltarParaSelecao">↩️ VOLTAR</button>
-                <button class="btn-ir-mesa-final" id="btnIrMesaFinal" style="display: none;">🏆 FINAL</button>
+                <button class="btn-ir-mesa-final" id="btnIrMesaFinal" style="display: none;">🃏 FINAL</button>
             </div>
         </div>
         
@@ -1077,7 +1077,7 @@
                 <div style="font-size: 0.7em; opacity: 0.8;">🟢 Jogando | ❌ Eliminados | 📊 Total</div>
             </div>
             <div class="stat-card total">
-                <div class="stat-card-titulo">🏆 TOTAL TORNEIO</div>
+                <div class="stat-card-titulo">🃏 TOTAL TORNEIO</div>
                 <div class="stat-card-numeros">
                     <span class="vivos" id="totalVivos">0</span>
                     <span>|</span>
@@ -1108,13 +1108,13 @@
     <div class="app-header">
         <div class="logo-top">
             <img src="logo pdq.png" alt="Poker de Quinta" onerror="this.style.display='none'">
-            <h2>🏆 MESA FINAL 🏆</h2>
+            <h2>🃏 MESA FINAL 🃏</h2>
             <div>
                 <button class="btn-voltar-mesa-final" id="btnVoltarMesaFinalSelecao">↩️ VOLTAR</button>
             </div>
         </div>
         <div class="mesa-indicator" style="border-color: #d4a121; background: linear-gradient(135deg, #d4a12120, #00000040);">
-            <div class="mesa-indicator-text" id="mesaFinalIndicatorText">🏆 MESA FINAL</div>
+            <div class="mesa-indicator-text" id="mesaFinalIndicatorText">🃏 MESA FINAL</div>
         </div>
     </div>
     <div class="jogadores-lados">
@@ -1218,7 +1218,8 @@ let audioContext = null;
 let fotosJogadores = {};
 
 function isAddonGratis(nome) {
-    return melhorMaoAtual === nome;
+    if (melhorMaoAtual === nome) return true;
+    return false;
 }
 
 function isAddonSemValor(nome) {
@@ -1232,9 +1233,16 @@ function getAddonValor(nome, addonAtivado) {
     return VALOR_ADDON;
 }
 
+function getAddonTexto(nome, addonAtivado) {
+    if (!addonAtivado) return '0';
+    if (melhorMaoAtual === nome) return 'GRÁTIS';
+    if (ADDON_GRATIS.includes(nome)) return '1';
+    return '1';
+}
+
 function getAddonParaExportacao(nome, addonAtivado) {
     if (!addonAtivado) return '0';
-    if (melhorMaoAtual === nome) return '0';
+    if (melhorMaoAtual === nome) return '1';
     if (ADDON_GRATIS.includes(nome)) return '1';
     return '1';
 }
@@ -1395,7 +1403,7 @@ function atualizarInfoMelhorMao() {
     const infoDiv = document.getElementById('melhorMaoInfo');
     if (melhorMaoAtual && infoDiv) {
         infoDiv.style.display = 'block';
-        infoDiv.innerHTML = `🏆 MELHOR MÃO: <strong style="color:#FFD700;">${melhorMaoAtual}</strong> - ADDON GRÁTIS! 🏆`;
+        infoDiv.innerHTML = `🃏 MELHOR MÃO: <strong style="color:#FFD700;">${melhorMaoAtual}</strong> - ADDON GRÁTIS! 🃏`;
     } else if (infoDiv) {
         infoDiv.style.display = 'none';
     }
@@ -1448,7 +1456,7 @@ function verificarMesaFinal() {
         atualizarStatsCards();
         atualizarBotoesMesaFinal();
         tocarAlertaMesaFinal();
-        alert('🎉 MESA FINAL! Restam 9 jogadores! 🎉');
+        alert('🃏 MESA FINAL! Restam 9 jogadores! 🃏');
     }
     
     if (mesaFinalAtiva) {
@@ -1468,18 +1476,18 @@ function renderizarMesaFinal() {
     const grid = document.getElementById('jogadoresMesaFinalGrid');
     const indicator = document.getElementById('mesaFinalIndicatorText');
     if (!grid) return;
-    if (indicator) indicator.textContent = `🏆 MESA FINAL - ${jogadoresMesaFinal.length} JOGADORES 🏆`;
-    if (jogadoresMesaFinal.length === 0) { grid.innerHTML = '<div style="text-align:center;padding:40px;">🏆 TORNEIO FINALIZADO! 🏆</div>'; return; }
+    if (indicator) indicator.textContent = `🃏 MESA FINAL - ${jogadoresMesaFinal.length} JOGADORES 🃏`;
+    if (jogadoresMesaFinal.length === 0) { grid.innerHTML = '<div style="text-align:center;padding:40px;">🃏 TORNEIO FINALIZADO! 🃏</div>'; return; }
     grid.innerHTML = jogadoresMesaFinal.map((j, idx) => {
         const isMelhorMao = melhorMaoAtual === j.nome;
         return `<div class="jogador-card ${isMelhorMao ? 'melhor-mao' : ''}">
                     <div class="jogador-posicao-numero">${idx + 1}</div>
                     <img class="jogador-foto" src="${getFotoJogador(j.nome)}">
                     <div class="jogador-info">
-                        <div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🏆' : ''}</div>
+                        <div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🃏' : ''}</div>
                         <div class="jogador-valores">
                             ${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}
-                            ${j.addon ? `<span class="badge badge-addon">💎 Addon</span>` : ''}
+                            ${j.addon ? `<span class="badge ${isMelhorMao || isAddonSemValor(j.nome) ? 'badge-addon-gratis' : 'badge-addon'}">💎 Addon ${isMelhorMao || isAddonSemValor(j.nome) ? 'GRÁTIS' : ''}</span>` : ''}
                         </div>
                     </div>
                     <div class="jogador-actions">
@@ -1515,14 +1523,14 @@ function confirmarEliminacaoMF() {
 }
 
 function finalizarComCampeao(campeao) {
-    const qtdKos = prompt(`🏆 CAMPEÃO: ${campeao.nome}\nQuantos KO's ele fez no total?`, "0");
+    const qtdKos = prompt(`🃏 CAMPEÃO: ${campeao.nome}\nQuantos KO's ele fez no total?`, "0");
     const kos = parseInt(qtdKos) || 0;
     const item = { nome: campeao.nome, mesa: mesasData.preta?.find(j => j.nome === campeao.nome) ? 'Preta' : 'Amarela', posicao: 1, pontosPosicao: getPontosPosicao(1), kos: kos, pontosKOs: kos, pontosTotal: getPontosPosicao(1) + kos, dataEliminacao: new Date().toISOString(), etapa: config.etapa };
     classificacaoData.push(item);
     db.ref('classificacao').set(classificacaoData);
     mostrarTelaClassificacao();
     tocarAlertaMesaFinal();
-    alert(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)! 🏆`);
+    alert(`🃏 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)! 🃏`);
     jogadoresMesaFinal = [];
     renderizarMesaFinal();
 }
@@ -1530,7 +1538,7 @@ function finalizarComCampeao(campeao) {
 function finalizarTorneio() { 
     mostrarTelaClassificacao();
     tocarAlertaMesaFinal(); 
-    alert('🏆 TORNEIO FINALIZADO! 🏆'); 
+    alert('🃏 TORNEIO FINALIZADO! 🃏'); 
 }
 
 function fecharMesaFinal() { mesaFinalAtiva = false; jogadoresMesaFinal = []; document.getElementById('mesaFinalApp').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); atualizarBotoesMesaFinal(); atualizarStatsCards(); }
@@ -1585,10 +1593,10 @@ function atualizarGridJogadores() {
                         <div class="jogador-posicao-numero">${j.posicao || '?'}</div>
                         <img class="jogador-foto" src="${getFotoJogador(j.nome)}">
                         <div class="jogador-info">
-                            <div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🏆' : ''}</div>
+                            <div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🃏' : ''}</div>
                             <div class="jogador-valores">
                                 ${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}
-                                ${j.addon ? `<span class="badge badge-addon">💎 Addon</span>` : ''}
+                                ${j.addon ? `<span class="badge ${isMelhorMao || isAddonSemValor(j.nome) ? 'badge-addon-gratis' : 'badge-addon'}">💎 Addon ${isMelhorMao || isAddonSemValor(j.nome) ? 'GRÁTIS' : ''}</span>` : ''}
                                 ${j.eliminado ? `<span class="badge badge-eliminado">❌ Elim (${j.posicaoFinal}º)</span>` : ''}
                             </div>
                         </div>
@@ -1781,7 +1789,7 @@ function enviarClassificacaoWhatsApp() {
         return;
     }
     
-    let mensagem = `🏆 *CLASSIFICAÇÃO ${config.etapa}ª ETAPA - POKER DE QUINTA* 🏆\n\n`;
+    let mensagem = `🃏 *CLASSIFICAÇÃO ${config.etapa}ª ETAPA - POKER DE QUINTA* 🃏\n\n`;
     ordenada.forEach(j => {
         const pontosTotais = j.pontosPosicao + (j.kos || 0);
         mensagem += `${j.posicao}º - ${j.nome} - ${j.pontosPosicao} pts + ${j.kos || 0} KO = *${pontosTotais} pts*\n`;
@@ -1864,14 +1872,18 @@ function atualizarAdminResumo() {
     const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const tbody = document.getElementById('adminResumoBody');
     if (!tbody) return;
-    if (todos.length === 0) { tbody.innerHTML = '<td><td colspan="7">Nenhum dado</td> </tr>'; document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; return; }
+    if (todos.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum dado<th> '; document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; return; }
+    
+    // Ordenar por ordem alfabética
+    const todosOrdenados = [...todos].sort((a, b) => a.nome.localeCompare(b.nome));
+    
     let totalGeral = 0;
-    tbody.innerHTML = todos.map(j => { 
+    tbody.innerHTML = todosOrdenados.map(j => { 
         const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'; 
         const valorAddon = getAddonValor(j.nome, j.addon);
         const total = VALOR_BUYIN + (j.rebuys || 0) * VALOR_REBUY + valorAddon;
         totalGeral += total; 
-        const addonTexto = j.addon ? '1' : '0';
+        const addonTexto = getAddonTexto(j.nome, j.addon);
         return `<tr>
                     <td>${j.nome}${j.eliminado ? ' ❌' : ''}${j.eliminado ? ` (${j.posicaoFinal}º)` : ''}</td>
                     <td>${mesa}</td>
@@ -1890,35 +1902,48 @@ function atualizarAdminEstatisticas() {
     const amarela = mesasData.amarela || [];
     const todos = [...preta, ...amarela];
     
-    document.getElementById('adminStatPretaJogadores').textContent = preta.length;
-    document.getElementById('adminStatPretaRebuys').textContent = preta.reduce((s,j) => s + (j.rebuys||0), 0);
-    document.getElementById('adminStatPretaAddons').textContent = preta.filter(j => j.addon).length;
-    document.getElementById('adminStatPretaTotal').textContent = `R$ ${preta.reduce((s,j) => { const valorAddon = getAddonValor(j.nome, j.addon); return s + VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + valorAddon; }, 0)}`;
+    const pretaVivos = document.getElementById('adminStatPretaJogadores');
+    const pretaRebuys = document.getElementById('adminStatPretaRebuys');
+    const pretaAddons = document.getElementById('adminStatPretaAddons');
+    const pretaTotal = document.getElementById('adminStatPretaTotal');
+    const amarelaVivos = document.getElementById('adminStatAmarelaJogadores');
+    const amarelaRebuys = document.getElementById('adminStatAmarelaRebuys');
+    const amarelaAddons = document.getElementById('adminStatAmarelaAddons');
+    const amarelaTotal = document.getElementById('adminStatAmarelaTotal');
+    const totalRebuys = document.getElementById('adminStatTotalRebuys');
+    const totalAddons = document.getElementById('adminStatTotalAddons');
+    const rankingBody = document.getElementById('adminRankingBody');
     
-    document.getElementById('adminStatAmarelaJogadores').textContent = amarela.length;
-    document.getElementById('adminStatAmarelaRebuys').textContent = amarela.reduce((s,j) => s + (j.rebuys||0), 0);
-    document.getElementById('adminStatAmarelaAddons').textContent = amarela.filter(j => j.addon).length;
-    document.getElementById('adminStatAmarelaTotal').textContent = `R$ ${amarela.reduce((s,j) => { const valorAddon = getAddonValor(j.nome, j.addon); return s + VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + valorAddon; }, 0)}`;
+    if (pretaVivos) pretaVivos.textContent = preta.length;
+    if (pretaRebuys) pretaRebuys.textContent = preta.reduce((s,j) => s + (j.rebuys||0), 0);
+    if (pretaAddons) pretaAddons.textContent = preta.filter(j => j.addon).length;
+    if (pretaTotal) pretaTotal.textContent = `R$ ${preta.reduce((s,j) => { const valorAddon = getAddonValor(j.nome, j.addon); return s + VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + valorAddon; }, 0)}`;
     
-    document.getElementById('adminStatTotalRebuys').textContent = todos.reduce((s,j) => s + (j.rebuys||0), 0);
-    document.getElementById('adminStatTotalAddons').textContent = todos.filter(j => j.addon).length;
+    if (amarelaVivos) amarelaVivos.textContent = amarela.length;
+    if (amarelaRebuys) amarelaRebuys.textContent = amarela.reduce((s,j) => s + (j.rebuys||0), 0);
+    if (amarelaAddons) amarelaAddons.textContent = amarela.filter(j => j.addon).length;
+    if (amarelaTotal) amarelaTotal.textContent = `R$ ${amarela.reduce((s,j) => { const valorAddon = getAddonValor(j.nome, j.addon); return s + VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + valorAddon; }, 0)}`;
+    
+    if (totalRebuys) totalRebuys.textContent = todos.reduce((s,j) => s + (j.rebuys||0), 0);
+    if (totalAddons) totalAddons.textContent = todos.filter(j => j.addon).length;
     
     const ranking = [...todos].filter(j => (j.rebuys||0) > 0).sort((a,b) => (b.rebuys||0) - (a.rebuys||0)).slice(0,5);
-    const rankingBody = document.getElementById('adminRankingBody');
-    if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy</td> </tr>';
-    else rankingBody.innerHTML = ranking.map((j,i) => `<tr>
-                <td>${i+1}</td>
-                <td>${j.nome}</td>
-                <td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}</td>
-                <td>${j.rebuys}</td>
-            </tr>`).join('');
+    if (rankingBody) {
+        if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy<th> ';
+        else rankingBody.innerHTML = ranking.map((j,i) => `<tr>
+                    <td>${i+1}</td>
+                    <td>${j.nome}</td>
+                    <td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}</td>
+                    <td>${j.rebuys}</td>
+                </tr>`).join('');
+    }
 }
 
 function atualizarClassificacao() {
     const tbody = document.getElementById('classificacaoBody');
     if (!tbody) return;
     const ordenada = [...classificacaoData].sort((a,b) => a.posicao - b.posicao);
-    if (ordenada.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum jogador eliminado ainda</td> </tr>'; return; }
+    if (ordenada.length === 0) { tbody.innerHTML = '<td><td colspan="7">Nenhum jogador eliminado ainda<th> '; return; }
     tbody.innerHTML = ordenada.map(j => { 
         let cls = ''; 
         if (j.posicao === 1) cls = 'top-1'; 
@@ -1948,14 +1973,14 @@ function atualizarHistoricoEtapas() {
         const data = new Date(etapa.data).toLocaleString('pt-BR');
         const num = etapa.etapaNumero;
         const classificacaoOrdenada = (etapa.classificacao || []).filter(j => j && j.posicao).sort((a, b) => a.posicao - b.posicao);
-        return `<div class="etapa-card"><div class="etapa-header" onclick="toggleEtapa(${idx})"><div><strong>📅 ${num}ª ETAPA</strong><div class="etapa-data">${data}</div></div><div>🏆 ${etapa.totalJogadores || 0} jogadores | ${classificacaoOrdenada.length} classificados</div></div><div class="etapa-classificacao" id="etapa-${idx}"><table class="etapa-table"><thead><tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th></tr></thead><tbody>${classificacaoOrdenada.map(j => `<tr>
+        return `<div class="etapa-card"><div class="etapa-header" onclick="toggleEtapa(${idx})"><div><strong>📅 ${num}ª ETAPA</strong><div class="etapa-data">${data}</div></div><div>🃏 ${etapa.totalJogadores || 0} jogadores | ${classificacaoOrdenada.length} classificados</div></div><div class="etapa-classificacao" id="etapa-${idx}"><table class="etapa-table"><thead><tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th></tr></thead><tbody>${classificacaoOrdenada.map(j => `<tr>
                             <td><strong>${j.posicao}º</strong></td>
                             <td>${j.nome || '?'}</td>
                             <td>${j.mesa || '-'}</td>
                             <td>${j.pontosPosicao || 0}</td>
                             <td>${j.kos || 0}</td>
                             <td><strong>${j.pontosTotal || j.pontosPosicao || 0}</strong></td>
-                        </tr>`).join('')}</tbody> </table></div></div>`;
+                        </tr>`).join('')}</tbody>}</div></div>`;
     }).join('');
 }
 
@@ -2041,7 +2066,7 @@ function exportarCSVCompleto() {
         const valorAddon = getAddonValor(j.nome, j.addon);
         const total = VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + valorAddon; 
         totalGeralValor += total; 
-        const addonExport = getAddonParaExportacao(j.nome, j.addon);
+        const addonExport = getAddonTexto(j.nome, j.addon);
         csv += `"${j.nome}",${mesa},${j.posicao||''},${VALOR_BUYIN},${j.rebuys||0},${addonExport},${total}\n`; 
     }); 
     csv += `\n"TOTAL GERAL",,,,,,${totalGeralValor}\n`; 
