@@ -932,7 +932,7 @@
 </head>
 <body>
 
-<div class="status-indicator" id="statusIndicator">🔄 Conectando...</div>
+<div class="status-indicator" id="statusIndicator">✅ Conectado</div>
 
 <!-- Tela de Seleção Inicial -->
 <div class="tela-selecao" id="telaSelecao">
@@ -1093,7 +1093,7 @@
 <div class="tela-verificar-classificacao hidden" id="telaVerificarClassificacao">
     <div class="verificar-container">
         <div class="verificar-header">
-            <h1>📊 CLASSIFICAÇÃO GERAL DA ETAPA <?php echo $etapaAtual; ?></h1>
+            <h1>📊 CLASSIFICAÇÃO GERAL DA 4ª ETAPA</h1>
             <div>
                 <button class="btn btn-warning" id="btnSalvarEProximaEtapa" style="margin-right: 10px;">💾 SALVAR E IR PARA PRÓXIMA ETAPA</button>
                 <button class="btn btn-info" id="btnEnviarWhatsApp" style="margin-right: 10px;">📱 ENVIAR PARA WHATSAPP</button>
@@ -1319,41 +1319,43 @@ let jogadorEliminandoMF = null;
 let melhorMaoAtual = null;
 let audioContext = null;
 let fotosJogadores = {};
-let chavesPix = {};
 
-// Função para carregar as chaves PIX do site
-async function carregarChavesPix() {
-    try {
-        const response = await fetch('http://pokerdequinta.github.io/pix');
-        const html = await response.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        
-        // Procura pela tabela de jogadores
-        const linhas = doc.querySelectorAll('table tr');
-        linhas.forEach(linha => {
-            const colunas = linha.querySelectorAll('td');
-            if (colunas.length >= 3) {
-                const nome = colunas[1]?.textContent?.trim();
-                let chave = colunas[2]?.textContent?.trim();
-                let tipo = colunas[1]?.nextElementSibling?.textContent?.trim() || '';
-                if (nome && chave && chave !== 'Sem PIX' && chave !== 'Sem chave PIX cadastrada') {
-                    chavesPix[nome] = { chave: chave, tipo: tipo };
-                }
-            }
-        });
-        
-        console.log('Chaves PIX carregadas:', Object.keys(chavesPix).length);
-    } catch (error) {
-        console.error('Erro ao carregar chaves PIX:', error);
-    }
-}
+// Chaves PIX dos jogadores (baseado no site http://pokerdequinta.github.io/pix)
+const chavesPix = {
+    'Amarildo': { chave: '41987779470', tipo: 'Telefone' },
+    'Boy': { chave: '41998294734', tipo: 'Telefone' },
+    'Buiu': null,
+    'Cleversson': { chave: '05470771903', tipo: 'CPF/CNPJ' },
+    'Diego': { chave: '05274037925', tipo: 'CPF/CNPJ' },
+    'Dos Anjos': { chave: '99899604968', tipo: 'CPF/CNPJ' },
+    'Gaspar': { chave: '04269573937', tipo: 'CPF/CNPJ' },
+    'Gera': { chave: '41984552228', tipo: 'Telefone' },
+    'Guti': { chave: '07104339990', tipo: 'CPF/CNPJ' },
+    'Izidio': { chave: '01916007929', tipo: 'CPF/CNPJ' },
+    'Jean': { chave: '07104345965', tipo: 'CPF/CNPJ' },
+    'Jean Rebuy': { chave: '02784209903', tipo: 'CPF/CNPJ' },
+    'Kastelo': null,
+    'Loreto': { chave: '30295467053', tipo: 'CPF/CNPJ' },
+    'Marcelo': null,
+    'Matheus': { chave: '06946581970', tipo: 'CPF/CNPJ' },
+    'Maykon': { chave: '41997643171', tipo: 'Telefone' },
+    'Neto': { chave: 'r.cruzneto91@gmail.com', tipo: 'E-mail' },
+    'Rafael': null,
+    'Ricardo Amarante': { chave: '08062627969', tipo: 'CPF/CNPJ' },
+    'Ricardo Linhares': { chave: '35522518987', tipo: 'CPF/CNPJ' },
+    'Ricardo Matoso': { chave: '05315830900', tipo: 'CPF/CNPJ' },
+    'Robson': { chave: '03490078969', tipo: 'CPF/CNPJ' },
+    'Sergio': { chave: 'sergio.menegari08@gmail.com', tipo: 'E-mail' },
+    'Solano': { chave: 'solanogomes2020@gmail.com', tipo: 'E-mail' },
+    'Tigre': null,
+    'Van Van': { chave: '41999677977', tipo: 'Telefone' }
+};
 
 function copiarPix(nome) {
     const pixInfo = chavesPix[nome];
     if (pixInfo && pixInfo.chave) {
         navigator.clipboard.writeText(pixInfo.chave).then(() => {
-            alert(`✅ Chave PIX de ${nome} copiada!\nTipo: ${pixInfo.tipo || 'Chave'}\nChave: ${pixInfo.chave}`);
+            alert(`✅ Chave PIX de ${nome} copiada!\nTipo: ${pixInfo.tipo}\nChave: ${pixInfo.chave}`);
         }).catch(() => {
             alert(`❌ Erro ao copiar. Chave: ${pixInfo.chave}`);
         });
@@ -1461,6 +1463,7 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true) {
         atualizarStatsCards();
         atualizarBotoesMesaFinal();
         atualizarSelectMelhorMao();
+        atualizarClassificacaoAtual();
         
         if (mostrarMensagem) {
             const proxima = config.etapa + 1;
@@ -1484,15 +1487,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('statusIndicator').textContent = '✅ Conectado';
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
-    await carregarChavesPix();
-    
     db.ref('config').on('value', (snapshot) => {
         if (snapshot.exists()) config = snapshot.val();
         else { config = { etapa: 4 }; db.ref('config').set(config); }
         const selectEtapa = document.getElementById('adminSelectEtapa');
         if (selectEtapa) selectEtapa.value = config.etapa || 4;
         
-        // Atualiza o título da classificação com a etapa atual
         const tituloClassificacao = document.querySelector('#telaVerificarClassificacao .verificar-header h1');
         if (tituloClassificacao) {
             tituloClassificacao.innerHTML = `📊 CLASSIFICAÇÃO GERAL DA ${config.etapa}ª ETAPA`;
@@ -1680,8 +1680,6 @@ function aplicarMelhorMao() {
     }
 }
 
-let eliminadosMesaFinalList = [];
-
 function atualizarTabelaEliminadosMF() {
     const eliminados = classificacaoData.filter(c => c.posicao <= 9 && c.posicao >= 1).sort((a,b) => a.posicao - b.posicao);
     const tbody = document.getElementById('eliminadosMesaFinalBody');
@@ -1702,14 +1700,11 @@ function atualizarTabelaEliminadosMF() {
     }
 }
 
-// Função para atualizar a classificação atual (Top 20)
 function atualizarClassificacaoAtual() {
     const tbody = document.getElementById('classificacaoBodyAtual');
     if (!tbody) return;
     
-    // Ordena por posição (menor número primeiro)
     const ordenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
-    // Pega apenas os 20 primeiros
     const top20 = ordenada.slice(0, 20);
     
     if (top20.length === 0) {
@@ -1720,7 +1715,7 @@ function atualizarClassificacaoAtual() {
     tbody.innerHTML = top20.map(j => {
         const pontosTotais = (j.pontosPosicao || 0) + (j.kos || 0);
         const fotoUrl = getFotoJogador(j.nome);
-        const temPix = !!chavesPix[j.nome];
+        const temPix = chavesPix[j.nome] && chavesPix[j.nome].chave;
         let premioDisplay = j.premio ? `R$ ${j.premio.toFixed(2)}` : '-';
         
         return `<tr class="${j.posicao === 1 ? 'top-1' : j.posicao === 2 ? 'top-2' : j.posicao === 3 ? 'top-3' : ''}">
@@ -1779,7 +1774,7 @@ function renderizarMesaFinal() {
         const isMelhorMao = melhorMaoAtual === j.nome;
         const addonGratis = isAddonGratis(j.nome);
         const addonTexto = j.addon ? (addonGratis ? 'GRÁTIS' : '') : '';
-        const temPix = !!chavesPix[j.nome];
+        const temPix = chavesPix[j.nome] && chavesPix[j.nome].chave;
         
         return `<div class="jogador-card ${isMelhorMao ? 'melhor-mao' : ''}">
                     <div class="jogador-posicao-numero">${idx + 1}</div>
@@ -1803,8 +1798,6 @@ function renderizarMesaFinal() {
 function abrirModalEliminarMF(nome) {
     jogadorEliminandoMF = nome;
     const premioGroup = document.getElementById('premioMFGroup');
-    
-    // Sempre mostrar o campo de prêmio para todos os eliminados da mesa final
     premioGroup.style.display = 'block';
     document.getElementById('premioMF').value = 0;
     
@@ -2173,7 +2166,6 @@ function iniciarEtapaAdmin() {
         
         alert(`✅ ${novaEtapa}ª ETAPA iniciada!\n\nImporte o layout das mesas para começar.`);
         
-        // Atualiza o título da classificação
         const tituloClassificacao = document.querySelector('#telaVerificarClassificacao .verificar-header h1');
         if (tituloClassificacao) {
             tituloClassificacao.innerHTML = `📊 CLASSIFICAÇÃO GERAL DA ${config.etapa}ª ETAPA`;
@@ -2224,7 +2216,7 @@ function atualizarAdminResumo() {
     const tbody = document.getElementById('adminResumoBody');
     if (!tbody) return;
     if (todos.length === 0) { 
-        tbody.innerHTML = '<tr><td colspan="7">Nenhum dado<th> '; 
+        tbody.innerHTML = '<tr><td colspan="7">Nenhum dado</td></tr>'; 
         document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; 
         return; 
     }
