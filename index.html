@@ -912,6 +912,22 @@
             text-align: center;
             border-bottom: 1px solid #2d5016;
         }
+        
+        .btn-copiar-pix-classif {
+            background: #d4a121;
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 0.7em;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        
+        .btn-copiar-pix-classif:hover {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
@@ -1073,21 +1089,36 @@
     </div>
 </div>
 
-<!-- Tela de Verificar Classificação (Histórico) -->
+<!-- Tela de Verificar Classificação (Histórico e Ranking Atual) -->
 <div class="tela-verificar-classificacao hidden" id="telaVerificarClassificacao">
     <div class="verificar-container">
         <div class="verificar-header">
-            <h1>📊 VERIFICAR CLASSIFICAÇÃO</h1>
+            <h1>📊 CLASSIFICAÇÃO GERAL DA ETAPA <?php echo $etapaAtual; ?></h1>
             <div>
-                <button class="btn btn-info" id="btnExportarHistoricoVerificar" style="margin-right: 10px;">📊 EXPORTAR HISTÓRICO</button>
+                <button class="btn btn-warning" id="btnSalvarEProximaEtapa" style="margin-right: 10px;">💾 SALVAR E IR PARA PRÓXIMA ETAPA</button>
+                <button class="btn btn-info" id="btnEnviarWhatsApp" style="margin-right: 10px;">📱 ENVIAR PARA WHATSAPP</button>
+                <button class="btn btn-secondary" id="btnExportarClassificacaoCSV" style="margin-right: 10px;">📊 EXPORTAR CSV</button>
                 <button class="voltar-inicio-btn" id="btnVoltarVerificarInicio" style="padding: 12px 25px; background: #c72c48; color: #fff; border: none; border-radius: 8px; cursor: pointer;">← VOLTAR</button>
             </div>
         </div>
         
+        <!-- Ranking atual (até 20 posições) -->
+        <div style="overflow-x: auto; margin-bottom: 40px;">
+            <h3>🏆 RANKING ATUAL (Top 20)</h3>
+            <table class="classificacao-table" id="classificacaoTableAtual">
+                <thead>
+                    <tr><th>Posição</th><th>Jogador</th><th>Mesa</th><th>Pontos Posição</th><th>KO's</th><th>PONTOS TOTAIS</th><th>Prêmio (R$)</th><th>PIX</th></tr>
+                </thead>
+                <tbody id="classificacaoBodyAtual"></tbody>
+            </table>
+        </div>
+        
+        <!-- Histórico de etapas -->
         <div style="margin-bottom: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                 <h3>📜 HISTÓRICO DE ETAPAS</h3>
                 <button class="btn btn-danger" id="btnApagarHistoricoVerificar">🗑️ APAGAR HISTÓRICO</button>
+                <button class="btn btn-info" id="btnExportarHistoricoVerificar">📊 EXPORTAR HISTÓRICO</button>
             </div>
             <div id="etapasListVerificar" class="etapas-list"></div>
         </div>
@@ -1305,19 +1336,10 @@ async function carregarChavesPix() {
             if (colunas.length >= 3) {
                 const nome = colunas[1]?.textContent?.trim();
                 let chave = colunas[2]?.textContent?.trim();
+                let tipo = colunas[1]?.nextElementSibling?.textContent?.trim() || '';
                 if (nome && chave && chave !== 'Sem PIX' && chave !== 'Sem chave PIX cadastrada') {
-                    chavesPix[nome] = chave;
+                    chavesPix[nome] = { chave: chave, tipo: tipo };
                 }
-            }
-        });
-        
-        // Também procura na lista não-tabela (estrutura alternativa)
-        const itensLista = doc.querySelectorAll('.jogador-item, .pix-item');
-        itensLista.forEach(item => {
-            const nome = item.querySelector('.jogador-nome')?.textContent?.trim();
-            const chave = item.querySelector('.chave-pix')?.textContent?.trim();
-            if (nome && chave && chave !== 'Sem PIX') {
-                chavesPix[nome] = chave;
             }
         });
         
@@ -1328,12 +1350,12 @@ async function carregarChavesPix() {
 }
 
 function copiarPix(nome) {
-    const chave = chavesPix[nome];
-    if (chave) {
-        navigator.clipboard.writeText(chave).then(() => {
-            alert(`✅ Chave PIX de ${nome} copiada!\n\n${chave}`);
+    const pixInfo = chavesPix[nome];
+    if (pixInfo && pixInfo.chave) {
+        navigator.clipboard.writeText(pixInfo.chave).then(() => {
+            alert(`✅ Chave PIX de ${nome} copiada!\nTipo: ${pixInfo.tipo || 'Chave'}\nChave: ${pixInfo.chave}`);
         }).catch(() => {
-            alert(`❌ Erro ao copiar. Chave: ${chave}`);
+            alert(`❌ Erro ao copiar. Chave: ${pixInfo.chave}`);
         });
     } else {
         alert(`⚠️ Nenhuma chave PIX cadastrada para ${nome}`);
@@ -1469,6 +1491,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         else { config = { etapa: 4 }; db.ref('config').set(config); }
         const selectEtapa = document.getElementById('adminSelectEtapa');
         if (selectEtapa) selectEtapa.value = config.etapa || 4;
+        
+        // Atualiza o título da classificação com a etapa atual
+        const tituloClassificacao = document.querySelector('#telaVerificarClassificacao .verificar-header h1');
+        if (tituloClassificacao) {
+            tituloClassificacao.innerHTML = `📊 CLASSIFICAÇÃO GERAL DA ${config.etapa}ª ETAPA`;
+        }
     });
     
     db.ref('fotosJogadores').on('value', (snapshot) => {
@@ -1476,6 +1504,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         atualizarGridJogadores();
         renderizarMesaFinal();
         atualizarSelectMelhorMao();
+        atualizarClassificacaoAtual();
     });
     
     db.ref('mesas').on('value', (snapshot) => {
@@ -1494,11 +1523,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         verificarMesaFinal();
         atualizarBotoesMesaFinal();
         atualizarSelectMelhorMao();
+        atualizarClassificacaoAtual();
     });
     
     db.ref('classificacao').on('value', (snapshot) => {
         if (snapshot.exists()) classificacaoData = snapshot.val();
         else classificacaoData = [];
+        atualizarClassificacaoAtual();
         atualizarHistoricoEtapas();
         atualizarTabelaEliminadosMF();
     });
@@ -1671,6 +1702,43 @@ function atualizarTabelaEliminadosMF() {
     }
 }
 
+// Função para atualizar a classificação atual (Top 20)
+function atualizarClassificacaoAtual() {
+    const tbody = document.getElementById('classificacaoBodyAtual');
+    if (!tbody) return;
+    
+    // Ordena por posição (menor número primeiro)
+    const ordenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
+    // Pega apenas os 20 primeiros
+    const top20 = ordenada.slice(0, 20);
+    
+    if (top20.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = top20.map(j => {
+        const pontosTotais = (j.pontosPosicao || 0) + (j.kos || 0);
+        const fotoUrl = getFotoJogador(j.nome);
+        const temPix = !!chavesPix[j.nome];
+        let premioDisplay = j.premio ? `R$ ${j.premio.toFixed(2)}` : '-';
+        
+        return `<tr class="${j.posicao === 1 ? 'top-1' : j.posicao === 2 ? 'top-2' : j.posicao === 3 ? 'top-3' : ''}">
+                    <td><strong>${j.posicao}º</strong></td>
+                    <td class="classificacao-nome">
+                        <img class="classificacao-foto" src="${fotoUrl}" onerror="this.style.display='none'">
+                        ${j.nome}
+                    </td>
+                    <td>${j.mesa || '-'}</td>
+                    <td>${j.pontosPosicao || 0}</td>
+                    <td>${j.kos || 0}</td>
+                    <td><strong style="color:#d4a121;">${pontosTotais}</strong></td>
+                    <td>${premioDisplay}</td>
+                    <td>${temPix ? `<button class="btn-copiar-pix-classif" onclick="copiarPix('${j.nome.replace(/'/g, "\\'")}')">📋 COPIAR PIX</button>` : '❌ Sem Pix'}</td>
+                </tr>`;
+    }).join('');
+}
+
 function verificarMesaFinal() {
     const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const vivos = todosJogadores.filter(j => !j.eliminado);
@@ -1790,6 +1858,7 @@ function confirmarEliminacaoMF() {
             renderizarMesaFinal();
             atualizarStatsCards();
             atualizarTabelaEliminadosMF();
+            atualizarClassificacaoAtual();
             
             if (jogadoresMesaFinal.length === 0) finalizarTorneio();
             else if (jogadoresMesaFinal.length === 1) finalizarComCampeao(jogadoresMesaFinal[0]);
@@ -1831,6 +1900,7 @@ function finalizarComCampeao(campeao) {
     jogadoresMesaFinal = [];
     renderizarMesaFinal();
     atualizarTabelaEliminadosMF();
+    atualizarClassificacaoAtual();
 }
 
 function finalizarTorneio() { 
@@ -2013,6 +2083,7 @@ function confirmarEliminacao() {
             atualizarAdminEstatisticas();
             verificarMesaFinal();
             atualizarSelectMelhorMao();
+            atualizarClassificacaoAtual();
             
             const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
             const vivos = todosJogadores.filter(j => !j.eliminado);
@@ -2031,6 +2102,7 @@ function mostrarTelaVerificarClassificacao() {
     document.getElementById('mesaFinalApp').classList.add('hidden');
     document.getElementById('telaAdmin').classList.add('hidden');
     document.getElementById('telaVerificarClassificacao').classList.remove('hidden');
+    atualizarClassificacaoAtual();
     atualizarHistoricoEtapas();
 }
 
@@ -2050,9 +2122,9 @@ function enviarClassificacaoWhatsApp() {
     }
     
     let mensagem = `🃏 *CLASSIFICAÇÃO ${config.etapa}ª ETAPA - POKER DE QUINTA* 🃏\n\n`;
-    ordenada.forEach(j => {
-        const pontosTotais = j.pontosPosicao + (j.kos || 0);
-        mensagem += `${j.posicao}º - ${j.nome} - ${j.pontosPosicao} pts + ${j.kos || 0} KO = *${pontosTotais} pts*`;
+    ordenada.slice(0, 20).forEach(j => {
+        const pontosTotais = (j.pontosPosicao || 0) + (j.kos || 0);
+        mensagem += `${j.posicao}º - ${j.nome} - ${j.pontosPosicao || 0} pts + ${j.kos || 0} KO = *${pontosTotais} pts*`;
         if (j.premio) mensagem += ` 💰 R$ ${j.premio}`;
         mensagem += `\n`;
     });
@@ -2094,11 +2166,18 @@ function iniciarEtapaAdmin() {
         atualizarStatsCards();
         atualizarBotoesMesaFinal();
         atualizarSelectMelhorMao();
+        atualizarClassificacaoAtual();
         
         const infoDiv = document.getElementById('proximaEtapaInfo');
         if (infoDiv) infoDiv.style.display = 'none';
         
         alert(`✅ ${novaEtapa}ª ETAPA iniciada!\n\nImporte o layout das mesas para começar.`);
+        
+        // Atualiza o título da classificação
+        const tituloClassificacao = document.querySelector('#telaVerificarClassificacao .verificar-header h1');
+        if (tituloClassificacao) {
+            tituloClassificacao.innerHTML = `📊 CLASSIFICAÇÃO GERAL DA ${config.etapa}ª ETAPA`;
+        }
     }
 }
 
@@ -2167,7 +2246,7 @@ function atualizarAdminResumo() {
                     <td>${j.rebuys || 0}</td>
                     <td>${addonTexto}</td>
                     <td><strong>R$ ${total}</strong></td>
-                </td>`; 
+                </tr>`; 
     }).join('');
     document.getElementById('adminTotalGeral').textContent = `TOTAL GERAL: R$ ${totalGeral},00`;
 }
@@ -2233,7 +2312,7 @@ function atualizarHistoricoEtapas() {
                                 <tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th><th>Prêmio</th></tr>
                             </thead>
                             <tbody>
-                                ${classificacaoOrdenada.map(j => `
+                                ${classificacaoOrdenada.slice(0, 20).map(j => `
                                     <tr>
                                         <td><strong>${j.posicao}º</strong></td>
                                         <td>${j.nome || '?'}${j.premio ? ` 💰` : ''}</td>
@@ -2336,6 +2415,7 @@ function aplicarLayout() {
     atualizarAdminEstatisticas(); 
     atualizarStatsCards(); 
     atualizarSelectMelhorMao();
+    atualizarClassificacaoAtual();
 }
 
 function exportarCSVSimples() { 
@@ -2370,6 +2450,19 @@ function exportarCSVCompleto() {
     }); 
     csv += `\n"TOTAL GERAL",,,,,,${totalGeralValor}\n`; 
     downloadCSV(csv, `caixa-completo-etapa${config.etapa}.csv`); 
+}
+
+function exportarClassificacaoCSV() {
+    if (classificacaoData.length === 0) {
+        alert('Nenhum classificado!');
+        return;
+    }
+    let csv = 'Posição,Jogador,Mesa,Pontos Posição,KO\'s,Pontos Totais,Prêmio (R$)\n';
+    [...classificacaoData].sort((a,b) => a.posicao - b.posicao).slice(0,20).forEach(j => {
+        const pontosTotais = (j.pontosPosicao || 0) + (j.kos || 0);
+        csv += `${j.posicao},"${j.nome}",${j.mesa},${j.pontosPosicao || 0},${j.kos || 0},${pontosTotais},${j.premio || 0}\n`;
+    });
+    downloadCSV(csv, `classificacao-etapa${config.etapa}.csv`);
 }
 
 function exportarHistoricoCSV() { 
@@ -2482,6 +2575,7 @@ function inicializarEventos() {
     const btnExportCSV = document.getElementById('btnAdminExportarCSV');
     const btnExportCompleto = document.getElementById('btnAdminExportarCompleto');
     const btnCopiar = document.getElementById('btnCopiarCSV');
+    const btnExportarClassificacaoCSV = document.getElementById('btnExportarClassificacaoCSV');
     const fileInput = document.getElementById('fileInput');
     
     if (logoAdmin) logoAdmin.onclick = () => document.getElementById('modalSenhaAdmin').classList.add('active');
@@ -2523,6 +2617,7 @@ function inicializarEventos() {
     if (btnExportCSV) btnExportCSV.onclick = exportarCSVSimples;
     if (btnExportCompleto) btnExportCompleto.onclick = exportarCSVCompleto;
     if (btnCopiar) btnCopiar.onclick = copiarCSV;
+    if (btnExportarClassificacaoCSV) btnExportarClassificacaoCSV.onclick = exportarClassificacaoCSV;
     
     document.querySelectorAll('.nav-tab-admin').forEach(tab => {
         tab.onclick = () => {
