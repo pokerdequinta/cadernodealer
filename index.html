@@ -3,12 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#0d1b0d">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Caderno do Dealer">
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     <title>Caderno do Dealer - Poker de Quinta</title>
     
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -27,6 +21,234 @@
             color: #fff;
             min-height: 100vh;
         }
+        
+        /* ============================================ */
+        /* ADAPTAÇÕES PARA TABLET DE 7 POLEGADAS */
+        /* ============================================ */
+        
+        /* Tamanhos base para tablet 7" */
+        @media (min-width: 600px) and (max-width: 1024px) {
+            .selecao-logo img {
+                max-width: 100px !important;
+            }
+            
+            .selecao-titulo {
+                font-size: 1.8em !important;
+                margin-bottom: 20px !important;
+            }
+            
+            .selecao-btn {
+                padding: 15px !important;
+                font-size: 1.3em !important;
+            }
+            
+            .btn-mesa-final-topo {
+                padding: 10px !important;
+                font-size: 0.9em !important;
+            }
+            
+            .logo-top img {
+                max-width: 50px !important;
+            }
+            
+            .logo-top h2 {
+                font-size: 0.85em !important;
+            }
+            
+            .stat-card {
+                padding: 8px !important;
+            }
+            
+            .stat-card-titulo {
+                font-size: 0.8em !important;
+            }
+            
+            .stat-card-numeros {
+                font-size: 1.1em !important;
+                gap: 10px !important;
+            }
+            
+            .jogador-foto {
+                width: 32px !important;
+                height: 32px !important;
+            }
+            
+            .jogador-nome {
+                font-size: 0.75em !important;
+            }
+            
+            .badge {
+                font-size: 0.5em !important;
+                padding: 1px 4px !important;
+            }
+            
+            .action-btn {
+                padding: 3px 6px !important;
+                font-size: 0.55em !important;
+            }
+            
+            .btn-rebuy-duplo {
+                font-size: 0.7em !important;
+                padding: 3px 8px !important;
+            }
+            
+            .jogador-posicao-numero {
+                font-size: 0.85em !important;
+                min-width: 28px !important;
+            }
+            
+            .jogador-card {
+                padding: 6px !important;
+                gap: 6px !important;
+            }
+            
+            .jogador-info {
+                min-width: 70px !important;
+            }
+            
+            .mesa-indicator-text {
+                font-size: 0.9em !important;
+            }
+            
+            .app-header {
+                padding: 10px !important;
+            }
+            
+            .stats-cards {
+                gap: 8px !important;
+                margin-bottom: 8px !important;
+            }
+            
+            .jogadores-lados {
+                padding: 8px !important;
+                gap: 10px !important;
+            }
+            
+            .lado-esquerdo, .lado-direito {
+                padding: 6px !important;
+            }
+            
+            .jogadores-grid {
+                gap: 6px !important;
+            }
+            
+            .admin-header h1 {
+                font-size: 1.3em !important;
+            }
+            
+            .voltar-btn {
+                padding: 8px 16px !important;
+            }
+            
+            .btn {
+                padding: 6px 10px !important;
+                font-size: 0.75em !important;
+            }
+            
+            .melhor-mao-section {
+                padding: 12px !important;
+            }
+            
+            .melhor-mao-section h3 {
+                font-size: 1em !important;
+            }
+            
+            .verificar-header h1 {
+                font-size: 1.2em !important;
+            }
+            
+            .classificacao-table th, .classificacao-table td {
+                padding: 6px !important;
+                font-size: 0.7em !important;
+            }
+            
+            .classificacao-foto {
+                width: 25px !important;
+                height: 25px !important;
+            }
+            
+            .status-indicator {
+                font-size: 0.6em !important;
+                padding: 3px 8px !important;
+            }
+            
+            .modal-content {
+                padding: 15px !important;
+                max-width: 300px !important;
+            }
+            
+            .modal-content h3 {
+                font-size: 1em !important;
+            }
+        }
+        
+        /* Ajustes específicos para altura de tablet 7" em modo retrato */
+        @media (min-width: 600px) and (max-width: 800px) and (orientation: portrait) {
+            .jogadores-lados {
+                flex-direction: column !important;
+            }
+            
+            .lado-esquerdo, .lado-direito {
+                width: 100% !important;
+            }
+            
+            .lado-direito {
+                margin-top: 8px !important;
+            }
+            
+            .mesa-final-app .jogadores-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important;
+            }
+        }
+        
+        /* Ajustes para modo paisagem do tablet */
+        @media (min-width: 800px) and (orientation: landscape) {
+            .jogadores-lados {
+                flex-direction: row !important;
+            }
+            
+            .lado-esquerdo, .lado-direito {
+                flex: 1 !important;
+            }
+            
+            .mesa-final-app .jogadores-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+            }
+        }
+        
+        /* Ajustes para telas muito pequenas (modo janela) */
+        @media (max-width: 599px) {
+            .selecao-logo img {
+                max-width: 80px !important;
+            }
+            
+            .selecao-titulo {
+                font-size: 1.5em !important;
+            }
+            
+            .selecao-btn {
+                padding: 12px !important;
+                font-size: 1.1em !important;
+            }
+            
+            .stat-card-numeros {
+                font-size: 1em !important;
+                gap: 8px !important;
+            }
+            
+            .action-btn {
+                padding: 2px 4px !important;
+                font-size: 0.5em !important;
+            }
+            
+            .jogador-nome {
+                font-size: 0.7em !important;
+            }
+        }
+        
+        /* ============================================ */
+        /* FIM DAS ADAPTAÇÕES PARA TABLET */
+        /* ============================================ */
         
         .tela-selecao {
             display: flex;
@@ -1729,7 +1951,7 @@ function atualizarClassificacaoAtual() {
                     <td class="classificacao-nome">
                         <img class="classificacao-foto" src="${fotoUrl}" onerror="this.style.display='none'">
                         ${j.nome}
-                     </td>
+                    </td>
                     <td>${j.mesa || '-'}</td>
                     <td>${j.pontosPosicao || 0}</td>
                     <td>${j.kos || 0}</td>
@@ -2275,7 +2497,7 @@ function atualizarAdminEstatisticas() {
     const ranking = [...todos].filter(j => (j.rebuys||0) > 0).sort((a,b) => (b.rebuys||0) - (a.rebuys||0)).slice(0,5);
     const rankingBody = document.getElementById('adminRankingBody');
     if (rankingBody) {
-        if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy<th> ';
+        if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy</td></tr>';
         else rankingBody.innerHTML = ranking.map((j,i) => `<tr>
                     <td>${i+1}</td>
                     <td>${j.nome}${j.premio ? ` 💰 R$ ${j.premio}` : ''}</td>
