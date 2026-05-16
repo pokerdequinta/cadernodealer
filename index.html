@@ -26,7 +26,6 @@
         /* ADAPTAÇÕES PARA TABLET DE 7 POLEGADAS */
         /* ============================================ */
         
-        /* Tamanhos base para tablet 7" */
         @media (min-width: 600px) and (max-width: 1024px) {
             .selecao-logo img {
                 max-width: 100px !important;
@@ -82,7 +81,6 @@
                 padding: 2px 6px !important;
             }
             
-            /* --- AJUSTE PRINCIPAL: BOTÕES MAIORES PARA TABLET --- */
             .action-btn {
                 padding: 8px 12px !important;
                 font-size: 0.8em !important;
@@ -176,7 +174,6 @@
                 padding: 3px 8px !important;
             }
             
-            /* Botões dos modais também maiores */
             .modal-content {
                 padding: 20px !important;
                 max-width: 320px !important;
@@ -197,7 +194,6 @@
             }
         }
         
-        /* Ajustes específicos para altura de tablet 7" em modo retrato */
         @media (min-width: 600px) and (max-width: 800px) and (orientation: portrait) {
             .jogadores-lados {
                 flex-direction: column !important;
@@ -216,7 +212,6 @@
             }
         }
         
-        /* Ajustes para modo paisagem do tablet */
         @media (min-width: 800px) and (orientation: landscape) {
             .jogadores-lados {
                 flex-direction: row !important;
@@ -231,7 +226,6 @@
             }
         }
         
-        /* Ajustes para telas muito pequenas (modo janela) */
         @media (max-width: 599px) {
             .selecao-logo img {
                 max-width: 80px !important;
@@ -260,10 +254,6 @@
                 font-size: 0.7em !important;
             }
         }
-        
-        /* ============================================ */
-        /* FIM DAS ADAPTAÇÕES PARA TABLET */
-        /* ============================================ */
         
         .tela-selecao {
             display: flex;
@@ -1558,13 +1548,12 @@ let jogadorEliminando = null;
 let contadorEliminados = 0;
 let totalJogadoresIniciais = 0;
 let mesaFinalAtiva = false;
-let jogadoresMesaFinal = [];
 let jogadorEliminandoMF = null;
 let melhorMaoAtual = null;
 let audioContext = null;
 let fotosJogadores = {};
 
-// Chaves PIX dos jogadores (baseado no site http://pokerdequinta.github.io/pix)
+// Chaves PIX dos jogadores
 const chavesPix = {
     'Amarildo': { chave: '41987779470', tipo: 'Telefone' },
     'Boy': { chave: '41998294734', tipo: 'Telefone' },
@@ -1693,13 +1682,13 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true) {
         classificacaoData = [];
         contadorEliminados = 0;
         mesaFinalAtiva = false;
-        jogadoresMesaFinal = [];
         totalJogadoresIniciais = 0;
         melhorMaoAtual = null;
         
         db.ref('mesas').set(mesasData);
         db.ref('classificacao').set(classificacaoData);
         db.ref('melhorMao').set(null);
+        db.ref('mesaFinalAtiva').set(false);
         
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
@@ -1743,6 +1732,15 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     });
     
+    db.ref('mesaFinalAtiva').on('value', (snapshot) => {
+        if (snapshot.exists()) {
+            mesaFinalAtiva = snapshot.val();
+        } else {
+            mesaFinalAtiva = false;
+        }
+        atualizarBotoesMesaFinal();
+    });
+    
     db.ref('fotosJogadores').on('value', (snapshot) => {
         if (snapshot.exists()) fotosJogadores = snapshot.val();
         atualizarGridJogadores();
@@ -1756,13 +1754,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         else { mesasData = { preta: [], amarela: [] }; db.ref('mesas').set(mesasData); }
         
         const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
-        // CORREÇÃO: Atualiza o total de jogadores inscritos no torneio
-        // Agora o totalGeralJogadores exibe o total de jogadores que iniciaram (vivos + eliminados)
         const totalJogadoresInscritos = todosJogadores.length;
         const totalVivos = todosJogadores.filter(j => !j.eliminado).length;
         const totalEliminados = todosJogadores.filter(j => j.eliminado).length;
         
-        // Atualiza o card "TOTAL TORNEIO" separadamente para garantir a exibição correta
         const totalGeralSpan = document.getElementById('totalGeralJogadores');
         const totalVivosSpan = document.getElementById('totalVivos');
         const totalEliminadosSpan = document.getElementById('totalEliminados');
@@ -1771,7 +1766,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (totalVivosSpan) totalVivosSpan.textContent = totalVivos;
         if (totalEliminadosSpan) totalEliminadosSpan.textContent = totalEliminados;
         
-        // Atualiza os totais individuais das mesas
         const pretaVivos = (mesasData.preta || []).filter(j => !j.eliminado).length;
         const pretaEliminados = (mesasData.preta || []).filter(j => j.eliminado).length;
         const pretaTotal = (mesasData.preta || []).length;
@@ -1793,7 +1787,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (amarelaEliminadosSpan) amarelaEliminadosSpan.textContent = amarelaEliminados;
         if (amarelaTotalSpan) amarelaTotalSpan.textContent = amarelaTotal;
         
-        // Atualiza totalJogadoresIniciais se ainda não foi definido
         if (totalJogadoresIniciais === 0 && todosJogadores.length > 0) {
             totalJogadoresIniciais = todosJogadores.length;
         }
@@ -1802,7 +1795,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
         verificarMesaFinal();
-        atualizarBotoesMesaFinal();
         atualizarSelectMelhorMao();
         atualizarClassificacaoAtual();
     });
@@ -1861,7 +1853,6 @@ function tocarAlertaMesaFinal() {
 }
 
 function atualizarStatsCards() {
-    // Função mantida para compatibilidade, mas os valores agora são atualizados diretamente no snapshot do Firebase
     const preta = mesasData.preta || [];
     const amarela = mesasData.amarela || [];
     
@@ -2022,8 +2013,7 @@ function verificarMesaFinal() {
     
     if (vivos.length === 9 && !mesaFinalAtiva) {
         mesaFinalAtiva = true;
-        jogadoresMesaFinal = [...vivos];
-        jogadoresMesaFinal.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
+        db.ref('mesaFinalAtiva').set(true);
         renderizarMesaFinal();
         atualizarStatsCards();
         atualizarBotoesMesaFinal();
@@ -2032,14 +2022,12 @@ function verificarMesaFinal() {
     }
     
     if (mesaFinalAtiva) {
-        const vivosAtualizados = todosJogadores.filter(j => !j.eliminado);
-        if (vivosAtualizados.length < 9) {
-            jogadoresMesaFinal = [...vivosAtualizados];
-            jogadoresMesaFinal.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
-            renderizarMesaFinal();
-            atualizarStatsCards();
-            if (jogadoresMesaFinal.length === 0) finalizarTorneio();
-            else if (jogadoresMesaFinal.length === 1) finalizarComCampeao(jogadoresMesaFinal[0]);
+        renderizarMesaFinal();
+        atualizarStatsCards();
+        if (vivos.length === 0) {
+            finalizarTorneio();
+        } else if (vivos.length === 1 && !classificacaoData.some(c => c.posicao === 1)) {
+            finalizarComCampeao(vivos[0]);
         }
         atualizarTabelaEliminadosMF();
     }
@@ -2049,14 +2037,21 @@ function renderizarMesaFinal() {
     const grid = document.getElementById('jogadoresMesaFinalGrid');
     const indicator = document.getElementById('mesaFinalIndicatorText');
     if (!grid) return;
-    if (indicator) indicator.textContent = `🃏 MESA FINAL - ${jogadoresMesaFinal.length} JOGADORES 🃏`;
-    if (jogadoresMesaFinal.length === 0) { grid.innerHTML = '<div style="text-align:center;padding:40px;">🃏 TORNEIO FINALIZADO! 🃏</div>'; return; }
     
-    grid.innerHTML = jogadoresMesaFinal.map((j, idx) => {
+    const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+    const vivos = todosJogadores.filter(j => !j.eliminado);
+    const jogadoresOrdenados = [...vivos].sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
+    
+    if (indicator) indicator.textContent = `🃏 MESA FINAL - ${jogadoresOrdenados.length} JOGADORES 🃏`;
+    if (jogadoresOrdenados.length === 0) { 
+        grid.innerHTML = '<div style="text-align:center;padding:40px;">🃏 TORNEIO FINALIZADO! 🃏</div>'; 
+        return; 
+    }
+    
+    grid.innerHTML = jogadoresOrdenados.map((j, idx) => {
         const isMelhorMao = melhorMaoAtual === j.nome;
         const addonGratis = isAddonGratis(j.nome);
         const addonTexto = j.addon ? (addonGratis ? 'GRÁTIS' : '') : '';
-        const temPix = chavesPix[j.nome] && chavesPix[j.nome].chave;
         
         return `<div class="jogador-card ${isMelhorMao ? 'melhor-mao' : ''}">
                     <div class="jogador-posicao-numero">${idx + 1}</div>
@@ -2071,7 +2066,6 @@ function renderizarMesaFinal() {
                     </div>
                     <div class="jogador-actions">
                         <button class="action-btn btn-eliminar" onclick="abrirModalEliminarMF('${j.nome}')">❌ ELIMINAR</button>
-                        ${temPix ? `<button class="action-btn btn-copiar-pix" onclick="copiarPix('${j.nome}')">📋 PIX</button>` : ''}
                     </div>
                 </div>`;
     }).join('');
@@ -2090,9 +2084,12 @@ function abrirModalEliminarMF(nome) {
 
 function confirmarEliminacaoMF() {
     if (jogadorEliminandoMF) {
-        const jogador = jogadoresMesaFinal.find(j => j.nome === jogadorEliminandoMF);
+        const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+        const vivos = todosJogadores.filter(j => !j.eliminado);
+        const jogador = vivos.find(j => j.nome === jogadorEliminandoMF);
+        
         if (jogador) {
-            const posicao = jogadoresMesaFinal.length;
+            const posicao = vivos.length;
             const qtdKos = parseInt(document.getElementById('quantidadeKOsMF').value) || 0;
             const premio = parseFloat(document.getElementById('premioMF').value) || 0;
             
@@ -2114,7 +2111,7 @@ function confirmarEliminacaoMF() {
             classificacaoData.push(item);
             db.ref('classificacao').set(classificacaoData);
             
-            const original = [...(mesasData.preta || []), ...(mesasData.amarela || [])].find(j => j.nome === jogador.nome);
+            const original = todosJogadores.find(j => j.nome === jogador.nome);
             if (original) { 
                 original.eliminado = true; 
                 original.posicaoFinal = posicao; 
@@ -2129,14 +2126,18 @@ function confirmarEliminacaoMF() {
             }
             alert(msg);
             
-            jogadoresMesaFinal = jogadoresMesaFinal.filter(j => j.nome !== jogadorEliminandoMF);
+            const novosVivos = todosJogadores.filter(j => j.nome !== jogadorEliminandoMF && !j.eliminado);
+            
+            if (novosVivos.length === 0) {
+                finalizarTorneio();
+            } else if (novosVivos.length === 1 && !classificacaoData.some(c => c.posicao === 1)) {
+                finalizarComCampeao(novosVivos[0]);
+            }
+            
             renderizarMesaFinal();
             atualizarStatsCards();
             atualizarTabelaEliminadosMF();
             atualizarClassificacaoAtual();
-            
-            if (jogadoresMesaFinal.length === 0) finalizarTorneio();
-            else if (jogadoresMesaFinal.length === 1) finalizarComCampeao(jogadoresMesaFinal[0]);
         }
     }
     document.getElementById('modalEliminarMesaFinal').classList.remove('active');
@@ -2172,8 +2173,6 @@ function finalizarComCampeao(campeao) {
     
     mostrarTelaVerificarClassificacao();
     tocarAlertaMesaFinal();
-    jogadoresMesaFinal = [];
-    renderizarMesaFinal();
     atualizarTabelaEliminadosMF();
     atualizarClassificacaoAtual();
 }
@@ -2184,11 +2183,32 @@ function finalizarTorneio() {
     alert('🃏 TORNEIO FINALIZADO! 🃏'); 
 }
 
-function irParaMesaFinal() { if (mesaFinalAtiva) { document.getElementById('appContainer').classList.add('hidden'); document.getElementById('mesaFinalApp').classList.remove('hidden'); renderizarMesaFinal(); atualizarStatsCards(); atualizarTabelaEliminadosMF(); } }
+function irParaMesaFinal() { 
+    if (mesaFinalAtiva) { 
+        document.getElementById('appContainer').classList.add('hidden'); 
+        document.getElementById('mesaFinalApp').classList.remove('hidden'); 
+        renderizarMesaFinal(); 
+        atualizarStatsCards(); 
+        atualizarTabelaEliminadosMF(); 
+    } 
+}
 
-function irParaMesaFinalTopo() { if (mesaFinalAtiva) { document.getElementById('telaSelecao').classList.add('hidden'); document.getElementById('mesaFinalApp').classList.remove('hidden'); renderizarMesaFinal(); atualizarStatsCards(); atualizarTabelaEliminadosMF(); } }
+function irParaMesaFinalTopo() { 
+    if (mesaFinalAtiva) { 
+        document.getElementById('telaSelecao').classList.add('hidden'); 
+        document.getElementById('mesaFinalApp').classList.remove('hidden'); 
+        renderizarMesaFinal(); 
+        atualizarStatsCards(); 
+        atualizarTabelaEliminadosMF(); 
+    } 
+}
 
-function voltarDaMesaFinal() { document.getElementById('mesaFinalApp').classList.add('hidden'); document.getElementById('appContainer').classList.remove('hidden'); atualizarGridJogadores(); atualizarStatsCards(); }
+function voltarDaMesaFinal() { 
+    document.getElementById('mesaFinalApp').classList.add('hidden'); 
+    document.getElementById('appContainer').classList.remove('hidden'); 
+    atualizarGridJogadores(); 
+    atualizarStatsCards(); 
+}
 
 function iniciarApp() {
     if (mesaFinalAtiva) return;
@@ -2232,6 +2252,8 @@ function atualizarGridJogadores() {
             const isMelhorMao = melhorMaoAtual === j.nome;
             const addonGratis = isAddonGratis(j.nome);
             const addonTexto = j.addon ? (addonGratis ? 'GRÁTIS' : '') : '';
+            const temPix = chavesPix[j.nome] && chavesPix[j.nome].chave;
+            
             return `<div class="jogador-card ${j.eliminado ? 'eliminado' : ''} ${isMelhorMao ? 'melhor-mao' : ''}">
                         <div class="jogador-posicao-numero">${j.posicao || '?'}</div>
                         <img class="jogador-foto" src="${getFotoJogador(j.nome)}">
@@ -2252,6 +2274,7 @@ function atualizarGridJogadores() {
                                 <button class="action-btn btn-corrigir" onclick="abrirCorrecao('${j.nome}')">✏️</button>
                                 <button class="action-btn btn-eliminar" onclick="abrirModalEliminar('${j.nome}')">❌</button>
                             ` : ''}
+                            ${temPix && !j.eliminado ? `<button class="action-btn btn-copiar-pix" onclick="copiarPix('${j.nome}')">📋 PIX</button>` : ''}
                         </div>
                     </div>`;
         }).join('');
@@ -2427,13 +2450,13 @@ function iniciarEtapaAdmin() {
         classificacaoData = [];
         contadorEliminados = 0;
         mesaFinalAtiva = false;
-        jogadoresMesaFinal = [];
         totalJogadoresIniciais = 0;
         melhorMaoAtual = null;
         
         db.ref('mesas').set(mesasData);
         db.ref('classificacao').set(classificacaoData);
         db.ref('melhorMao').set(null);
+        db.ref('mesaFinalAtiva').set(false);
         
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
@@ -2498,7 +2521,7 @@ function atualizarAdminResumo() {
     const tbody = document.getElementById('adminResumoBody');
     if (!tbody) return;
     if (todos.length === 0) { 
-        tbody.innerHTML = '<td><td colspan="7">Nenhum dado</td></table>'; 
+        tbody.innerHTML = '<tr><td colspan="7">Nenhum dado</td></tr>'; 
         document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; 
         return; 
     }
@@ -2682,8 +2705,8 @@ function aplicarLayout() {
     totalJogadoresIniciais = mesasData.preta.length + mesasData.amarela.length; 
     contadorEliminados = 0; 
     mesaFinalAtiva = false; 
-    jogadoresMesaFinal = []; 
     db.ref('mesas').set(mesasData); 
+    db.ref('mesaFinalAtiva').set(false);
     alert(`✅ Layout aplicado!\nPreta: ${mesasData.preta.length}\nAmarela: ${mesasData.amarela.length}\nTotal: ${totalJogadoresIniciais}`); 
     atualizarAdminResumo(); 
     atualizarAdminEstatisticas(); 
@@ -2790,13 +2813,13 @@ function confirmarApagarTodos() {
         historicoEtapas = []; 
         contadorEliminados = 0; 
         mesaFinalAtiva = false; 
-        jogadoresMesaFinal = []; 
         totalJogadoresIniciais = 0; 
         melhorMaoAtual = null; 
         db.ref('mesas').set(mesasData); 
         db.ref('classificacao').set(classificacaoData); 
         db.ref('historicoEtapas').set([]); 
         db.ref('melhorMao').set(null); 
+        db.ref('mesaFinalAtiva').set(false);
         document.getElementById('telaAdmin').classList.add('hidden'); 
         document.getElementById('telaSelecao').classList.remove('hidden'); 
         atualizarStatsCards(); 
