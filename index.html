@@ -1162,6 +1162,31 @@
         .btn-copiar-pix-classif:hover {
             transform: scale(1.05);
         }
+        
+        /* Estilo para o toast de notificação */
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #d4a121;
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: 'Anton', sans-serif;
+            z-index: 10000;
+            animation: fadeOut 3s forwards;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            font-size: 1em;
+            text-align: center;
+            white-space: nowrap;
+        }
+        
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            70% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(20px); visibility: hidden; }
+        }
     </style>
 </head>
 <body>
@@ -1548,6 +1573,7 @@ let jogadorEliminando = null;
 let contadorEliminados = 0;
 let totalJogadoresIniciais = 0;
 let mesaFinalAtiva = false;
+let torneioFinalizado = false; // NOVA VARIÁVEL PARA CONTROLAR SE O TORNEIO FOI FINALIZADO
 let jogadorEliminandoMF = null;
 let melhorMaoAtual = null;
 let audioContext = null;
@@ -1584,16 +1610,26 @@ const chavesPix = {
     'Van Van': { chave: '41999677977', tipo: 'Telefone' }
 };
 
+function mostrarToast(mensagem) {
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.textContent = mensagem;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        if (toast && toast.remove) toast.remove();
+    }, 3000);
+}
+
 function copiarPix(nome) {
     const pixInfo = chavesPix[nome];
     if (pixInfo && pixInfo.chave) {
         navigator.clipboard.writeText(pixInfo.chave).then(() => {
-            alert(`✅ Chave PIX de ${nome} copiada!\nTipo: ${pixInfo.tipo}\nChave: ${pixInfo.chave}`);
+            mostrarToast(`✅ Chave PIX de ${nome} copiada!`);
         }).catch(() => {
-            alert(`❌ Erro ao copiar. Chave: ${pixInfo.chave}`);
+            mostrarToast(`❌ Erro ao copiar. Chave: ${pixInfo.chave}`);
         });
     } else {
-        alert(`⚠️ Nenhuma chave PIX cadastrada para ${nome}`);
+        mostrarToast(`⚠️ Nenhuma chave PIX cadastrada para ${nome}`);
     }
 }
 
@@ -1673,7 +1709,7 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true) {
     
     if (salvou) {
         if (mostrarMensagem) {
-            alert(`✅ ${config.etapa}ª ETAPA salva no histórico com sucesso!`);
+            mostrarToast(`✅ ${config.etapa}ª ETAPA salva no histórico com sucesso!`);
         }
         
         prepararProximaEtapa();
@@ -1684,11 +1720,13 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true) {
         mesaFinalAtiva = false;
         totalJogadoresIniciais = 0;
         melhorMaoAtual = null;
+        torneioFinalizado = false;
         
         db.ref('mesas').set(mesasData);
         db.ref('classificacao').set(classificacaoData);
         db.ref('melhorMao').set(null);
         db.ref('mesaFinalAtiva').set(false);
+        db.ref('torneioFinalizado').set(false);
         
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
@@ -1701,16 +1739,16 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true) {
         if (mostrarMensagem) {
             const proxima = config.etapa + 1;
             if (proxima <= 13) {
-                alert(`🎯 PRÓXIMA ETAPA: ${proxima}ª ETAPA!\n\nClique em "INICIAR ETAPA SELECIONADA" no painel administrativo para começar a próxima etapa.`);
+                mostrarToast(`🎯 PRÓXIMA ETAPA: ${proxima}ª ETAPA!\n\nClique em "INICIAR ETAPA SELECIONADA" no painel administrativo para começar a próxima etapa.`);
             } else {
-                alert(`🏆 PARABÉNS! Temporada concluída até a 13ª etapa!`);
+                mostrarToast(`🏆 PARABÉNS! Temporada concluída até a 13ª etapa!`);
             }
         }
         
         return true;
     } else {
         if (mostrarMensagem) {
-            alert('Nenhum dado para salvar! É necessário ter eliminações registradas.');
+            mostrarToast('Nenhum dado para salvar! É necessário ter eliminações registradas.');
         }
         return false;
     }
@@ -1729,6 +1767,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         const tituloClassificacao = document.querySelector('#telaVerificarClassificacao .verificar-header h1');
         if (tituloClassificacao) {
             tituloClassificacao.innerHTML = `📊 CLASSIFICAÇÃO GERAL DA ${config.etapa}ª ETAPA`;
+        }
+    });
+    
+    db.ref('torneioFinalizado').on('value', (snapshot) => {
+        if (snapshot.exists()) {
+            torneioFinalizado = snapshot.val();
+        } else {
+            torneioFinalizado = false;
         }
     });
     
@@ -1787,7 +1833,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (amarelaEliminadosSpan) amarelaEliminadosSpan.textContent = amarelaEliminados;
         if (amarelaTotalSpan) amarelaTotalSpan.textContent = amarelaTotal;
         
-        if (totalJogadoresIniciais === 0 && todosJogadores.length > 0) {
+        if (totalJogadoresIniciais === 0 && todosJogadores.length > 0 && !torneioFinalizado) {
             totalJogadoresIniciais = todosJogadores.length;
         }
         
@@ -1883,7 +1929,7 @@ function atualizarStatsCards() {
 function atualizarBotoesMesaFinal() {
     const btnIrMesaFinal = document.getElementById('btnIrMesaFinal');
     const btnMesaFinalTopo = document.getElementById('btnMesaFinalTopo');
-    if (mesaFinalAtiva) {
+    if (mesaFinalAtiva && !torneioFinalizado) {
         if (btnIrMesaFinal) btnIrMesaFinal.style.display = 'inline-block';
         if (btnMesaFinalTopo) btnMesaFinalTopo.style.display = 'block';
     } else {
@@ -1942,9 +1988,9 @@ function aplicarMelhorMao() {
             jogadorEncontrado.addon = true;
             jogadorEncontrado.addonGratis = true;
             db.ref('mesas').set(mesasData);
-            alert(`✅ ${jogadorNome} ganhou ADDON GRÁTIS pela melhor mão!`);
+            mostrarToast(`✅ ${jogadorNome} ganhou ADDON GRÁTIS pela melhor mão!`);
         } else if (jogadorEncontrado && jogadorEncontrado.addon) {
-            alert(`⚠️ ${jogadorNome} já possui addon registrado!`);
+            mostrarToast(`⚠️ ${jogadorNome} já possui addon registrado!`);
         }
         
         atualizarGridJogadores();
@@ -2008,6 +2054,9 @@ function atualizarClassificacaoAtual() {
 }
 
 function verificarMesaFinal() {
+    // Se o torneio já foi finalizado, não faz nada
+    if (torneioFinalizado) return;
+    
     const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const vivos = todosJogadores.filter(j => !j.eliminado);
     
@@ -2018,10 +2067,10 @@ function verificarMesaFinal() {
         atualizarStatsCards();
         atualizarBotoesMesaFinal();
         tocarAlertaMesaFinal();
-        alert('🃏 MESA FINAL! Restam 9 jogadores! 🃏');
+        mostrarToast('🃏 MESA FINAL! Restam 9 jogadores! 🃏');
     }
     
-    if (mesaFinalAtiva) {
+    if (mesaFinalAtiva && !torneioFinalizado) {
         renderizarMesaFinal();
         atualizarStatsCards();
         if (vivos.length === 0) {
@@ -2083,7 +2132,7 @@ function abrirModalEliminarMF(nome) {
 }
 
 function confirmarEliminacaoMF() {
-    if (jogadorEliminandoMF) {
+    if (jogadorEliminandoMF && !torneioFinalizado) {
         const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
         const vivos = todosJogadores.filter(j => !j.eliminado);
         const jogador = vivos.find(j => j.nome === jogadorEliminandoMF);
@@ -2124,7 +2173,7 @@ function confirmarEliminacaoMF() {
             if (premio > 0) {
                 msg += `\n💰 Premiação: R$ ${premio.toFixed(2)}`;
             }
-            alert(msg);
+            mostrarToast(msg);
             
             const novosVivos = todosJogadores.filter(j => j.nome !== jogadorEliminandoMF && !j.eliminado);
             
@@ -2145,6 +2194,11 @@ function confirmarEliminacaoMF() {
 }
 
 function finalizarComCampeao(campeao) {
+    if (torneioFinalizado) return;
+    
+    torneioFinalizado = true;
+    db.ref('torneioFinalizado').set(true);
+    
     const qtdKos = prompt(`🃏 CAMPEÃO: ${campeao.nome}\nQuantos KO's ele fez no total?`, "0");
     const kos = parseInt(qtdKos) || 0;
     const premio = prompt(`💰 CAMPEÃO: ${campeao.nome}\nQual foi a premiação em R$?`, "0");
@@ -2166,10 +2220,23 @@ function finalizarComCampeao(campeao) {
     db.ref('classificacao').set(classificacaoData);
     
     if (valorPremio > 0) {
-        alert(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)!\n💰 Premiação: R$ ${valorPremio.toFixed(2)}`);
+        mostrarToast(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)! 💰 Premiação: R$ ${valorPremio.toFixed(2)}`);
     } else {
-        alert(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)!`);
+        mostrarToast(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)!`);
     }
+    
+    // Marcar todos os jogadores como eliminados
+    const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+    todosJogadores.forEach(j => {
+        if (!j.eliminado) {
+            j.eliminado = true;
+            j.posicaoFinal = 1;
+        }
+    });
+    db.ref('mesas').set(mesasData);
+    
+    db.ref('mesaFinalAtiva').set(false);
+    mesaFinalAtiva = false;
     
     mostrarTelaVerificarClassificacao();
     tocarAlertaMesaFinal();
@@ -2178,29 +2245,40 @@ function finalizarComCampeao(campeao) {
 }
 
 function finalizarTorneio() { 
+    if (torneioFinalizado) return;
+    
+    torneioFinalizado = true;
+    db.ref('torneioFinalizado').set(true);
+    db.ref('mesaFinalAtiva').set(false);
+    mesaFinalAtiva = false;
+    
     mostrarTelaVerificarClassificacao();
     tocarAlertaMesaFinal(); 
-    alert('🃏 TORNEIO FINALIZADO! 🃏'); 
+    mostrarToast('🃏 TORNEIO FINALIZADO! 🃏'); 
 }
 
 function irParaMesaFinal() { 
-    if (mesaFinalAtiva) { 
+    if (mesaFinalAtiva && !torneioFinalizado) { 
         document.getElementById('appContainer').classList.add('hidden'); 
         document.getElementById('mesaFinalApp').classList.remove('hidden'); 
         renderizarMesaFinal(); 
         atualizarStatsCards(); 
         atualizarTabelaEliminadosMF(); 
-    } 
+    } else if (torneioFinalizado) {
+        mostrarToast('O torneio já foi finalizado! Inicie uma nova etapa para começar outro torneio.');
+    }
 }
 
 function irParaMesaFinalTopo() { 
-    if (mesaFinalAtiva) { 
+    if (mesaFinalAtiva && !torneioFinalizado) { 
         document.getElementById('telaSelecao').classList.add('hidden'); 
         document.getElementById('mesaFinalApp').classList.remove('hidden'); 
         renderizarMesaFinal(); 
         atualizarStatsCards(); 
         atualizarTabelaEliminadosMF(); 
-    } 
+    } else if (torneioFinalizado) {
+        mostrarToast('O torneio já foi finalizado! Inicie uma nova etapa para começar outro torneio.');
+    }
 }
 
 function voltarDaMesaFinal() { 
@@ -2211,7 +2289,14 @@ function voltarDaMesaFinal() {
 }
 
 function iniciarApp() {
-    if (mesaFinalAtiva) return;
+    if (mesaFinalAtiva && !torneioFinalizado) {
+        mostrarToast('A mesa final está ativa! Acesse a mesa final pelo botão especial.');
+        return;
+    }
+    if (torneioFinalizado) {
+        mostrarToast('O torneio foi finalizado! Inicie uma nova etapa para começar outro torneio.');
+        return;
+    }
     document.getElementById('telaSelecao').classList.add('hidden');
     document.getElementById('appContainer').classList.remove('hidden');
     const indicator = document.getElementById('mesaIndicator');
@@ -2267,14 +2352,14 @@ function atualizarGridJogadores() {
                             </div>
                         </div>
                         <div class="jogador-actions">
-                            ${!j.eliminado ? `
+                            ${!j.eliminado && !torneioFinalizado ? `
                                 <button class="action-btn btn-rebuy" onclick="adicionarRebuy('${j.nome}', 'simples')">REBUY</button>
                                 <button class="action-btn btn-rebuy-duplo" onclick="adicionarRebuy('${j.nome}', 'duplo')">2x</button>
                                 ${!j.addon ? `<button class="action-btn btn-addon" onclick="adicionarAddon('${j.nome}')">ADDON</button>` : ''}
                                 <button class="action-btn btn-corrigir" onclick="abrirCorrecao('${j.nome}')">✏️</button>
                                 <button class="action-btn btn-eliminar" onclick="abrirModalEliminar('${j.nome}')">❌</button>
                             ` : ''}
-                            ${temPix && !j.eliminado ? `<button class="action-btn btn-copiar-pix" onclick="copiarPix('${j.nome}')">📋 PIX</button>` : ''}
+                            ${temPix && !j.eliminado && !torneioFinalizado ? `<button class="action-btn btn-copiar-pix" onclick="copiarPix('${j.nome}')">📋 PIX</button>` : ''}
                         </div>
                     </div>`;
         }).join('');
@@ -2291,6 +2376,10 @@ function fecharAppEIrAdmin() {
 }
 
 function adicionarRebuy(nome, tipo) { 
+    if (torneioFinalizado) {
+        mostrarToast('O torneio já foi finalizado!');
+        return;
+    }
     const qtd = tipo === 'simples' ? 1 : 2; 
     if (confirm(`REBUY ${tipo.toUpperCase()} para ${nome}?`)) { 
         const jogador = mesasData[mesaAtual].find(j => j.nome === nome); 
@@ -2306,20 +2395,24 @@ function adicionarRebuy(nome, tipo) {
 }
 
 function adicionarAddon(nome) { 
+    if (torneioFinalizado) {
+        mostrarToast('O torneio já foi finalizado!');
+        return;
+    }
     const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
     if (jogador && !jogador.addon && !jogador.eliminado) {
         if (confirm(`ADDON para ${nome}?`)) {
             jogador.addon = true;
             jogador.addonGratis = isAddonGratis(nome) || isAddonSemValor(nome);
             db.ref('mesas').set(mesasData);
-            alert(`✅ Addon registrado para ${nome}`);
+            mostrarToast(`✅ Addon registrado para ${nome}`);
             atualizarGridJogadores();
             atualizarStatsCards();
             atualizarAdminResumo();
             atualizarAdminEstatisticas();
         }
     } else if (jogador && jogador.addon) {
-        alert(`${nome} já possui addon!`);
+        mostrarToast(`${nome} já possui addon!`);
     }
 }
 
@@ -2355,6 +2448,10 @@ function salvarCorrecao() {
 }
 
 function abrirModalEliminar(nome) { 
+    if (torneioFinalizado) {
+        mostrarToast('O torneio já foi finalizado!');
+        return;
+    }
     jogadorEliminando = nome; 
     document.getElementById('eliminarJogadorNome').textContent = nome; 
     document.getElementById('quantidadeKOs').value = 0; 
@@ -2362,7 +2459,7 @@ function abrirModalEliminar(nome) {
 }
 
 function confirmarEliminacao() {
-    if (jogadorEliminando) {
+    if (jogadorEliminando && !torneioFinalizado) {
         const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorEliminando);
         if (jogador && !jogador.eliminado) {
             contadorEliminados++;
@@ -2374,7 +2471,7 @@ function confirmarEliminacao() {
             db.ref('classificacao').set(classificacaoData);
             jogador.eliminado = true; jogador.posicaoFinal = posicao; jogador.kos = qtdKos;
             db.ref('mesas').set(mesasData);
-            alert(`✅ ${jogador.nome} eliminado na ${posicao}ª posição com ${qtdKos} KO(s)!`);
+            mostrarToast(`✅ ${jogador.nome} eliminado na ${posicao}ª posição com ${qtdKos} KO(s)!`);
             atualizarGridJogadores();
             atualizarStatsCards();
             atualizarAdminResumo();
@@ -2386,7 +2483,7 @@ function confirmarEliminacao() {
             const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
             const vivos = todosJogadores.filter(j => !j.eliminado);
             if (vivos.length === 0) {
-                mostrarTelaVerificarClassificacao();
+                finalizarTorneio();
             }
         }
     }
@@ -2440,7 +2537,7 @@ function iniciarEtapaAdmin() {
         
         if (classificacaoData.length > 0 || totalJogadoresIniciais > 0) {
             salvarEtapaNoHistorico();
-            alert(`✅ ${config.etapa}ª ETAPA salva no histórico!`);
+            mostrarToast(`✅ ${config.etapa}ª ETAPA salva no histórico!`);
         }
         
         config.etapa = novaEtapa;
@@ -2452,11 +2549,13 @@ function iniciarEtapaAdmin() {
         mesaFinalAtiva = false;
         totalJogadoresIniciais = 0;
         melhorMaoAtual = null;
+        torneioFinalizado = false;
         
         db.ref('mesas').set(mesasData);
         db.ref('classificacao').set(classificacaoData);
         db.ref('melhorMao').set(null);
         db.ref('mesaFinalAtiva').set(false);
+        db.ref('torneioFinalizado').set(false);
         
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
@@ -2469,7 +2568,7 @@ function iniciarEtapaAdmin() {
         const infoDiv = document.getElementById('proximaEtapaInfo');
         if (infoDiv) infoDiv.style.display = 'none';
         
-        alert(`✅ ${novaEtapa}ª ETAPA iniciada!\n\nImporte o layout das mesas para começar.`);
+        mostrarToast(`✅ ${novaEtapa}ª ETAPA iniciada!\n\nImporte o layout das mesas para começar.`);
         
         const tituloClassificacao = document.querySelector('#telaVerificarClassificacao .verificar-header h1');
         if (tituloClassificacao) {
@@ -2637,7 +2736,7 @@ function removerEtapaHistorico(idx) {
         historicoEtapas.splice(idx, 1);
         db.ref('historicoEtapas').set(historicoEtapas);
         atualizarHistoricoEtapas();
-        alert('✅ Etapa removida do histórico!');
+        mostrarToast('✅ Etapa removida do histórico!');
     }
 }
 
@@ -2645,7 +2744,7 @@ function apagarHistorico() {
     if (confirm('⚠️ Apagar TODO o histórico de etapas?')) { 
         historicoEtapas = []; 
         db.ref('historicoEtapas').set([]); 
-        alert('✅ Histórico apagado!'); 
+        mostrarToast('✅ Histórico apagado!'); 
         atualizarHistoricoEtapas(); 
     } 
 }
@@ -2705,9 +2804,11 @@ function aplicarLayout() {
     totalJogadoresIniciais = mesasData.preta.length + mesasData.amarela.length; 
     contadorEliminados = 0; 
     mesaFinalAtiva = false; 
+    torneioFinalizado = false;
     db.ref('mesas').set(mesasData); 
     db.ref('mesaFinalAtiva').set(false);
-    alert(`✅ Layout aplicado!\nPreta: ${mesasData.preta.length}\nAmarela: ${mesasData.amarela.length}\nTotal: ${totalJogadoresIniciais}`); 
+    db.ref('torneioFinalizado').set(false);
+    mostrarToast(`✅ Layout aplicado!\nPreta: ${mesasData.preta.length}\nAmarela: ${mesasData.amarela.length}\nTotal: ${totalJogadoresIniciais}`); 
     atualizarAdminResumo(); 
     atualizarAdminEstatisticas(); 
     atualizarStatsCards(); 
@@ -2789,7 +2890,7 @@ function copiarCSV() {
         const addonValor = j.addon ? '1' : '0';
         csv += `${j.nome},${j.rebuys || 0},${addonValor}\n`; 
     }); 
-    navigator.clipboard.writeText(csv).then(() => alert('✅ Dados copiados! (Nome,Rebuys,Addon)')).catch(() => alert('❌ Erro ao copiar')); 
+    navigator.clipboard.writeText(csv).then(() => mostrarToast('✅ Dados copiados! (Nome,Rebuys,Addon)')).catch(() => mostrarToast('❌ Erro ao copiar')); 
 }
 
 function downloadCSV(csv, nome) { 
@@ -2815,16 +2916,18 @@ function confirmarApagarTodos() {
         mesaFinalAtiva = false; 
         totalJogadoresIniciais = 0; 
         melhorMaoAtual = null; 
+        torneioFinalizado = false;
         db.ref('mesas').set(mesasData); 
         db.ref('classificacao').set(classificacaoData); 
         db.ref('historicoEtapas').set([]); 
         db.ref('melhorMao').set(null); 
         db.ref('mesaFinalAtiva').set(false);
+        db.ref('torneioFinalizado').set(false);
         document.getElementById('telaAdmin').classList.add('hidden'); 
         document.getElementById('telaSelecao').classList.remove('hidden'); 
         atualizarStatsCards(); 
         atualizarBotoesMesaFinal(); 
-        alert('✅ Todos os dados foram apagados!'); 
+        mostrarToast('✅ Todos os dados foram apagados!'); 
         document.getElementById('modalSenhaApagar').classList.remove('active');
         document.getElementById('senhaApagar').value = '';
     } else { 
@@ -2876,9 +2979,9 @@ function inicializarEventos() {
     const fileInput = document.getElementById('fileInput');
     
     if (logoAdmin) logoAdmin.onclick = () => document.getElementById('modalSenhaAdmin').classList.add('active');
-    if (btnPreta) btnPreta.onclick = () => { if (!mesaFinalAtiva) { mesaAtual = 'preta'; iniciarApp(); } };
-    if (btnAmarela) btnAmarela.onclick = () => { if (!mesaFinalAtiva) { mesaAtual = 'amarela'; iniciarApp(); } };
-    if (btnVoltar) btnVoltar.onclick = () => { if (!mesaFinalAtiva) { document.getElementById('appContainer').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); } };
+    if (btnPreta) btnPreta.onclick = () => { if (!mesaFinalAtiva && !torneioFinalizado) { mesaAtual = 'preta'; iniciarApp(); } else if (torneioFinalizado) { mostrarToast('O torneio foi finalizado! Inicie uma nova etapa.'); } };
+    if (btnAmarela) btnAmarela.onclick = () => { if (!mesaFinalAtiva && !torneioFinalizado) { mesaAtual = 'amarela'; iniciarApp(); } else if (torneioFinalizado) { mostrarToast('O torneio foi finalizado! Inicie uma nova etapa.'); } };
+    if (btnVoltar) btnVoltar.onclick = () => { if (!mesaFinalAtiva && !torneioFinalizado) { document.getElementById('appContainer').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); } };
     if (btnIrFinal) btnIrFinal.onclick = irParaMesaFinal;
     if (btnFinalTopo) btnFinalTopo.onclick = irParaMesaFinalTopo;
     if (btnVoltarFinal) btnVoltarFinal.onclick = voltarDaMesaFinal;
