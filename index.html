@@ -78,32 +78,35 @@
             }
             
             .badge {
-                font-size: 0.5em !important;
-                padding: 1px 4px !important;
+                font-size: 0.6em !important;
+                padding: 2px 6px !important;
             }
             
+            /* --- AJUSTE PRINCIPAL: BOTÕES MAIORES PARA TABLET --- */
             .action-btn {
-                padding: 3px 6px !important;
-                font-size: 0.55em !important;
+                padding: 8px 12px !important;
+                font-size: 0.8em !important;
+                min-width: 60px !important;
             }
             
             .btn-rebuy-duplo {
-                font-size: 0.7em !important;
-                padding: 3px 8px !important;
+                font-size: 0.8em !important;
+                padding: 8px 12px !important;
+                min-width: 60px !important;
             }
             
             .jogador-posicao-numero {
-                font-size: 0.85em !important;
-                min-width: 28px !important;
+                font-size: 0.9em !important;
+                min-width: 32px !important;
             }
             
             .jogador-card {
-                padding: 6px !important;
-                gap: 6px !important;
+                padding: 8px !important;
+                gap: 8px !important;
             }
             
             .jogador-info {
-                min-width: 70px !important;
+                min-width: 80px !important;
             }
             
             .mesa-indicator-text {
@@ -129,7 +132,7 @@
             }
             
             .jogadores-grid {
-                gap: 6px !important;
+                gap: 8px !important;
             }
             
             .admin-header h1 {
@@ -137,12 +140,13 @@
             }
             
             .voltar-btn {
-                padding: 8px 16px !important;
+                padding: 10px 18px !important;
+                font-size: 0.9em !important;
             }
             
             .btn {
-                padding: 6px 10px !important;
-                font-size: 0.75em !important;
+                padding: 10px 14px !important;
+                font-size: 0.85em !important;
             }
             
             .melhor-mao-section {
@@ -158,13 +162,13 @@
             }
             
             .classificacao-table th, .classificacao-table td {
-                padding: 6px !important;
-                font-size: 0.7em !important;
+                padding: 8px !important;
+                font-size: 0.75em !important;
             }
             
             .classificacao-foto {
-                width: 25px !important;
-                height: 25px !important;
+                width: 28px !important;
+                height: 28px !important;
             }
             
             .status-indicator {
@@ -172,12 +176,23 @@
                 padding: 3px 8px !important;
             }
             
+            /* Botões dos modais também maiores */
             .modal-content {
-                padding: 15px !important;
-                max-width: 300px !important;
+                padding: 20px !important;
+                max-width: 320px !important;
             }
             
             .modal-content h3 {
+                font-size: 1.1em !important;
+            }
+            
+            .modal-buttons .btn {
+                padding: 12px 18px !important;
+                font-size: 0.9em !important;
+            }
+            
+            .form-group input {
+                padding: 12px !important;
                 font-size: 1em !important;
             }
         }
@@ -237,8 +252,8 @@
             }
             
             .action-btn {
-                padding: 2px 4px !important;
-                font-size: 0.5em !important;
+                padding: 6px 8px !important;
+                font-size: 0.65em !important;
             }
             
             .jogador-nome {
@@ -578,21 +593,22 @@
         
         .jogador-actions {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             flex-wrap: wrap;
             justify-content: flex-end;
         }
         
         .action-btn {
-            padding: 6px 10px;
+            padding: 6px 12px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.7em;
+            font-size: 0.75em;
             white-space: nowrap;
             font-family: 'Anton', sans-serif;
             transition: all 0.2s;
+            min-width: 55px;
         }
         
         .action-btn:hover {
@@ -679,7 +695,7 @@
         .btn {
             padding: 10px 15px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
             font-size: 0.9em;
@@ -1043,19 +1059,19 @@
         
         @media (max-width: 1024px) {
             .action-btn {
-                padding: 4px 8px;
-                font-size: 0.65em;
+                padding: 6px 10px;
+                font-size: 0.7em;
             }
             .btn-rebuy-duplo {
                 font-size: 0.75em;
-                padding: 4px 10px;
+                padding: 6px 10px;
             }
             .jogador-nome {
                 font-size: 0.8em;
             }
             .badge {
-                font-size: 0.55em;
-                padding: 2px 5px;
+                font-size: 0.6em;
+                padding: 2px 6px;
             }
             .jogador-foto {
                 width: 35px;
@@ -1740,14 +1756,51 @@ document.addEventListener('DOMContentLoaded', async function() {
         else { mesasData = { preta: [], amarela: [] }; db.ref('mesas').set(mesasData); }
         
         const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+        // CORREÇÃO: Atualiza o total de jogadores inscritos no torneio
+        // Agora o totalGeralJogadores exibe o total de jogadores que iniciaram (vivos + eliminados)
+        const totalJogadoresInscritos = todosJogadores.length;
+        const totalVivos = todosJogadores.filter(j => !j.eliminado).length;
+        const totalEliminados = todosJogadores.filter(j => j.eliminado).length;
+        
+        // Atualiza o card "TOTAL TORNEIO" separadamente para garantir a exibição correta
+        const totalGeralSpan = document.getElementById('totalGeralJogadores');
+        const totalVivosSpan = document.getElementById('totalVivos');
+        const totalEliminadosSpan = document.getElementById('totalEliminados');
+        
+        if (totalGeralSpan) totalGeralSpan.textContent = totalJogadoresInscritos;
+        if (totalVivosSpan) totalVivosSpan.textContent = totalVivos;
+        if (totalEliminadosSpan) totalEliminadosSpan.textContent = totalEliminados;
+        
+        // Atualiza os totais individuais das mesas
+        const pretaVivos = (mesasData.preta || []).filter(j => !j.eliminado).length;
+        const pretaEliminados = (mesasData.preta || []).filter(j => j.eliminado).length;
+        const pretaTotal = (mesasData.preta || []).length;
+        const amarelaVivos = (mesasData.amarela || []).filter(j => !j.eliminado).length;
+        const amarelaEliminados = (mesasData.amarela || []).filter(j => j.eliminado).length;
+        const amarelaTotal = (mesasData.amarela || []).length;
+        
+        const pretaVivosSpan = document.getElementById('pretaVivos');
+        const pretaEliminadosSpan = document.getElementById('pretaEliminados');
+        const pretaTotalSpan = document.getElementById('pretaTotal');
+        const amarelaVivosSpan = document.getElementById('amarelaVivos');
+        const amarelaEliminadosSpan = document.getElementById('amarelaEliminados');
+        const amarelaTotalSpan = document.getElementById('amarelaTotal');
+        
+        if (pretaVivosSpan) pretaVivosSpan.textContent = pretaVivos;
+        if (pretaEliminadosSpan) pretaEliminadosSpan.textContent = pretaEliminados;
+        if (pretaTotalSpan) pretaTotalSpan.textContent = pretaTotal;
+        if (amarelaVivosSpan) amarelaVivosSpan.textContent = amarelaVivos;
+        if (amarelaEliminadosSpan) amarelaEliminadosSpan.textContent = amarelaEliminados;
+        if (amarelaTotalSpan) amarelaTotalSpan.textContent = amarelaTotal;
+        
+        // Atualiza totalJogadoresIniciais se ainda não foi definido
         if (totalJogadoresIniciais === 0 && todosJogadores.length > 0) {
-            totalJogadoresIniciais = todosJogadores.filter(j => !j.eliminado).length;
+            totalJogadoresIniciais = todosJogadores.length;
         }
         
         atualizarGridJogadores();
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
-        atualizarStatsCards();
         verificarMesaFinal();
         atualizarBotoesMesaFinal();
         atualizarSelectMelhorMao();
@@ -1808,6 +1861,7 @@ function tocarAlertaMesaFinal() {
 }
 
 function atualizarStatsCards() {
+    // Função mantida para compatibilidade, mas os valores agora são atualizados diretamente no snapshot do Firebase
     const preta = mesasData.preta || [];
     const amarela = mesasData.amarela || [];
     
@@ -2444,7 +2498,7 @@ function atualizarAdminResumo() {
     const tbody = document.getElementById('adminResumoBody');
     if (!tbody) return;
     if (todos.length === 0) { 
-        tbody.innerHTML = '<tr><td colspan="7">Nenhum dado</td></tr>'; 
+        tbody.innerHTML = '<td><td colspan="7">Nenhum dado</td></table>'; 
         document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; 
         return; 
     }
