@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -641,7 +640,7 @@ let melhorMaoAtual = null;
 let audioContext = null;
 let fotosJogadores = {};
 
-// Chaves PIX dos jogadores (apenas para a tela de classificação)
+// Chaves PIX dos jogadores
 const chavesPix = {
     'Amarildo': { chave: '41987779470', tipo: 'Telefone' },
     'Boy': { chave: '41998294734', tipo: 'Telefone' },
@@ -687,74 +686,89 @@ function tocarSom(tipo) {
     if (audioContext.state === 'suspended') audioContext.resume();
     
     try {
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        osc.connect(gain);
-        gain.connect(audioContext.destination);
+        const now = audioContext.currentTime;
         
         switch(tipo) {
             case 'rebuySimples':
-                osc.frequency.value = 880;
-                osc.type = 'sine';
-                gain.gain.value = 0.3;
-                osc.start();
-                gain.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.2);
-                setTimeout(() => osc.stop(), 200);
+                // Som elegante para rebuy simples - arpeggio ascendente suave
+                const notas1 = [523.25, 659.25, 783.99];
+                notas1.forEach((freq, i) => {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.frequency.value = freq;
+                    osc.type = 'sine';
+                    gain.gain.value = 0.25;
+                    gain.gain.exponentialRampToValueAtTime(0.00001, now + 0.3 + i * 0.1);
+                    osc.start(now + i * 0.1);
+                    osc.stop(now + 0.4 + i * 0.1);
+                });
                 break;
                 
             case 'rebuyDuplo':
-                osc.frequency.value = 660;
-                osc.type = 'sine';
-                gain.gain.value = 0.3;
-                osc.start();
-                gain.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.15);
-                setTimeout(() => {
-                    osc.stop();
-                    const osc2 = audioContext.createOscillator();
-                    const gain2 = audioContext.createGain();
-                    osc2.connect(gain2);
-                    gain2.connect(audioContext.destination);
-                    osc2.frequency.value = 440;
-                    osc2.type = 'sine';
-                    gain2.gain.value = 0.3;
-                    osc2.start();
-                    gain2.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.15);
-                    setTimeout(() => osc2.stop(), 150);
-                }, 150);
+                // Som mais marcante para rebuy duplo - acorde com vibrato suave
+                const osc1 = audioContext.createOscillator();
+                const osc2 = audioContext.createOscillator();
+                const gain1 = audioContext.createGain();
+                const gain2 = audioContext.createGain();
+                osc1.connect(gain1);
+                osc2.connect(gain2);
+                gain1.connect(audioContext.destination);
+                gain2.connect(audioContext.destination);
+                osc1.frequency.value = 659.25;
+                osc2.frequency.value = 783.99;
+                osc1.type = 'sine';
+                osc2.type = 'sine';
+                gain1.gain.value = 0.2;
+                gain2.gain.value = 0.2;
+                gain1.gain.exponentialRampToValueAtTime(0.00001, now + 0.5);
+                gain2.gain.exponentialRampToValueAtTime(0.00001, now + 0.5);
+                osc1.start();
+                osc2.start();
+                osc1.stop(now + 0.5);
+                osc2.stop(now + 0.5);
                 break;
                 
             case 'addon':
-                osc.frequency.value = 523.25;
-                osc.type = 'sine';
-                gain.gain.value = 0.35;
-                osc.start();
-                gain.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.4);
-                setTimeout(() => osc.stop(), 400);
+                // Som especial para addon - sequência triunfante
+                const notas = [523.25, 659.25, 783.99, 1046.50];
+                notas.forEach((freq, i) => {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.frequency.value = freq;
+                    osc.type = 'sine';
+                    gain.gain.value = 0.2;
+                    gain.gain.exponentialRampToValueAtTime(0.00001, now + 0.4 + i * 0.12);
+                    osc.start(now + i * 0.12);
+                    osc.stop(now + 0.5 + i * 0.12);
+                });
+                break;
+                
+            case 'alerta':
+                // Alerta de mesa final
+                const alertNotas = [880, 440, 880, 440, 880];
+                alertNotas.forEach((freq, index) => {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.frequency.value = freq;
+                    osc.type = 'sine';
+                    gain.gain.value = 0.3;
+                    osc.start(now + index * 0.2);
+                    gain.gain.exponentialRampToValueAtTime(0.00001, now + 0.3 + index * 0.2);
+                    setTimeout(() => osc.stop(), 300 + index * 200);
+                });
                 break;
         }
     } catch(e) { console.log('Erro no áudio:', e); }
 }
 
 function tocarAlertaMesaFinal() {
-    if (!audioContext) return;
-    if (audioContext.state === 'suspended') audioContext.resume();
-    try {
-        const frequencias = [880, 440, 880, 440, 880];
-        frequencias.forEach((freq, index) => {
-            setTimeout(() => {
-                const osc = audioContext.createOscillator();
-                const gain = audioContext.createGain();
-                osc.connect(gain);
-                gain.connect(audioContext.destination);
-                osc.frequency.value = freq;
-                osc.type = 'sine';
-                gain.gain.value = 0.4;
-                osc.start();
-                gain.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.3);
-                setTimeout(() => osc.stop(), 300);
-            }, index * 200);
-        });
-    } catch(e) { console.log('Erro no áudio:', e); }
+    tocarSom('alerta');
     if (navigator.vibrate) navigator.vibrate([300, 200, 300, 200, 500]);
 }
 
@@ -796,24 +810,33 @@ function getAddonTexto(nome, addonAtivado) {
 function salvarEtapaNoHistorico() {
     if (classificacaoData.length > 0 && totalJogadoresIniciais > 0) {
         const etapaAtual = config.etapa;
-        historicoEtapas.unshift({ 
-            data: new Date().toISOString(), 
-            classificacao: classificacaoData.map(j => ({ 
-                nome: j.nome, 
-                mesa: j.mesa, 
-                posicao: j.posicao, 
-                pontosPosicao: j.pontosPosicao, 
-                kos: j.kos || 0, 
-                pontosKOs: j.pontosKOs || 0, 
-                pontosTotal: j.pontosTotal || (j.pontosPosicao + (j.kos || 0)), 
-                dataEliminacao: j.dataEliminacao, 
+        const novaEtapa = {
+            data: new Date().toISOString(),
+            classificacao: classificacaoData.map(j => ({
+                nome: j.nome,
+                mesa: j.mesa,
+                posicao: j.posicao,
+                pontosPosicao: j.pontosPosicao,
+                kos: j.kos || 0,
+                pontosKOs: j.pontosKOs || 0,
+                pontosTotal: j.pontosTotal || (j.pontosPosicao + (j.kos || 0)),
+                dataEliminacao: j.dataEliminacao,
                 etapa: j.etapa || etapaAtual,
                 premio: j.premio || 0
-            })), 
-            totalJogadores: totalJogadoresIniciais, 
-            totalClassificados: classificacaoData.length, 
-            etapaNumero: etapaAtual 
-        });
+            })),
+            totalJogadores: totalJogadoresIniciais,
+            totalClassificados: classificacaoData.length,
+            etapaNumero: etapaAtual
+        };
+        
+        // Verificar se já existe uma etapa com este número
+        const etapaExistente = historicoEtapas.findIndex(e => e.etapaNumero === etapaAtual);
+        if (etapaExistente !== -1) {
+            historicoEtapas[etapaExistente] = novaEtapa;
+        } else {
+            historicoEtapas.unshift(novaEtapa);
+        }
+        
         db.ref('historicoEtapas').set(historicoEtapas);
         return true;
     }
@@ -1142,7 +1165,7 @@ function atualizarClassificacaoAtual() {
     const top20 = ordenada.slice(0, 20);
     
     if (top20.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda</td><\/tr>';
+        tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda</td></tr>';
         return;
     }
     
@@ -1189,8 +1212,6 @@ function verificarMesaFinal() {
         atualizarStatsCards();
         if (vivos.length === 0) {
             finalizarTorneio();
-        } else if (vivos.length === 1 && !classificacaoData.some(c => c.posicao === 1)) {
-            finalizarComCampeao(vivos[0]);
         }
         atualizarTabelaEliminadosMF();
     }
@@ -1293,8 +1314,6 @@ function confirmarEliminacaoMF() {
             
             if (novosVivos.length === 0) {
                 finalizarTorneio();
-            } else if (novosVivos.length === 1 && !classificacaoData.some(c => c.posicao === 1)) {
-                finalizarComCampeao(novosVivos[0]);
             }
             
             renderizarMesaFinal();
@@ -1307,56 +1326,6 @@ function confirmarEliminacaoMF() {
     jogadorEliminandoMF = null;
 }
 
-function finalizarComCampeao(campeao) {
-    if (torneioFinalizado) return;
-    
-    torneioFinalizado = true;
-    db.ref('torneioFinalizado').set(true);
-    
-    const qtdKos = prompt(`🃏 CAMPEÃO: ${campeao.nome}\nQuantos KO's ele fez no total?`, "0");
-    const kos = parseInt(qtdKos) || 0;
-    const premio = prompt(`💰 CAMPEÃO: ${campeao.nome}\nQual foi a premiação em R$?`, "0");
-    const valorPremio = parseFloat(premio) || 0;
-    
-    const item = { 
-        nome: campeao.nome, 
-        mesa: mesasData.preta?.find(j => j.nome === campeao.nome) ? 'Preta' : 'Amarela', 
-        posicao: 1, 
-        pontosPosicao: getPontosPosicao(1), 
-        kos: kos, 
-        pontosKOs: kos, 
-        pontosTotal: getPontosPosicao(1) + kos, 
-        dataEliminacao: new Date().toISOString(), 
-        etapa: config.etapa,
-        premio: valorPremio
-    };
-    classificacaoData.push(item);
-    db.ref('classificacao').set(classificacaoData);
-    
-    const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
-    todosJogadores.forEach(j => {
-        if (!j.eliminado) {
-            j.eliminado = true;
-            j.posicaoFinal = 1;
-        }
-    });
-    db.ref('mesas').set(mesasData);
-    
-    db.ref('mesaFinalAtiva').set(false);
-    mesaFinalAtiva = false;
-    
-    if (valorPremio > 0) {
-        mostrarToast(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)! 💰 Premiação: R$ ${valorPremio.toFixed(2)}`);
-    } else {
-        mostrarToast(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)!`);
-    }
-    
-    mostrarTelaVerificarClassificacao();
-    tocarAlertaMesaFinal();
-    atualizarTabelaEliminadosMF();
-    atualizarClassificacaoAtual();
-}
-
 function finalizarTorneio() { 
     if (torneioFinalizado) return;
     
@@ -1365,9 +1334,12 @@ function finalizarTorneio() {
     db.ref('mesaFinalAtiva').set(false);
     mesaFinalAtiva = false;
     
+    // Salvar automaticamente a etapa ao finalizar
+    salvarEtapaNoHistorico();
+    
     mostrarTelaVerificarClassificacao();
     tocarAlertaMesaFinal(); 
-    mostrarToast('🃏 TORNEIO FINALIZADO! 🃏'); 
+    mostrarToast('🃏 TORNEIO FINALIZADO! Etapa salva no histórico! 🃏'); 
 }
 
 function irParaMesaFinal() { 
