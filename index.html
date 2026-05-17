@@ -452,7 +452,7 @@
         <div style="overflow-x: auto; margin-bottom: 40px;">
             <h3>🏆 RANKING ATUAL (Top 20)</h3>
             <table class="classificacao-table" id="classificacaoTableAtual">
-                <thead><tr><th>Posição</th><th>Jogador</th><th>Mesa</th><th>Pontos Posição</th><th>KO's</th><th>PONTOS TOTAIS</th><th>Prêmio (R$)</th><th>PIX</th></tr></thead>
+                <thead><tr><th>Posição</th><th>Jogador</th><th>Mesa</th><th>Pontos Posição</th><th>KO's</th><th>PONTOS TOTAIS</th><th>Prêmio (R$)</th><th>PIX</th><tr></thead>
                 <tbody id="classificacaoBodyAtual"></tbody>
             </table>
         </div>
@@ -681,22 +681,48 @@ function mostrarToast(mensagem) {
     setTimeout(() => { if (toast && toast.remove) toast.remove(); }, 3000);
 }
 
-// Função para obter voz masculina natural
-function obterVozMasculina() {
+// Função para obter voz masculina mais marcante
+function obterVozMasculinaMarcante() {
     return new Promise((resolve) => {
         const voices = window.speechSynthesis.getVoices();
-        // Priorizar vozes masculinas em português do Brasil
-        const voz = voices.find(v => 
-            (v.lang === 'pt-BR' && (v.name.includes('Marcelo') || v.name.includes('Luciano') || v.name.includes('Ricardo') || v.name.includes('Felipe'))) ||
-            (v.lang === 'pt-BR' && v.name.includes('Google') && v.name.includes('português')) ||
-            (v.lang === 'pt' && v.name.includes('português')) ||
-            voices.find(vv => vv.lang === 'pt-BR')
-        ) || voices.find(v => v.lang === 'pt-BR') || voices[0];
+        
+        // Lista de vozes masculinas marcantes em ordem de preferência
+        const vozesPreferidas = [
+            'Google UK English Male',
+            'Microsoft Daniel',
+            'Google português do Brasil masculino',
+            'Microsoft Antonio',
+            'Samantha',
+            'Alex'
+        ];
+        
+        // Tentar encontrar uma voz masculina em português
+        let voz = voices.find(v => 
+            (v.lang === 'pt-BR' && (v.name.includes('Marcelo') || v.name.includes('Luciano') || 
+             v.name.includes('Ricardo') || v.name.includes('Felipe') || v.name.includes('Antonio'))) ||
+            (v.lang === 'pt-BR' && v.name.includes('Google') && v.name.includes('masculino'))
+        );
+        
+        // Se não encontrar, tentar vozes masculinas em inglês (mais marcantes)
+        if (!voz) {
+            voz = voices.find(v => vozesPreferidas.some(pref => v.name.includes(pref)));
+        }
+        
+        // Último recurso: qualquer voz em português
+        if (!voz) {
+            voz = voices.find(v => v.lang === 'pt-BR');
+        }
+        
+        // Fallback final
+        if (!voz && voices.length > 0) {
+            voz = voices[0];
+        }
+        
         resolve(voz);
     });
 }
 
-// Função para falar com voz masculina natural
+// Função para falar com voz masculina marcante
 function falar(texto) {
     if (!window.speechSynthesis) return;
     
@@ -705,44 +731,50 @@ function falar(texto) {
     
     const utterance = new SpeechSynthesisUtterance(texto);
     utterance.lang = 'pt-BR';
-    utterance.rate = 0.85; // Velocidade mais natural
-    utterance.pitch = 0.9; // Tom mais grave (masculino)
-    utterance.volume = 1;
+    utterance.rate = 0.85; // Velocidade mais marcante
+    utterance.pitch = 0.7; // Tom mais grave e imponente (masculino marcante)
+    utterance.volume = 1.2; // Volume um pouco mais alto
     
-    // Usar voz masculina se disponível
+    // Usar voz masculina marcante se disponível
     if (vozMasculina) {
         utterance.voice = vozMasculina;
     }
     
-    // Adicionar pequeno delay para dar mais naturalidade
+    // Adicionar entonação dramática para eventos importantes
+    if (texto.includes('Eliminação') || texto.includes('Mesa final')) {
+        utterance.rate = 0.75; // Mais lento para dar ênfase
+        utterance.pitch = 0.65; // Ainda mais grave para impacto
+    }
+    
+    // Pequeno delay para dar mais naturalidade
     setTimeout(() => {
         window.speechSynthesis.speak(utterance);
     }, 50);
 }
 
-// Inicializar voz masculina
+// Inicializar voz masculina marcante
 async function inicializarVoz() {
-    vozMasculina = await obterVozMasculina();
+    vozMasculina = await obterVozMasculinaMarcante();
 }
 
 function tocarSomEliminacao(jogadorNome, mesa) {
-    falar(`Eliminação. ${jogadorNome} foi eliminado da mesa ${mesa}.`);
+    falar(`Eliminação! ${jogadorNome} foi eliminado da mesa ${mesa}.`);
 }
 
 function tocarSomRebuySimples() {
-    falar("Rebuy simples");
+    falar("Rebuy simples!");
 }
 
 function tocarSomRebuyDuplo() {
-    falar("Rebuy duplo");
+    falar("Rebuy duplo!");
 }
 
 function tocarSomAddon() {
-    falar("Addon");
+    falar("Addon!");
 }
 
 function tocarAlertaMesaFinal() {
-    falar("Mesa final. Atenção.");
+    falar("Atenção! Mesa final!");
     if (navigator.vibrate) navigator.vibrate([300, 200, 300, 200, 500]);
 }
 
@@ -837,7 +869,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('statusIndicator').textContent = '✅ Conectado';
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
-    // Inicializar voz masculina
+    // Inicializar voz masculina marcante
     await inicializarVoz();
     
     db.ref('config').on('value', (snapshot) => {
@@ -982,7 +1014,7 @@ function atualizarClassificacaoAtual() {
     if (!tbody) return;
     const ordenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
     const top20 = ordenada.slice(0, 20);
-    if (top20.length === 0) { tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda<\/td><\/tr>'; return; }
+    if (top20.length === 0) { tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda</td><\/tr>'; return; }
     tbody.innerHTML = top20.map(j => {
         const pontosTotais = (j.pontosPosicao || 0) + (j.kos || 0);
         const fotoUrl = getFotoJogador(j.nome);
@@ -1393,7 +1425,7 @@ function atualizarAdminResumo() {
     const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const tbody = document.getElementById('adminResumoBody');
     if (!tbody) return;
-    if (todos.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum dado<\/td><\/tr>'; document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; return; }
+    if (todos.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum dado</td><\/tr>'; document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; return; }
     const todosOrdenados = [...todos].sort((a, b) => a.nome.localeCompare(b.nome));
     let totalGeral = 0;
     tbody.innerHTML = todosOrdenados.map(j => {
@@ -1402,7 +1434,7 @@ function atualizarAdminResumo() {
         const total = VALOR_BUYIN + (j.rebuys || 0) * VALOR_REBUY + valorAddon;
         totalGeral += total;
         const addonTexto = getAddonTexto(j.nome, j.addon);
-        return `<tr><td>${j.nome}${j.eliminado ? ' ❌' : ''}${j.eliminado ? ` (${j.posicaoFinal}º)` : ''}${j.premio ? ` 💰 R$ ${j.premio}` : ''}<\/td><td>${mesa}<\/td><td>${j.posicao || '-'}<\/td><td>R$ ${VALOR_BUYIN}<\/td><td>${j.rebuys || 0}<\/td><td>${addonTexto}<\/td><td><strong>R$ ${total}<\/strong><\/td><\/tr>`;
+        return `<tr><td>${j.nome}${j.eliminado ? ' ❌' : ''}${j.eliminado ? ` (${j.posicaoFinal}º)` : ''}${j.premio ? ` 💰 R$ ${j.premio}` : ''}</td><td>${mesa}</td><td>${j.posicao || '-'}</td><td>R$ ${VALOR_BUYIN}</td><td>${j.rebuys || 0}</td><td>${addonTexto}</td><td><strong>R$ ${total}</strong></td></tr>`;
     }).join('');
     document.getElementById('adminTotalGeral').textContent = `TOTAL GERAL: R$ ${totalGeral},00`;
 }
@@ -1428,7 +1460,7 @@ function atualizarAdminEstatisticas() {
     const rankingBody = document.getElementById('adminRankingBody');
     if (rankingBody) {
         if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy<\/td><\/tr>';
-        else rankingBody.innerHTML = ranking.map((j,i) => `<tr><td>${i+1}<\/td><td>${j.nome}${j.premio ? ` 💰 R$ ${j.premio}` : ''}<\/td><td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}<\/td><td>${j.rebuys}<\/td><\/tr>`).join('');
+        else rankingBody.innerHTML = ranking.map((j,i) => `<tr><td>${i+1}</td><td>${j.nome}${j.premio ? ` 💰 R$ ${j.premio}` : ''}</td><td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}</td><td>${j.rebuys}</tr>`).join('');
     }
 }
 
