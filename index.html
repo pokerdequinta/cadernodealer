@@ -57,6 +57,10 @@
             .classificacao-foto { width: 25px !important; height: 25px !important; }
             .modal-content { padding: 15px !important; max-width: 300px !important; }
             .jogadores-grid { grid-template-columns: 1fr !important; gap: 6px !important; }
+            .confirmation-popup { width: 90% !important; max-width: 320px !important; padding: 20px !important; }
+            .confirmation-popup h3 { font-size: 1.3em !important; }
+            .confirmation-details { font-size: 1em !important; }
+            .confirmation-buttons button { padding: 10px 20px !important; font-size: 0.9em !important; }
         }
         
         @media (min-width: 600px) and (max-width: 1024px) and (orientation: landscape) {
@@ -78,6 +82,7 @@
             .action-btn { padding: 5px 6px !important; font-size: 0.6em !important; }
             .jogadores-grid { grid-template-columns: 1fr !important; }
             .jogador-posicao-numero { width: 25px; height: 25px; font-size: 0.75em; }
+            .confirmation-popup { width: 95% !important; padding: 15px !important; }
         }
         
         .tela-selecao { display: flex; flex-direction: column; min-height: 100vh; padding: 20px; background: #0d1b0d; position: relative; }
@@ -188,6 +193,97 @@
         .btn-addon { background: #4CAF50; color: #fff; }
         .btn-corrigir { background: #FFA500; color: #000; }
         .btn-eliminar { background: #c72c48; color: #fff; }
+        
+        /* Popup de confirmação profissional */
+        .confirmation-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #1a3d1a 0%, #0d2a0d 100%);
+            border: 3px solid #d4a121;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            z-index: 10000;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 20px rgba(212,161,33,0.3);
+            animation: slideIn 0.3s ease-out;
+            text-align: center;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        
+        .confirmation-popup h3 {
+            font-family: 'Anton', sans-serif;
+            font-size: 1.8em;
+            color: #d4a121;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .confirmation-popup .confirmation-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        
+        .confirmation-popup .confirmation-details {
+            font-family: 'Anton', sans-serif;
+            font-size: 1.2em;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        
+        .confirmation-popup .confirmation-details span {
+            color: #d4a121;
+            font-weight: bold;
+        }
+        
+        .confirmation-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .confirmation-buttons button {
+            padding: 12px 25px;
+            font-family: 'Anton', sans-serif;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+        
+        .confirmation-buttons button:hover {
+            transform: scale(1.05);
+        }
+        
+        .btn-confirm {
+            background: #4CAF50;
+            color: #fff;
+            box-shadow: 0 2px 10px rgba(76,175,80,0.3);
+        }
+        
+        .btn-cancel {
+            background: #c72c48;
+            color: #fff;
+            box-shadow: 0 2px 10px rgba(199,44,72,0.3);
+        }
         
         .empty-state { text-align: center; padding: 40px 20px; background: rgba(0, 0, 0, 0.3); border-radius: 15px; margin: 20px; }
         .empty-state h3 { font-family: 'Anton', sans-serif; color: #d4a121; margin-bottom: 15px; }
@@ -550,7 +646,7 @@
     </div>
 </div>
 
-<!-- Modais -->
+<!-- Modais Originais (Mantidos para compatibilidade) -->
 <div class="modal" id="modalCorrigir">
     <div class="modal-content">
         <h3>🔧 Corrigir valores</h3>
@@ -681,39 +777,79 @@ function mostrarToast(mensagem) {
     setTimeout(() => { if (toast && toast.remove) toast.remove(); }, 3000);
 }
 
-// Função para obter voz masculina mais marcante
-function obterVozMasculinaMarcante() {
+// Popup de confirmação profissional
+function mostrarPopupConfirmacao(titulo, mensagem, icon, onConfirm, onCancel) {
+    // Remove popup existente se houver
+    const existingPopup = document.querySelector('.confirmation-popup');
+    if (existingPopup) existingPopup.remove();
+    
+    const popup = document.createElement('div');
+    popup.className = 'confirmation-popup';
+    popup.innerHTML = `
+        <div class="confirmation-icon">${icon}</div>
+        <h3>${titulo}</h3>
+        <div class="confirmation-details">${mensagem}</div>
+        <div class="confirmation-buttons">
+            <button class="btn-confirm" id="popupConfirmBtn">✅ CONFIRMAR</button>
+            <button class="btn-cancel" id="popupCancelBtn">❌ CANCELAR</button>
+        </div>
+    `;
+    
+    document.body.appendChild(popup);
+    
+    const confirmBtn = document.getElementById('popupConfirmBtn');
+    const cancelBtn = document.getElementById('popupCancelBtn');
+    
+    const closePopup = () => {
+        popup.remove();
+        if (confirmBtn) confirmBtn.removeEventListener('click', handleConfirm);
+        if (cancelBtn) cancelBtn.removeEventListener('click', handleCancel);
+    };
+    
+    const handleConfirm = () => {
+        closePopup();
+        if (onConfirm) onConfirm();
+    };
+    
+    const handleCancel = () => {
+        closePopup();
+        if (onCancel) onCancel();
+    };
+    
+    confirmBtn.addEventListener('click', handleConfirm);
+    cancelBtn.addEventListener('click', handleCancel);
+}
+
+// Função para obter voz masculina mais vibrante
+function obterVozMasculinaVibrante() {
     return new Promise((resolve) => {
         const voices = window.speechSynthesis.getVoices();
         
-        // Lista de vozes masculinas marcantes em ordem de preferência
+        // Vozes masculinas vibrantes em ordem de preferência
         const vozesPreferidas = [
             'Google UK English Male',
-            'Microsoft Daniel',
+            'Microsoft Daniel - English (United Kingdom)',
             'Google português do Brasil masculino',
-            'Microsoft Antonio',
+            'Microsoft Antonio - Portuguese (Brazil)',
             'Samantha',
             'Alex'
         ];
         
-        // Tentar encontrar uma voz masculina em português
+        // Tentar encontrar uma voz masculina vibrante
         let voz = voices.find(v => 
             (v.lang === 'pt-BR' && (v.name.includes('Marcelo') || v.name.includes('Luciano') || 
              v.name.includes('Ricardo') || v.name.includes('Felipe') || v.name.includes('Antonio'))) ||
             (v.lang === 'pt-BR' && v.name.includes('Google') && v.name.includes('masculino'))
         );
         
-        // Se não encontrar, tentar vozes masculinas em inglês (mais marcantes)
         if (!voz) {
             voz = voices.find(v => vozesPreferidas.some(pref => v.name.includes(pref)));
         }
         
-        // Último recurso: qualquer voz em português
         if (!voz) {
             voz = voices.find(v => v.lang === 'pt-BR');
         }
         
-        // Fallback final
         if (!voz && voices.length > 0) {
             voz = voices[0];
         }
@@ -722,59 +858,55 @@ function obterVozMasculinaMarcante() {
     });
 }
 
-// Função para falar com voz masculina marcante
-function falar(texto) {
+// Função para falar com voz masculina vibrante e enfática
+function falar(texto, isImportante = false) {
     if (!window.speechSynthesis) return;
     
-    // Cancela qualquer fala em andamento
     window.speechSynthesis.cancel();
     
     const utterance = new SpeechSynthesisUtterance(texto);
     utterance.lang = 'pt-BR';
-    utterance.rate = 0.85; // Velocidade mais marcante
-    utterance.pitch = 0.7; // Tom mais grave e imponente (masculino marcante)
-    utterance.volume = 1.2; // Volume um pouco mais alto
+    utterance.rate = isImportante ? 0.7 : 0.8;
+    utterance.pitch = isImportante ? 0.6 : 0.7;
+    utterance.volume = 1.2;
     
-    // Usar voz masculina marcante se disponível
     if (vozMasculina) {
         utterance.voice = vozMasculina;
     }
     
-    // Adicionar entonação dramática para eventos importantes
-    if (texto.includes('Eliminação') || texto.includes('Mesa final')) {
-        utterance.rate = 0.75; // Mais lento para dar ênfase
-        utterance.pitch = 0.65; // Ainda mais grave para impacto
+    // Ênfase adicional para eventos importantes
+    if (isImportante || texto.includes('Eliminação') || texto.includes('Mesa final')) {
+        utterance.rate = 0.65;
+        utterance.pitch = 0.55;
     }
     
-    // Pequeno delay para dar mais naturalidade
     setTimeout(() => {
         window.speechSynthesis.speak(utterance);
     }, 50);
 }
 
-// Inicializar voz masculina marcante
 async function inicializarVoz() {
-    vozMasculina = await obterVozMasculinaMarcante();
+    vozMasculina = await obterVozMasculinaVibrante();
 }
 
 function tocarSomEliminacao(jogadorNome, mesa) {
-    falar(`Eliminação! ${jogadorNome} foi eliminado da mesa ${mesa}.`);
+    falar(`Eliminação! ${jogadorNome} foi eliminado da mesa ${mesa}!`, true);
 }
 
 function tocarSomRebuySimples() {
-    falar("Rebuy simples!");
+    falar("Rebuy simples!", true);
 }
 
 function tocarSomRebuyDuplo() {
-    falar("Rebuy duplo!");
+    falar("Rebuy duplo!", true);
 }
 
 function tocarSomAddon() {
-    falar("Addon!");
+    falar("Addon!", true);
 }
 
 function tocarAlertaMesaFinal() {
-    falar("Atenção! Mesa final!");
+    falar("Atenção! Mesa final!", true);
     if (navigator.vibrate) navigator.vibrate([300, 200, 300, 200, 500]);
 }
 
@@ -869,7 +1001,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('statusIndicator').textContent = '✅ Conectado';
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
-    // Inicializar voz masculina marcante
     await inicializarVoz();
     
     db.ref('config').on('value', (snapshot) => {
@@ -1014,7 +1145,7 @@ function atualizarClassificacaoAtual() {
     if (!tbody) return;
     const ordenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
     const top20 = ordenada.slice(0, 20);
-    if (top20.length === 0) { tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda</td><\/tr>'; return; }
+    if (top20.length === 0) { tbody.innerHTML = '</table><td colspan="8">Nenhum jogador eliminado ainda</td><\/tr>'; return; }
     tbody.innerHTML = top20.map(j => {
         const pontosTotais = (j.pontosPosicao || 0) + (j.kos || 0);
         const fotoUrl = getFotoJogador(j.nome);
@@ -1181,12 +1312,10 @@ function atualizarGridJogadores() {
         grid.innerHTML = `<div class="empty-state"><h3>📋 NENHUM JOGADOR CADASTRADO</h3><p>Você precisa importar o layout das mesas primeiro.</p><button class="btn-ir-admin" onclick="fecharAppEIrAdmin()">🔐 IR PARA ADMINISTRAÇÃO</button></div>`;
         return;
     }
-    // Ordenar por posição numérica (1,2,3...)
     const ordenados = [...jogadores].sort((a,b) => (a.posicao||999) - (b.posicao||999));
     grid.innerHTML = ordenados.map((j, index) => {
         const isMelhorMao = melhorMaoAtual === j.nome;
         const addonTexto = j.addon ? (isMelhorMao ? 'GRÁTIS' : '') : '';
-        // Usar a posição real do jogador (1,2,3...)
         const posicaoDisplay = j.posicao || (index + 1);
         return `<div class="jogador-card ${j.eliminado ? 'eliminado' : ''} ${isMelhorMao ? 'melhor-mao' : ''}">
                     <div class="jogador-posicao-numero">${posicaoDisplay}</div>
@@ -1221,43 +1350,68 @@ function fecharAppEIrAdmin() {
 
 function adicionarRebuy(nome, tipo) {
     if (torneioFinalizado) { mostrarToast('O torneio já foi finalizado!'); return; }
-    let mensagem = tipo === 'simples' ? `REBUY SIMPLES para ${nome}?` : `REBUY DUPLO para ${nome}? (2 rebuys)`;
-    if (confirm(mensagem)) {
-        const qtd = tipo === 'simples' ? 1 : 2;
-        const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
-        if (jogador) {
-            jogador.rebuys = (jogador.rebuys || 0) + qtd;
-            db.ref('mesas').set(mesasData);
-            if (tipo === 'simples') {
-                tocarSomRebuySimples();
-            } else {
-                tocarSomRebuyDuplo();
+    
+    const qtd = tipo === 'simples' ? 1 : 2;
+    const valorTotal = qtd * VALOR_REBUY;
+    const tipoTexto = tipo === 'simples' ? 'SIMPLES' : 'DUPLO';
+    const icon = tipo === 'simples' ? '🔄' : '🔄🔄';
+    
+    mostrarPopupConfirmacao(
+        `REBUY ${tipoTexto}`,
+        `<span>${nome}</span><br>Valor: R$ ${valorTotal},00<br>Quantidade: ${qtd} rebuy(s)`,
+        icon,
+        () => {
+            const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
+            if (jogador) {
+                jogador.rebuys = (jogador.rebuys || 0) + qtd;
+                db.ref('mesas').set(mesasData);
+                if (tipo === 'simples') {
+                    tocarSomRebuySimples();
+                } else {
+                    tocarSomRebuyDuplo();
+                }
+                mostrarToast(`✅ ${tipo === 'simples' ? 'Rebuy simples' : 'Rebuy duplo'} adicionado para ${nome}!`);
+                atualizarGridJogadores();
+                atualizarStatsCards();
+                atualizarAdminResumo();
+                atualizarAdminEstatisticas();
             }
-            mostrarToast(`✅ ${tipo === 'simples' ? 'Rebuy simples' : 'Rebuy duplo'} adicionado para ${nome}!`);
-            atualizarGridJogadores();
-            atualizarStatsCards();
-            atualizarAdminResumo();
-            atualizarAdminEstatisticas();
+        },
+        () => {
+            mostrarToast(`❌ Rebuy cancelado para ${nome}`);
         }
-    }
+    );
 }
 
 function adicionarAddon(nome) {
     if (torneioFinalizado) { mostrarToast('O torneio já foi finalizado!'); return; }
     const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
     if (jogador && !jogador.addon && !jogador.eliminado) {
-        if (confirm(`ADDON para ${nome}?`)) {
-            jogador.addon = true;
-            jogador.addonGratis = isAddonGratis(nome) || isAddonSemValor(nome);
-            db.ref('mesas').set(mesasData);
-            tocarSomAddon();
-            mostrarToast(`✅ Addon registrado para ${nome}`);
-            atualizarGridJogadores();
-            atualizarStatsCards();
-            atualizarAdminResumo();
-            atualizarAdminEstatisticas();
-        }
-    } else if (jogador && jogador.addon) mostrarToast(`${nome} já possui addon!`);
+        const valorAddon = getAddonValor(nome, true);
+        const textoValor = valorAddon === 0 ? 'GRÁTIS' : `R$ ${valorAddon},00`;
+        
+        mostrarPopupConfirmacao(
+            `ADDON`,
+            `<span>${nome}</span><br>Valor: ${textoValor}`,
+            `💎`,
+            () => {
+                jogador.addon = true;
+                jogador.addonGratis = isAddonGratis(nome) || isAddonSemValor(nome);
+                db.ref('mesas').set(mesasData);
+                tocarSomAddon();
+                mostrarToast(`✅ Addon registrado para ${nome}`);
+                atualizarGridJogadores();
+                atualizarStatsCards();
+                atualizarAdminResumo();
+                atualizarAdminEstatisticas();
+            },
+            () => {
+                mostrarToast(`❌ Addon cancelado para ${nome}`);
+            }
+        );
+    } else if (jogador && jogador.addon) {
+        mostrarToast(`${nome} já possui addon!`);
+    }
 }
 
 function abrirCorrecao(nome) {
@@ -1312,7 +1466,6 @@ function confirmarEliminacao() {
             jogador.eliminado = true; jogador.posicaoFinal = posicao; jogador.kos = qtdKos;
             db.ref('mesas').set(mesasData);
             
-            // Tocar som de eliminação com a cor da mesa
             const nomeMesa = mesaAtual === 'preta' ? 'PRETA' : 'AMARELA';
             tocarSomEliminacao(jogador.nome, nomeMesa);
             
@@ -1425,7 +1578,7 @@ function atualizarAdminResumo() {
     const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const tbody = document.getElementById('adminResumoBody');
     if (!tbody) return;
-    if (todos.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum dado</td><\/tr>'; document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; return; }
+    if (todos.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum dado<\/td><\/tr>'; document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; return; }
     const todosOrdenados = [...todos].sort((a, b) => a.nome.localeCompare(b.nome));
     let totalGeral = 0;
     tbody.innerHTML = todosOrdenados.map(j => {
@@ -1460,7 +1613,7 @@ function atualizarAdminEstatisticas() {
     const rankingBody = document.getElementById('adminRankingBody');
     if (rankingBody) {
         if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy<\/td><\/tr>';
-        else rankingBody.innerHTML = ranking.map((j,i) => `<tr><td>${i+1}</td><td>${j.nome}${j.premio ? ` 💰 R$ ${j.premio}` : ''}</td><td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}</td><td>${j.rebuys}</tr>`).join('');
+        else rankingBody.innerHTML = ranking.map((j,i) => `<tr><td>${i+1}</td><td>${j.nome}${j.premio ? ` 💰 R$ ${j.premio}` : ''}</td><td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}</td><td>${j.rebuys}</td></tr>`).join('');
     }
 }
 
