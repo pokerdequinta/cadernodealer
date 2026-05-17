@@ -23,10 +23,6 @@
             min-height: 100vh;
         }
         
-        /* ============================================ */
-        /* ADAPTAÇÕES PARA TABLET DE 7 POLEGADAS */
-        /* ============================================ */
-        
         @media (min-width: 600px) and (max-width: 1024px) {
             .selecao-logo img { max-width: 100px !important; }
             .selecao-titulo { font-size: 1.8em !important; margin-bottom: 20px !important; }
@@ -686,6 +682,82 @@ function mostrarToast(mensagem) {
     }, 3000);
 }
 
+function tocarSom(tipo) {
+    if (!audioContext) return;
+    if (audioContext.state === 'suspended') audioContext.resume();
+    
+    try {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        
+        switch(tipo) {
+            case 'rebuySimples':
+                osc.frequency.value = 880;
+                osc.type = 'sine';
+                gain.gain.value = 0.3;
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.2);
+                setTimeout(() => osc.stop(), 200);
+                break;
+                
+            case 'rebuyDuplo':
+                osc.frequency.value = 660;
+                osc.type = 'sine';
+                gain.gain.value = 0.3;
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.15);
+                setTimeout(() => {
+                    osc.stop();
+                    const osc2 = audioContext.createOscillator();
+                    const gain2 = audioContext.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(audioContext.destination);
+                    osc2.frequency.value = 440;
+                    osc2.type = 'sine';
+                    gain2.gain.value = 0.3;
+                    osc2.start();
+                    gain2.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.15);
+                    setTimeout(() => osc2.stop(), 150);
+                }, 150);
+                break;
+                
+            case 'addon':
+                osc.frequency.value = 523.25;
+                osc.type = 'sine';
+                gain.gain.value = 0.35;
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.4);
+                setTimeout(() => osc.stop(), 400);
+                break;
+        }
+    } catch(e) { console.log('Erro no áudio:', e); }
+}
+
+function tocarAlertaMesaFinal() {
+    if (!audioContext) return;
+    if (audioContext.state === 'suspended') audioContext.resume();
+    try {
+        const frequencias = [880, 440, 880, 440, 880];
+        frequencias.forEach((freq, index) => {
+            setTimeout(() => {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.frequency.value = freq;
+                osc.type = 'sine';
+                gain.gain.value = 0.4;
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.3);
+                setTimeout(() => osc.stop(), 300);
+            }, index * 200);
+        });
+    } catch(e) { console.log('Erro no áudio:', e); }
+    if (navigator.vibrate) navigator.vibrate([300, 200, 300, 200, 500]);
+}
+
 function copiarPix(nome) {
     const pixInfo = chavesPix[nome];
     if (pixInfo && pixInfo.chave) {
@@ -941,29 +1013,6 @@ function getFotoJogador(nome) {
     return fotosJogadores[nome] || `https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=d4a121&color=000&size=45`;
 }
 
-function tocarAlertaMesaFinal() {
-    if (!audioContext) return;
-    if (audioContext.state === 'suspended') audioContext.resume();
-    try {
-        const frequencias = [880, 440, 880, 440, 880];
-        frequencias.forEach((freq, index) => {
-            setTimeout(() => {
-                const osc = audioContext.createOscillator();
-                const gain = audioContext.createGain();
-                osc.connect(gain);
-                gain.connect(audioContext.destination);
-                osc.frequency.value = freq;
-                osc.type = 'sine';
-                gain.gain.value = 0.4;
-                osc.start();
-                gain.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.3);
-                setTimeout(() => osc.stop(), 300);
-            }, index * 200);
-        });
-    } catch(e) { console.log('Erro no áudio:', e); }
-    if (navigator.vibrate) navigator.vibrate([300, 200, 300, 200, 500]);
-}
-
 function atualizarStatsCards() {
     const preta = mesasData.preta || [];
     const amarela = mesasData.amarela || [];
@@ -1093,7 +1142,7 @@ function atualizarClassificacaoAtual() {
     const top20 = ordenada.slice(0, 20);
     
     if (top20.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda</td><tr>';
+        tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda</td><\/tr>';
         return;
     }
     
@@ -1284,7 +1333,6 @@ function finalizarComCampeao(campeao) {
     classificacaoData.push(item);
     db.ref('classificacao').set(classificacaoData);
     
-    // Marcar todos os jogadores como eliminados
     const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     todosJogadores.forEach(j => {
         if (!j.eliminado) {
@@ -1443,12 +1491,26 @@ function adicionarRebuy(nome, tipo) {
         mostrarToast('O torneio já foi finalizado!');
         return;
     }
-    const qtd = tipo === 'simples' ? 1 : 2; 
-    if (confirm(`REBUY ${tipo.toUpperCase()} para ${nome}?`)) { 
+    
+    let mensagem = '';
+    let somTipo = '';
+    
+    if (tipo === 'simples') {
+        mensagem = `REBUY SIMPLES para ${nome}?`;
+        somTipo = 'rebuySimples';
+    } else {
+        mensagem = `REBUY DUPLO para ${nome}? (2 rebuys)`;
+        somTipo = 'rebuyDuplo';
+    }
+    
+    if (confirm(mensagem)) { 
+        const qtd = tipo === 'simples' ? 1 : 2;
         const jogador = mesasData[mesaAtual].find(j => j.nome === nome); 
         if (jogador) { 
             jogador.rebuys = (jogador.rebuys || 0) + qtd; 
             db.ref('mesas').set(mesasData); 
+            tocarSom(somTipo);
+            mostrarToast(`✅ ${tipo === 'simples' ? 'Rebuy simples' : 'Rebuy duplo'} adicionado para ${nome}!`);
             atualizarGridJogadores();
             atualizarStatsCards();
             atualizarAdminResumo();
@@ -1468,6 +1530,7 @@ function adicionarAddon(nome) {
             jogador.addon = true;
             jogador.addonGratis = isAddonGratis(nome) || isAddonSemValor(nome);
             db.ref('mesas').set(mesasData);
+            tocarSom('addon');
             mostrarToast(`✅ Addon registrado para ${nome}`);
             atualizarGridJogadores();
             atualizarStatsCards();
@@ -1500,6 +1563,7 @@ function salvarCorrecao() {
                 jogador.addonGratis = true;
             }
             db.ref('mesas').set(mesasData); 
+            mostrarToast(`✅ Correção salva para ${jogador.nome}`);
             atualizarGridJogadores();
             atualizarStatsCards();
             atualizarAdminResumo();
