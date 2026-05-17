@@ -379,7 +379,6 @@
         </div>
     </div>
 </div>
-
 <!-- Tela de Verificar Classificação -->
 <div class="tela-verificar-classificacao hidden" id="telaVerificarClassificacao">
     <div class="verificar-container">
@@ -676,7 +675,6 @@ function finalizarETAPARegistrarProxima(mostrar=true){
         return true;
     } else { if(mostrar) mostrarToast('Nenhum dado para salvar!'); return false; }
 }
-
 function getFotoJogador(nome){ return fotosJogadores[nome] || `https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=d4a121&color=000&size=45`; }
 function tocarAlertaMesaFinal(){ if(!audioContext) return; if(audioContext.state==='suspended') audioContext.resume(); try{[880,440,880,440,880].forEach((f,i)=>setTimeout(()=>{let o=audioContext.createOscillator(),g=audioContext.createGain();o.connect(g);g.connect(audioContext.destination);o.frequency.value=f;o.type='sine';g.gain.value=0.4;o.start();g.gain.exponentialRampToValueAtTime(0.00001,audioContext.currentTime+0.3);setTimeout(()=>o.stop(),300);},i*200));}catch(e){} if(navigator.vibrate) navigator.vibrate([300,200,300,200,500]); }
 function atualizarStatsCards(){ let p=mesasData.preta||[], a=mesasData.amarela||[]; let pV=p.filter(j=>!j.eliminado).length, pE=p.filter(j=>j.eliminado).length, pT=p.length, aV=a.filter(j=>!j.eliminado).length, aE=a.filter(j=>j.eliminado).length, aT=a.length, tV=pV+aV, tE=pE+aE, tG=pT+aT; let els={pretaVivos:pV,pretaEliminados:pE,pretaTotal:pT,amarelaVivos:aV,amarelaEliminados:aE,amarelaTotal:aT,totalVivos:tV,totalEliminados:tE,totalGeral:tG}; for(let[id,val]of Object.entries(els)){ let el=document.getElementById(id); if(el) el.textContent=val; } }
@@ -843,7 +841,15 @@ function inicializarEventos(){
     document.querySelectorAll('.nav-tab-admin').forEach(tab=>{ tab.onclick=()=>{ document.querySelectorAll('.nav-tab-admin').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.admin-tab-content').forEach(c=>c.classList.add('hidden')); tab.classList.add('active'); let tid=document.getElementById(`admin-${tab.dataset.adminTab}`); if(tid) tid.classList.remove('hidden'); }; });
 }
 
-window.adicionarRebuy=adicionarRebuy; window.adicionarAddon=adicionarAddon; window.abrirCorrecao=abrirCorrecao; window.abrirModalEliminar=abrirModalEliminar; window.abrirModalEliminarMF=abrirModalEliminarMF; window.toggleEtapaVerificar=toggleEtapaVerificar; window.removerEtapaHistorico=removerEtapaHistorico; window.fecharAppEIrAdmin=fecharAppEIrAdmin; window.copiarPix=copiarPix;
+window.adicionarRebuy=adicionarRebuy;
+window.adicionarAddon=adicionarAddon;
+window.abrirCorrecao=abrirCorrecao;
+window.abrirModalEliminar=abrirModalEliminar;
+window.abrirModalEliminarMF=abrirModalEliminarMF;
+window.toggleEtapaVerificar=toggleEtapaVerificar;
+window.removerEtapaHistorico=removerEtapaHistorico;
+window.fecharAppEIrAdmin=fecharAppEIrAdmin;
+window.copiarPix=copiarPix;
 </script>
 </body>
 </html>
