@@ -43,7 +43,7 @@
             .badge { font-size: 0.55em !important; padding: 2px 5px !important; }
             .action-btn { padding: 6px 10px !important; font-size: 0.7em !important; min-width: 55px !important; }
             .btn-rebuy-duplo { font-size: 0.7em !important; padding: 6px 10px !important; min-width: 55px !important; }
-            .jogador-posicao-numero { font-size: 0.85em !important; min-width: 28px !important; }
+            .jogador-posicao-numero { font-size: 0.85em !important; min-width: 35px !important; background: #d4a121; color: #000; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
             .jogador-card { padding: 6px !important; gap: 6px !important; }
             .jogador-info { min-width: 70px !important; }
             .mesa-indicator-text { font-size: 0.85em !important; }
@@ -77,6 +77,7 @@
             .stat-card-numeros { font-size: 0.9em !important; gap: 6px !important; }
             .action-btn { padding: 5px 6px !important; font-size: 0.6em !important; }
             .jogadores-grid { grid-template-columns: 1fr !important; }
+            .jogador-posicao-numero { width: 25px; height: 25px; font-size: 0.75em; }
         }
         
         .tela-selecao { display: flex; flex-direction: column; min-height: 100vh; padding: 20px; background: #0d1b0d; position: relative; }
@@ -125,9 +126,9 @@
         }
         
         .jogadores-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
         
         .jogador-card {
@@ -153,7 +154,21 @@
         
         .jogador-card.eliminado { opacity: 0.6; background: rgba(199, 44, 72, 0.2); border-color: #c72c48; }
         
-        .jogador-posicao-numero { font-family: 'Anton', sans-serif; font-size: 1.1em; color: #d4a121; min-width: 35px; text-align: center; }
+        .jogador-posicao-numero { 
+            font-family: 'Anton', sans-serif; 
+            font-size: 1.2em; 
+            background: #d4a121;
+            color: #000;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        
         .jogador-foto { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a121; background: #2d5016; }
         .jogador-info { flex: 1; min-width: 100px; }
         .jogador-nome { font-weight: bold; font-size: 0.9em; font-family: 'Anton', sans-serif; letter-spacing: 0.5px; }
@@ -250,7 +265,7 @@
         ::-webkit-scrollbar-thumb { background: #d4a121; border-radius: 3px; }
         
         .mesa-final-app .jogadores-container { display: block; }
-        .mesa-final-app .jogadores-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+        .mesa-final-app .jogadores-grid { display: flex; flex-direction: column; gap: 8px; }
         .mesa-final-app .stats-cards { display: none; }
         
         .tabela-eliminados-mf { margin-top: 20px; background: #102810; border-radius: 10px; padding: 15px; }
@@ -665,99 +680,48 @@ function mostrarToast(mensagem) {
     setTimeout(() => { if (toast && toast.remove) toast.remove(); }, 3000);
 }
 
-function tocarSom(tipo) {
-    if (!audioContext) return;
-    if (audioContext.state === 'suspended') audioContext.resume();
+// Função para gerar fala usando Web Speech API
+function falar(texto) {
+    if (!window.speechSynthesis) return;
     
-    try {
-        const now = audioContext.currentTime;
-        
-        switch(tipo) {
-            case 'rebuySimples':
-                const notasSlot = [523.25, 587.33, 659.25];
-                notasSlot.forEach((freq, i) => {
-                    const osc = audioContext.createOscillator();
-                    const gain = audioContext.createGain();
-                    osc.connect(gain);
-                    gain.connect(audioContext.destination);
-                    osc.frequency.value = freq;
-                    osc.type = 'sine';
-                    gain.gain.value = 0.15;
-                    gain.gain.exponentialRampToValueAtTime(0.00001, now + 0.25 + i * 0.08);
-                    osc.start(now + i * 0.08);
-                    osc.stop(now + 0.35 + i * 0.08);
-                });
-                break;
-                
-            case 'rebuyDuplo':
-                const osc1 = audioContext.createOscillator();
-                const osc2 = audioContext.createOscillator();
-                const gain1 = audioContext.createGain();
-                const gain2 = audioContext.createGain();
-                osc1.connect(gain1);
-                osc2.connect(gain2);
-                gain1.connect(audioContext.destination);
-                gain2.connect(audioContext.destination);
-                osc1.frequency.value = 659.25;
-                osc2.frequency.value = 880.00;
-                osc1.type = 'sine';
-                osc2.type = 'sine';
-                gain1.gain.value = 0.18;
-                gain2.gain.value = 0.18;
-                
-                const lfo = audioContext.createOscillator();
-                const lfoGain = audioContext.createGain();
-                lfo.connect(lfoGain);
-                lfoGain.connect(osc2.frequency);
-                lfo.frequency.value = 5;
-                lfoGain.gain.value = 15;
-                lfo.start();
-                
-                gain1.gain.exponentialRampToValueAtTime(0.00001, now + 0.6);
-                gain2.gain.exponentialRampToValueAtTime(0.00001, now + 0.6);
-                osc1.start();
-                osc2.start();
-                osc1.stop(now + 0.6);
-                osc2.stop(now + 0.6);
-                setTimeout(() => lfo.stop(), 600);
-                break;
-                
-            case 'addon':
-                const notasVitoria = [523.25, 659.25, 783.99, 1046.50, 783.99, 659.25, 523.25];
-                notasVitoria.forEach((freq, i) => {
-                    const osc = audioContext.createOscillator();
-                    const gain = audioContext.createGain();
-                    osc.connect(gain);
-                    gain.connect(audioContext.destination);
-                    osc.frequency.value = freq;
-                    osc.type = 'sine';
-                    gain.gain.value = 0.2;
-                    gain.gain.exponentialRampToValueAtTime(0.00001, now + 0.3 + i * 0.1);
-                    osc.start(now + i * 0.1);
-                    osc.stop(now + 0.4 + i * 0.1);
-                });
-                break;
-                
-            case 'alerta':
-                const notasAlerta = [880, 660, 880, 660, 880];
-                notasAlerta.forEach((freq, index) => {
-                    const osc = audioContext.createOscillator();
-                    const gain = audioContext.createGain();
-                    osc.connect(gain);
-                    gain.connect(audioContext.destination);
-                    osc.frequency.value = freq;
-                    osc.type = 'sine';
-                    gain.gain.value = 0.25;
-                    osc.start(now + index * 0.25);
-                    gain.gain.exponentialRampToValueAtTime(0.00001, now + 0.35 + index * 0.25);
-                    setTimeout(() => osc.stop(), 350 + index * 250);
-                });
-                break;
-        }
-    } catch(e) { console.log('Erro no áudio:', e); }
+    // Cancela qualquer fala em andamento
+    window.speechSynthesis.cancel();
+    
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'pt-BR';
+    utterance.rate = 0.9;
+    utterance.pitch = 1.1;
+    utterance.volume = 1;
+    
+    // Tenta encontrar uma voz feminina em português
+    const voices = window.speechSynthesis.getVoices();
+    const portugueseVoice = voices.find(voice => voice.lang === 'pt-BR' && voice.name.includes('Google'));
+    if (portugueseVoice) utterance.voice = portugueseVoice;
+    
+    window.speechSynthesis.speak(utterance);
 }
 
-function tocarAlertaMesaFinal() { tocarSom('alerta'); if (navigator.vibrate) navigator.vibrate([300, 200, 300, 200, 500]); }
+function tocarSomEliminacao(jogadorNome, mesa) {
+    falar(`ELIMINAÇÃO! ${jogadorNome} foi eliminado da mesa ${mesa}!`);
+}
+
+function tocarSomRebuySimples() {
+    falar("REBUY SIMPLES");
+}
+
+function tocarSomRebuyDuplo() {
+    falar("REBUY DUPLO");
+}
+
+function tocarSomAddon() {
+    falar("ADDON");
+}
+
+function tocarAlertaMesaFinal() {
+    falar("MESA FINAL! ATENÇÃO!");
+    if (navigator.vibrate) navigator.vibrate([300, 200, 300, 200, 500]);
+}
+
 function copiarPix(nome) {
     const pixInfo = chavesPix[nome];
     if (pixInfo && pixInfo.chave) {
@@ -848,6 +812,9 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true) {
 document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('statusIndicator').textContent = '✅ Conectado';
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    // Carregar vozes para o speech synthesis
+    window.speechSynthesis.getVoices();
     
     db.ref('config').on('value', (snapshot) => {
         if (snapshot.exists()) config = snapshot.val();
@@ -982,7 +949,7 @@ function atualizarTabelaEliminadosMF() {
     const eliminados = classificacaoData.filter(c => c.posicao <= 9 && c.posicao >= 1).sort((a,b) => a.posicao - b.posicao);
     const tbody = document.getElementById('eliminadosMesaFinalBody');
     const tabelaDiv = document.getElementById('tabelaEliminadosMF');
-    if (tbody && eliminados.length > 0) { tabelaDiv.style.display = 'block'; tbody.innerHTML = eliminados.map(e => `<tr><td><strong>${e.posicao}º</strong></td><td>${e.nome}</td><td>${e.kos || 0}</td><td>${e.premio ? `R$ ${e.premio.toFixed(2)}` : '-'}</td></tr>`).join(''); }
+    if (tbody && eliminados.length > 0) { tabelaDiv.style.display = 'block'; tbody.innerHTML = eliminados.map(e => `<tr><td><strong>${e.posicao}º</strong></td><td>${e.nome}</td><td>${e.kos || 0}</td><td>${e.premio ? `R$ ${e.premio.toFixed(2)}` : '-'}</td>`).join(''); }
     else if (tabelaDiv) tabelaDiv.style.display = 'none';
 }
 
@@ -1158,12 +1125,15 @@ function atualizarGridJogadores() {
         grid.innerHTML = `<div class="empty-state"><h3>📋 NENHUM JOGADOR CADASTRADO</h3><p>Você precisa importar o layout das mesas primeiro.</p><button class="btn-ir-admin" onclick="fecharAppEIrAdmin()">🔐 IR PARA ADMINISTRAÇÃO</button></div>`;
         return;
     }
+    // Ordenar por posição numérica (1,2,3...)
     const ordenados = [...jogadores].sort((a,b) => (a.posicao||999) - (b.posicao||999));
-    grid.innerHTML = ordenados.map(j => {
+    grid.innerHTML = ordenados.map((j, index) => {
         const isMelhorMao = melhorMaoAtual === j.nome;
         const addonTexto = j.addon ? (isMelhorMao ? 'GRÁTIS' : '') : '';
+        // Usar a posição real do jogador (1,2,3...)
+        const posicaoDisplay = j.posicao || (index + 1);
         return `<div class="jogador-card ${j.eliminado ? 'eliminado' : ''} ${isMelhorMao ? 'melhor-mao' : ''}">
-                    <div class="jogador-posicao-numero">${j.posicao || '?'}</div>
+                    <div class="jogador-posicao-numero">${posicaoDisplay}</div>
                     <img class="jogador-foto" src="${getFotoJogador(j.nome)}">
                     <div class="jogador-info">
                         <div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🃏' : ''}</div>
@@ -1202,7 +1172,11 @@ function adicionarRebuy(nome, tipo) {
         if (jogador) {
             jogador.rebuys = (jogador.rebuys || 0) + qtd;
             db.ref('mesas').set(mesasData);
-            tocarSom(tipo === 'simples' ? 'rebuySimples' : 'rebuyDuplo');
+            if (tipo === 'simples') {
+                tocarSomRebuySimples();
+            } else {
+                tocarSomRebuyDuplo();
+            }
             mostrarToast(`✅ ${tipo === 'simples' ? 'Rebuy simples' : 'Rebuy duplo'} adicionado para ${nome}!`);
             atualizarGridJogadores();
             atualizarStatsCards();
@@ -1220,7 +1194,7 @@ function adicionarAddon(nome) {
             jogador.addon = true;
             jogador.addonGratis = isAddonGratis(nome) || isAddonSemValor(nome);
             db.ref('mesas').set(mesasData);
-            tocarSom('addon');
+            tocarSomAddon();
             mostrarToast(`✅ Addon registrado para ${nome}`);
             atualizarGridJogadores();
             atualizarStatsCards();
@@ -1281,6 +1255,11 @@ function confirmarEliminacao() {
             db.ref('classificacao').set(classificacaoData);
             jogador.eliminado = true; jogador.posicaoFinal = posicao; jogador.kos = qtdKos;
             db.ref('mesas').set(mesasData);
+            
+            // Tocar som de eliminação com a cor da mesa
+            const nomeMesa = mesaAtual === 'preta' ? 'PRETA' : 'AMARELA';
+            tocarSomEliminacao(jogador.nome, nomeMesa);
+            
             mostrarToast(`✅ ${jogador.nome} eliminado na ${posicao}ª posição com ${qtdKos} KO(s)!`);
             atualizarGridJogadores();
             atualizarStatsCards();
@@ -1424,7 +1403,7 @@ function atualizarAdminEstatisticas() {
     const ranking = [...todos].filter(j => (j.rebuys||0) > 0).sort((a,b) => (b.rebuys||0) - (a.rebuys||0)).slice(0,5);
     const rankingBody = document.getElementById('adminRankingBody');
     if (rankingBody) {
-        if (ranking.length === 0) rankingBody.innerHTML = '</tr><td colspan="4">Nenhum rebuy</td></tr>';
+        if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy</td></tr>';
         else rankingBody.innerHTML = ranking.map((j,i) => `<tr><td>${i+1}</td><td>${j.nome}${j.premio ? ` 💰 R$ ${j.premio}` : ''}</td><td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}</td><td>${j.rebuys}</td></tr>`).join('');
     }
 }
