@@ -20,67 +20,63 @@
             background: linear-gradient(135deg, #0a1a0a 0%, #0d1b0d 100%);
             color: #fff;
             min-height: 100vh;
+            overflow-x: hidden;
         }
+        
+        /* ============================================ */
+        /* ADAPTAÇÕES PARA TABLET DE 7 POLEGADAS */
+        /* ============================================ */
         
         @media (min-width: 600px) and (max-width: 1024px) {
-            .selecao-logo img { max-width: 100px !important; }
-            .selecao-titulo { font-size: 1.8em !important; margin-bottom: 20px !important; }
-            .selecao-btn { padding: 15px !important; font-size: 1.3em !important; }
-            .btn-mesa-final-topo { padding: 10px !important; font-size: 0.9em !important; }
-            .logo-top img { max-width: 50px !important; }
-            .logo-top h2 { font-size: 0.85em !important; }
-            .stat-card { padding: 8px !important; }
-            .stat-card-titulo { font-size: 0.8em !important; }
-            .stat-card-numeros { font-size: 1.1em !important; gap: 10px !important; }
-            .jogador-foto { width: 32px !important; height: 32px !important; }
-            .jogador-nome { font-size: 0.75em !important; }
-            .badge { font-size: 0.6em !important; padding: 2px 6px !important; }
-            .action-btn { padding: 8px 12px !important; font-size: 0.8em !important; min-width: 60px !important; }
-            .btn-rebuy-duplo { font-size: 0.8em !important; padding: 8px 12px !important; min-width: 60px !important; }
-            .jogador-posicao-numero { font-size: 0.9em !important; min-width: 32px !important; }
-            .jogador-card { padding: 8px !important; gap: 8px !important; }
-            .jogador-info { min-width: 80px !important; }
-            .mesa-indicator-text { font-size: 0.9em !important; }
-            .app-header { padding: 10px !important; }
-            .stats-cards { gap: 8px !important; margin-bottom: 8px !important; }
-            .jogadores-lados { padding: 8px !important; gap: 10px !important; }
-            .lado-esquerdo, .lado-direito { padding: 6px !important; }
-            .jogadores-grid { gap: 8px !important; }
-            .admin-header h1 { font-size: 1.3em !important; }
-            .voltar-btn { padding: 10px 18px !important; font-size: 0.9em !important; }
-            .btn { padding: 10px 14px !important; font-size: 0.85em !important; }
-            .melhor-mao-section { padding: 12px !important; }
-            .melhor-mao-section h3 { font-size: 1em !important; }
-            .verificar-header h1 { font-size: 1.2em !important; }
-            .classificacao-table th, .classificacao-table td { padding: 8px !important; font-size: 0.75em !important; }
-            .classificacao-foto { width: 28px !important; height: 28px !important; }
-            .status-indicator { font-size: 0.6em !important; padding: 3px 8px !important; }
-            .modal-content { padding: 20px !important; max-width: 320px !important; }
-            .modal-content h3 { font-size: 1.1em !important; }
-            .modal-buttons .btn { padding: 12px 18px !important; font-size: 0.9em !important; }
-            .form-group input { padding: 12px !important; font-size: 1em !important; }
+            body { font-size: 14px; }
+            .selecao-logo img { max-width: 90px !important; }
+            .selecao-titulo { font-size: 1.6em !important; margin-bottom: 15px !important; }
+            .selecao-btn { padding: 12px !important; font-size: 1.2em !important; }
+            .btn-mesa-final-topo { padding: 8px !important; font-size: 0.85em !important; }
+            .logo-top img { max-width: 45px !important; }
+            .logo-top h2 { font-size: 0.8em !important; }
+            .stat-card { padding: 6px !important; }
+            .stat-card-titulo { font-size: 0.75em !important; }
+            .stat-card-numeros { font-size: 1em !important; gap: 8px !important; }
+            .jogador-foto { width: 35px !important; height: 35px !important; }
+            .jogador-nome { font-size: 0.7em !important; }
+            .badge { font-size: 0.55em !important; padding: 2px 5px !important; }
+            .action-btn { padding: 6px 10px !important; font-size: 0.7em !important; min-width: 55px !important; }
+            .btn-rebuy-duplo { font-size: 0.7em !important; padding: 6px 10px !important; min-width: 55px !important; }
+            .jogador-posicao-numero { font-size: 0.85em !important; min-width: 28px !important; }
+            .jogador-card { padding: 6px !important; gap: 6px !important; }
+            .jogador-info { min-width: 70px !important; }
+            .mesa-indicator-text { font-size: 0.85em !important; }
+            .app-header { padding: 8px !important; }
+            .stats-cards { gap: 6px !important; margin-bottom: 6px !important; }
+            .admin-header h1 { font-size: 1.2em !important; }
+            .voltar-btn { padding: 8px 15px !important; font-size: 0.85em !important; }
+            .btn { padding: 8px 12px !important; font-size: 0.8em !important; }
+            .verificar-header h1 { font-size: 1.1em !important; }
+            .classificacao-table th, .classificacao-table td { padding: 6px !important; font-size: 0.7em !important; }
+            .classificacao-foto { width: 25px !important; height: 25px !important; }
+            .modal-content { padding: 15px !important; max-width: 300px !important; }
+            .jogadores-grid { grid-template-columns: 1fr !important; gap: 6px !important; }
         }
         
-        @media (min-width: 600px) and (max-width: 800px) and (orientation: portrait) {
-            .jogadores-lados { flex-direction: column !important; }
-            .lado-esquerdo, .lado-direito { width: 100% !important; }
-            .lado-direito { margin-top: 8px !important; }
-            .mesa-final-app .jogadores-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important; }
+        @media (min-width: 600px) and (max-width: 1024px) and (orientation: landscape) {
+            .jogadores-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+            .stats-cards { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
         }
         
-        @media (min-width: 800px) and (orientation: landscape) {
-            .jogadores-lados { flex-direction: row !important; }
-            .lado-esquerdo, .lado-direito { flex: 1 !important; }
-            .mesa-final-app .jogadores-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important; }
+        @media (min-width: 600px) and (max-width: 1024px) and (orientation: portrait) {
+            .jogadores-grid { display: grid !important; grid-template-columns: 1fr !important; gap: 8px !important; }
+            .stats-cards { display: grid !important; grid-template-columns: 1fr !important; gap: 6px !important; }
+            .logo-top { flex-direction: column !important; text-align: center !important; }
         }
         
         @media (max-width: 599px) {
-            .selecao-logo img { max-width: 80px !important; }
-            .selecao-titulo { font-size: 1.5em !important; }
-            .selecao-btn { padding: 12px !important; font-size: 1.1em !important; }
-            .stat-card-numeros { font-size: 1em !important; gap: 8px !important; }
-            .action-btn { padding: 6px 8px !important; font-size: 0.65em !important; }
-            .jogador-nome { font-size: 0.7em !important; }
+            .selecao-logo img { max-width: 70px !important; }
+            .selecao-titulo { font-size: 1.3em !important; }
+            .selecao-btn { padding: 10px !important; font-size: 1em !important; }
+            .stat-card-numeros { font-size: 0.9em !important; gap: 6px !important; }
+            .action-btn { padding: 5px 6px !important; font-size: 0.6em !important; }
+            .jogadores-grid { grid-template-columns: 1fr !important; }
         }
         
         .tela-selecao { display: flex; flex-direction: column; min-height: 100vh; padding: 20px; background: #0d1b0d; position: relative; }
@@ -121,15 +117,44 @@
         .total-num { color: #d4a121; }
         .mesa-indicator { background: rgba(16, 40, 16, 0.9); border-radius: 15px; padding: 10px; text-align: center; margin-bottom: 10px; }
         .mesa-indicator-text { font-family: 'Anton', sans-serif; font-size: 1.2em; text-transform: uppercase; }
-        .jogadores-lados { display: flex; flex: 1; overflow: hidden; padding: 15px; gap: 20px; }
-        .lado-esquerdo, .lado-direito { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: rgba(0, 0, 0, 0.2); border-radius: 15px; padding: 10px; }
-        .jogadores-grid { display: flex; flex-direction: column; gap: 10px; }
-        .jogador-card { background: rgba(255, 255, 255, 0.08); border: 2px solid #d4a121; border-radius: 12px; padding: 10px; display: flex; align-items: center; gap: 10px; transition: all 0.3s; backdrop-filter: blur(5px); }
-        .jogador-card.melhor-mao { background: linear-gradient(135deg, #d4a12130, #d4a12110); border: 3px solid #FFD700; box-shadow: 0 0 20px rgba(212, 161, 33, 0.5); animation: glow 1.5s infinite; }
+        
+        .jogadores-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        
+        .jogadores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 12px;
+        }
+        
+        .jogador-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid #d4a121;
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        
+        .jogador-card.melhor-mao { 
+            background: linear-gradient(135deg, #d4a12130, #d4a12110); 
+            border: 3px solid #FFD700; 
+            box-shadow: 0 0 20px rgba(212, 161, 33, 0.5); 
+            animation: glow 1.5s infinite; 
+        }
+        
         @keyframes glow { 0%, 100% { box-shadow: 0 0 10px rgba(212, 161, 33, 0.5); } 50% { box-shadow: 0 0 25px rgba(212, 161, 33, 0.8); } }
+        
         .jogador-card.eliminado { opacity: 0.6; background: rgba(199, 44, 72, 0.2); border-color: #c72c48; }
+        
         .jogador-posicao-numero { font-family: 'Anton', sans-serif; font-size: 1.1em; color: #d4a121; min-width: 35px; text-align: center; }
-        .jogador-foto { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a121; background: #2d5016; }
+        .jogador-foto { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a121; background: #2d5016; }
         .jogador-info { flex: 1; min-width: 100px; }
         .jogador-nome { font-weight: bold; font-size: 0.9em; font-family: 'Anton', sans-serif; letter-spacing: 0.5px; }
         .jogador-valores { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
@@ -148,6 +173,7 @@
         .btn-addon { background: #4CAF50; color: #fff; }
         .btn-corrigir { background: #FFA500; color: #000; }
         .btn-eliminar { background: #c72c48; color: #fff; }
+        
         .empty-state { text-align: center; padding: 40px 20px; background: rgba(0, 0, 0, 0.3); border-radius: 15px; margin: 20px; }
         .empty-state h3 { font-family: 'Anton', sans-serif; color: #d4a121; margin-bottom: 15px; }
         .empty-state p { margin-bottom: 20px; opacity: 0.8; }
@@ -201,7 +227,6 @@
         .top-3 { background: rgba(205, 127, 50, 0.2); }
         .classificacao-foto { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a121; vertical-align: middle; margin-right: 8px; }
         .classificacao-nome { display: flex; align-items: center; gap: 8px; }
-        .ko-input { width: 60px; padding: 5px; text-align: center; background: #1a3d1a; color: #fff; border: 1px solid #d4a121; border-radius: 4px; }
         .etapas-list { max-height: 400px; overflow-y: auto; }
         .etapa-card { background: #102810; border: 1px solid #d4a121; border-radius: 10px; margin-bottom: 15px; padding: 15px; }
         .etapa-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #d4a121; cursor: pointer; flex-wrap: wrap; gap: 10px; font-family: 'Anton', sans-serif; }
@@ -223,22 +248,11 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0d1b0d; }
         ::-webkit-scrollbar-thumb { background: #d4a121; border-radius: 3px; }
-        @media (max-width: 1024px) {
-            .action-btn { padding: 6px 10px; font-size: 0.7em; }
-            .btn-rebuy-duplo { font-size: 0.75em; padding: 6px 10px; }
-            .jogador-nome { font-size: 0.8em; }
-            .badge { font-size: 0.6em; padding: 2px 6px; }
-            .jogador-foto { width: 35px; height: 35px; }
-            .stat-card-numeros { font-size: 1.2em; gap: 15px; }
-        }
-        .mesa-final-app .jogadores-lados { flex-direction: column; }
-        .mesa-final-app .lado-esquerdo { width: 100%; }
-        .mesa-final-app .lado-direito { display: none; }
-        .mesa-final-app .jogadores-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 10px; }
+        
+        .mesa-final-app .jogadores-container { display: block; }
+        .mesa-final-app .jogadores-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
         .mesa-final-app .stats-cards { display: none; }
-        .carta-icon { font-size: 1.2em; }
-        .proxima-etapa-info { background: #1a3d1a; border: 2px solid #4CAF50; border-radius: 10px; padding: 10px; margin-top: 10px; text-align: center; font-family: 'Anton', sans-serif; }
-        .pix-chave { font-size: 0.7em; color: #d4a121; margin-top: 4px; font-family: monospace; }
+        
         .tabela-eliminados-mf { margin-top: 20px; background: #102810; border-radius: 10px; padding: 15px; }
         .tabela-eliminados-mf h4 { color: #d4a121; margin-bottom: 10px; font-family: 'Anton', sans-serif; }
         .tabela-eliminados-mf table { width: 100%; font-size: 0.8em; border-collapse: collapse; }
@@ -360,9 +374,7 @@
             <div id="admin-resumo" class="admin-tab-content">
                 <div style="max-height: 400px; overflow-y: auto;">
                     <table class="resumo-table" id="adminResumoFinanceiro">
-                        <thead>
-                            <tr><th>Jogador</th><th>Mesa</th><th>Pos.</th><th>Buy-in</th><th>Rebuys</th><th>Addon</th><th>Total</th></tr>
-                        </thead>
+                        <thead><tr><th>Jogador</th><th>Mesa</th><th>Pos.</th><th>Buy-in</th><th>Rebuys</th><th>Addon</th><th>Total</th></tr></thead>
                         <tbody id="adminResumoBody"></tbody>
                     </table>
                 </div>
@@ -409,7 +421,7 @@
     </div>
 </div>
 
-<!-- Tela de Verificar Classificação (Histórico e Ranking Atual) -->
+<!-- Tela de Verificar Classificação -->
 <div class="tela-verificar-classificacao hidden" id="telaVerificarClassificacao">
     <div class="verificar-container">
         <div class="verificar-header">
@@ -422,18 +434,14 @@
             </div>
         </div>
         
-        <!-- Ranking atual (até 20 posições) -->
         <div style="overflow-x: auto; margin-bottom: 40px;">
             <h3>🏆 RANKING ATUAL (Top 20)</h3>
             <table class="classificacao-table" id="classificacaoTableAtual">
-                <thead>
-                    <tr><th>Posição</th><th>Jogador</th><th>Mesa</th><th>Pontos Posição</th><th>KO's</th><th>PONTOS TOTAIS</th><th>Prêmio (R$)</th><th>PIX</th></tr>
-                </thead>
+                <thead><tr><th>Posição</th><th>Jogador</th><th>Mesa</th><th>Pontos Posição</th><th>KO's</th><th>PONTOS TOTAIS</th><th>Prêmio (R$)</th><th>PIX</th></tr></thead>
                 <tbody id="classificacaoBodyAtual"></tbody>
             </table>
         </div>
         
-        <!-- Histórico de etapas -->
         <div style="margin-bottom: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                 <h3>📜 HISTÓRICO DE ETAPAS</h3>
@@ -467,7 +475,6 @@
                     <span>|</span>
                     <span class="total-num" id="pretaTotal">0</span>
                 </div>
-                <div style="font-size: 0.7em; opacity: 0.8;">🟢 Jogando | ❌ Eliminados | 📊 Total</div>
             </div>
             <div class="stat-card amarela">
                 <div class="stat-card-titulo">♦️ MESA AMARELA</div>
@@ -478,7 +485,6 @@
                     <span>|</span>
                     <span class="total-num" id="amarelaTotal">0</span>
                 </div>
-                <div style="font-size: 0.7em; opacity: 0.8;">🟢 Jogando | ❌ Eliminados | 📊 Total</div>
             </div>
             <div class="stat-card total">
                 <div class="stat-card-titulo">🃏 TOTAL TORNEIO</div>
@@ -489,7 +495,6 @@
                     <span>|</span>
                     <span class="total-num" id="totalGeralJogadores">0</span>
                 </div>
-                <div style="font-size: 0.7em; opacity: 0.8;">🟢 Restantes | ❌ Eliminados | 📊 Inscritos</div>
             </div>
         </div>
         
@@ -498,13 +503,8 @@
         </div>
     </div>
     
-    <div class="jogadores-lados">
-        <div class="lado-esquerdo">
-            <div class="jogadores-grid" id="jogadoresGridEsquerda"></div>
-        </div>
-        <div class="lado-direito">
-            <div class="jogadores-grid" id="jogadoresGridDireita"></div>
-        </div>
+    <div class="jogadores-container">
+        <div class="jogadores-grid" id="jogadoresGrid"></div>
     </div>
 </div>
 
@@ -523,22 +523,15 @@
             <div class="mesa-indicator-text" id="mesaFinalIndicatorText">🃏 MESA FINAL</div>
         </div>
     </div>
-    <div class="jogadores-lados">
-        <div class="lado-esquerdo">
-            <div class="jogadores-grid" id="jogadoresMesaFinalGrid"></div>
-            
-            <!-- Tabela de Eliminados da Mesa Final -->
-            <div class="tabela-eliminados-mf" id="tabelaEliminadosMF" style="display: none;">
-                <h4>📋 JOGADORES ELIMINADOS NA MESA FINAL</h4>
-                <table id="eliminadosMesaFinalTable">
-                    <thead>
-                        <tr><th>Posição</th><th>Jogador</th><th>KO's</th><th>Prêmio (R$)</th></tr>
-                    </thead>
-                    <tbody id="eliminadosMesaFinalBody"></tbody>
-                </table>
-            </div>
+    <div class="jogadores-container">
+        <div class="jogadores-grid" id="jogadoresMesaFinalGrid"></div>
+        <div class="tabela-eliminados-mf" id="tabelaEliminadosMF" style="display: none;">
+            <h4>📋 JOGADORES ELIMINADOS NA MESA FINAL</h4>
+            <table id="eliminadosMesaFinalTable">
+                <thead><tr><th>Posição</th><th>Jogador</th><th>KO's</th><th>Prêmio (R$)</th></tr></thead>
+                <tbody id="eliminadosMesaFinalBody"></tbody>
+            </table>
         </div>
-        <div class="lado-direito"></div>
     </div>
 </div>
 
@@ -610,7 +603,6 @@ const db = firebase.database();
 const VALOR_BUYIN = 100;
 const VALOR_REBUY = 30;
 const VALOR_ADDON = 50;
-
 const ADDON_GRATIS = ['Gaspar', 'Matheus', 'Ricardo Linhares', 'Diego'];
 
 const PONTOS_POSICAO = {
@@ -640,11 +632,9 @@ let melhorMaoAtual = null;
 let audioContext = null;
 let fotosJogadores = {};
 
-// Chaves PIX dos jogadores
 const chavesPix = {
     'Amarildo': { chave: '41987779470', tipo: 'Telefone' },
     'Boy': { chave: '41998294734', tipo: 'Telefone' },
-    'Buiu': null,
     'Cleversson': { chave: '05470771903', tipo: 'CPF/CNPJ' },
     'Diego': { chave: '05274037925', tipo: 'CPF/CNPJ' },
     'Dos Anjos': { chave: '99899604968', tipo: 'CPF/CNPJ' },
@@ -654,20 +644,16 @@ const chavesPix = {
     'Izidio': { chave: '01916007929', tipo: 'CPF/CNPJ' },
     'Jean': { chave: '07104345965', tipo: 'CPF/CNPJ' },
     'Jean Rebuy': { chave: '02784209903', tipo: 'CPF/CNPJ' },
-    'Kastelo': null,
     'Loreto': { chave: '30295467053', tipo: 'CPF/CNPJ' },
-    'Marcelo': null,
     'Matheus': { chave: '06946581970', tipo: 'CPF/CNPJ' },
     'Maykon': { chave: '41997643171', tipo: 'Telefone' },
     'Neto': { chave: 'r.cruzneto91@gmail.com', tipo: 'E-mail' },
-    'Rafael': null,
     'Ricardo Amarante': { chave: '08062627969', tipo: 'CPF/CNPJ' },
     'Ricardo Linhares': { chave: '35522518987', tipo: 'CPF/CNPJ' },
     'Ricardo Matoso': { chave: '05315830900', tipo: 'CPF/CNPJ' },
     'Robson': { chave: '03490078969', tipo: 'CPF/CNPJ' },
     'Sergio': { chave: 'sergio.menegari08@gmail.com', tipo: 'E-mail' },
     'Solano': { chave: 'solanogomes2020@gmail.com', tipo: 'E-mail' },
-    'Tigre': null,
     'Van Van': { chave: '41999677977', tipo: 'Telefone' }
 };
 
@@ -676,9 +662,7 @@ function mostrarToast(mensagem) {
     toast.className = 'toast-notification';
     toast.textContent = mensagem;
     document.body.appendChild(toast);
-    setTimeout(() => {
-        if (toast && toast.remove) toast.remove();
-    }, 3000);
+    setTimeout(() => { if (toast && toast.remove) toast.remove(); }, 3000);
 }
 
 function tocarSom(tipo) {
@@ -690,24 +674,22 @@ function tocarSom(tipo) {
         
         switch(tipo) {
             case 'rebuySimples':
-                // Som elegante para rebuy simples - arpeggio ascendente suave
-                const notas1 = [523.25, 659.25, 783.99];
-                notas1.forEach((freq, i) => {
+                const notasSlot = [523.25, 587.33, 659.25];
+                notasSlot.forEach((freq, i) => {
                     const osc = audioContext.createOscillator();
                     const gain = audioContext.createGain();
                     osc.connect(gain);
                     gain.connect(audioContext.destination);
                     osc.frequency.value = freq;
                     osc.type = 'sine';
-                    gain.gain.value = 0.25;
-                    gain.gain.exponentialRampToValueAtTime(0.00001, now + 0.3 + i * 0.1);
-                    osc.start(now + i * 0.1);
-                    osc.stop(now + 0.4 + i * 0.1);
+                    gain.gain.value = 0.15;
+                    gain.gain.exponentialRampToValueAtTime(0.00001, now + 0.25 + i * 0.08);
+                    osc.start(now + i * 0.08);
+                    osc.stop(now + 0.35 + i * 0.08);
                 });
                 break;
                 
             case 'rebuyDuplo':
-                // Som mais marcante para rebuy duplo - acorde com vibrato suave
                 const osc1 = audioContext.createOscillator();
                 const osc2 = audioContext.createOscillator();
                 const gain1 = audioContext.createGain();
@@ -717,23 +699,32 @@ function tocarSom(tipo) {
                 gain1.connect(audioContext.destination);
                 gain2.connect(audioContext.destination);
                 osc1.frequency.value = 659.25;
-                osc2.frequency.value = 783.99;
+                osc2.frequency.value = 880.00;
                 osc1.type = 'sine';
                 osc2.type = 'sine';
-                gain1.gain.value = 0.2;
-                gain2.gain.value = 0.2;
-                gain1.gain.exponentialRampToValueAtTime(0.00001, now + 0.5);
-                gain2.gain.exponentialRampToValueAtTime(0.00001, now + 0.5);
+                gain1.gain.value = 0.18;
+                gain2.gain.value = 0.18;
+                
+                const lfo = audioContext.createOscillator();
+                const lfoGain = audioContext.createGain();
+                lfo.connect(lfoGain);
+                lfoGain.connect(osc2.frequency);
+                lfo.frequency.value = 5;
+                lfoGain.gain.value = 15;
+                lfo.start();
+                
+                gain1.gain.exponentialRampToValueAtTime(0.00001, now + 0.6);
+                gain2.gain.exponentialRampToValueAtTime(0.00001, now + 0.6);
                 osc1.start();
                 osc2.start();
-                osc1.stop(now + 0.5);
-                osc2.stop(now + 0.5);
+                osc1.stop(now + 0.6);
+                osc2.stop(now + 0.6);
+                setTimeout(() => lfo.stop(), 600);
                 break;
                 
             case 'addon':
-                // Som especial para addon - sequência triunfante
-                const notas = [523.25, 659.25, 783.99, 1046.50];
-                notas.forEach((freq, i) => {
+                const notasVitoria = [523.25, 659.25, 783.99, 1046.50, 783.99, 659.25, 523.25];
+                notasVitoria.forEach((freq, i) => {
                     const osc = audioContext.createOscillator();
                     const gain = audioContext.createGain();
                     osc.connect(gain);
@@ -741,66 +732,48 @@ function tocarSom(tipo) {
                     osc.frequency.value = freq;
                     osc.type = 'sine';
                     gain.gain.value = 0.2;
-                    gain.gain.exponentialRampToValueAtTime(0.00001, now + 0.4 + i * 0.12);
-                    osc.start(now + i * 0.12);
-                    osc.stop(now + 0.5 + i * 0.12);
+                    gain.gain.exponentialRampToValueAtTime(0.00001, now + 0.3 + i * 0.1);
+                    osc.start(now + i * 0.1);
+                    osc.stop(now + 0.4 + i * 0.1);
                 });
                 break;
                 
             case 'alerta':
-                // Alerta de mesa final
-                const alertNotas = [880, 440, 880, 440, 880];
-                alertNotas.forEach((freq, index) => {
+                const notasAlerta = [880, 660, 880, 660, 880];
+                notasAlerta.forEach((freq, index) => {
                     const osc = audioContext.createOscillator();
                     const gain = audioContext.createGain();
                     osc.connect(gain);
                     gain.connect(audioContext.destination);
                     osc.frequency.value = freq;
                     osc.type = 'sine';
-                    gain.gain.value = 0.3;
-                    osc.start(now + index * 0.2);
-                    gain.gain.exponentialRampToValueAtTime(0.00001, now + 0.3 + index * 0.2);
-                    setTimeout(() => osc.stop(), 300 + index * 200);
+                    gain.gain.value = 0.25;
+                    osc.start(now + index * 0.25);
+                    gain.gain.exponentialRampToValueAtTime(0.00001, now + 0.35 + index * 0.25);
+                    setTimeout(() => osc.stop(), 350 + index * 250);
                 });
                 break;
         }
     } catch(e) { console.log('Erro no áudio:', e); }
 }
 
-function tocarAlertaMesaFinal() {
-    tocarSom('alerta');
-    if (navigator.vibrate) navigator.vibrate([300, 200, 300, 200, 500]);
-}
-
+function tocarAlertaMesaFinal() { tocarSom('alerta'); if (navigator.vibrate) navigator.vibrate([300, 200, 300, 200, 500]); }
 function copiarPix(nome) {
     const pixInfo = chavesPix[nome];
     if (pixInfo && pixInfo.chave) {
-        navigator.clipboard.writeText(pixInfo.chave).then(() => {
-            mostrarToast(`✅ Chave PIX de ${nome} copiada!`);
-        }).catch(() => {
-            mostrarToast(`❌ Erro ao copiar. Chave: ${pixInfo.chave}`);
-        });
-    } else {
-        mostrarToast(`⚠️ Nenhuma chave PIX cadastrada para ${nome}`);
-    }
+        navigator.clipboard.writeText(pixInfo.chave).then(() => mostrarToast(`✅ Chave PIX de ${nome} copiada!`))
+            .catch(() => mostrarToast(`❌ Erro ao copiar. Chave: ${pixInfo.chave}`));
+    } else { mostrarToast(`⚠️ Nenhuma chave PIX cadastrada para ${nome}`); }
 }
 
-function isAddonGratis(nome) {
-    if (melhorMaoAtual === nome) return true;
-    return false;
-}
-
-function isAddonSemValor(nome) {
-    return ADDON_GRATIS.includes(nome);
-}
-
+function isAddonGratis(nome) { return melhorMaoAtual === nome; }
+function isAddonSemValor(nome) { return ADDON_GRATIS.includes(nome); }
 function getAddonValor(nome, addonAtivado) {
     if (!addonAtivado) return 0;
     if (melhorMaoAtual === nome) return 0;
     if (ADDON_GRATIS.includes(nome)) return 0;
     return VALOR_ADDON;
 }
-
 function getAddonTexto(nome, addonAtivado) {
     if (!addonAtivado) return '0';
     if (melhorMaoAtual === nome) return 'GRÁTIS';
@@ -813,68 +786,37 @@ function salvarEtapaNoHistorico() {
         const novaEtapa = {
             data: new Date().toISOString(),
             classificacao: classificacaoData.map(j => ({
-                nome: j.nome,
-                mesa: j.mesa,
-                posicao: j.posicao,
-                pontosPosicao: j.pontosPosicao,
-                kos: j.kos || 0,
-                pontosKOs: j.pontosKOs || 0,
+                nome: j.nome, mesa: j.mesa, posicao: j.posicao, pontosPosicao: j.pontosPosicao,
+                kos: j.kos || 0, pontosKOs: j.pontosKOs || 0,
                 pontosTotal: j.pontosTotal || (j.pontosPosicao + (j.kos || 0)),
-                dataEliminacao: j.dataEliminacao,
-                etapa: j.etapa || etapaAtual,
-                premio: j.premio || 0
+                dataEliminacao: j.dataEliminacao, etapa: j.etapa || etapaAtual, premio: j.premio || 0
             })),
-            totalJogadores: totalJogadoresIniciais,
-            totalClassificados: classificacaoData.length,
-            etapaNumero: etapaAtual
+            totalJogadores: totalJogadoresIniciais, totalClassificados: classificacaoData.length, etapaNumero: etapaAtual
         };
-        
-        // Verificar se já existe uma etapa com este número
         const etapaExistente = historicoEtapas.findIndex(e => e.etapaNumero === etapaAtual);
-        if (etapaExistente !== -1) {
-            historicoEtapas[etapaExistente] = novaEtapa;
-        } else {
-            historicoEtapas.unshift(novaEtapa);
-        }
-        
+        if (etapaExistente !== -1) historicoEtapas[etapaExistente] = novaEtapa;
+        else historicoEtapas.unshift(novaEtapa);
         db.ref('historicoEtapas').set(historicoEtapas);
         return true;
     }
     return false;
 }
 
-function prepararProximaEtapa() {
-    const proximaEtapa = config.etapa + 1;
-    if (proximaEtapa <= 13) {
-        const infoDiv = document.getElementById('proximaEtapaInfo');
-        const spanProxima = document.getElementById('proximaEtapaNumero');
-        if (infoDiv && spanProxima) {
-            spanProxima.textContent = `${proximaEtapa}ª ETAPA`;
-            infoDiv.style.display = 'block';
-        }
-        
-        const selectEtapa = document.getElementById('adminSelectEtapa');
-        if (selectEtapa) {
-            selectEtapa.value = proximaEtapa;
-        }
-    } else {
-        const infoDiv = document.getElementById('proximaEtapaInfo');
-        if (infoDiv) {
-            infoDiv.style.display = 'none';
-        }
-    }
-}
-
 function finalizarETAPARegistrarProxima(mostrarMensagem = true) {
     const salvou = salvarEtapaNoHistorico();
-    
     if (salvou) {
-        if (mostrarMensagem) {
-            mostrarToast(`✅ ${config.etapa}ª ETAPA salva no histórico com sucesso!`);
+        if (mostrarMensagem) mostrarToast(`✅ ${config.etapa}ª ETAPA salva no histórico com sucesso!`);
+        const proximaEtapa = config.etapa + 1;
+        if (proximaEtapa <= 13) {
+            const infoDiv = document.getElementById('proximaEtapaInfo');
+            const spanProxima = document.getElementById('proximaEtapaNumero');
+            if (infoDiv && spanProxima) { spanProxima.textContent = `${proximaEtapa}ª ETAPA`; infoDiv.style.display = 'block'; }
+            const selectEtapa = document.getElementById('adminSelectEtapa');
+            if (selectEtapa) selectEtapa.value = proximaEtapa;
+        } else {
+            const infoDiv = document.getElementById('proximaEtapaInfo');
+            if (infoDiv) infoDiv.style.display = 'none';
         }
-        
-        prepararProximaEtapa();
-        
         mesasData = { preta: [], amarela: [] };
         classificacaoData = [];
         contadorEliminados = 0;
@@ -882,13 +824,11 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true) {
         totalJogadoresIniciais = 0;
         melhorMaoAtual = null;
         torneioFinalizado = false;
-        
         db.ref('mesas').set(mesasData);
         db.ref('classificacao').set(classificacaoData);
         db.ref('melhorMao').set(null);
         db.ref('mesaFinalAtiva').set(false);
         db.ref('torneioFinalizado').set(false);
-        
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
         atualizarHistoricoEtapas();
@@ -896,21 +836,11 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true) {
         atualizarBotoesMesaFinal();
         atualizarSelectMelhorMao();
         atualizarClassificacaoAtual();
-        
-        if (mostrarMensagem) {
-            const proxima = config.etapa + 1;
-            if (proxima <= 13) {
-                mostrarToast(`🎯 PRÓXIMA ETAPA: ${proxima}ª ETAPA!\n\nClique em "INICIAR ETAPA SELECIONADA" no painel administrativo para começar a próxima etapa.`);
-            } else {
-                mostrarToast(`🏆 PARABÉNS! Temporada concluída até a 13ª etapa!`);
-            }
-        }
-        
+        if (mostrarMensagem && proximaEtapa <= 13) mostrarToast(`🎯 PRÓXIMA ETAPA: ${proximaEtapa}ª ETAPA!`);
+        else if (mostrarMensagem) mostrarToast(`🏆 PARABÉNS! Temporada concluída!`);
         return true;
     } else {
-        if (mostrarMensagem) {
-            mostrarToast('Nenhum dado para salvar! É necessário ter eliminações registradas.');
-        }
+        if (mostrarMensagem) mostrarToast('Nenhum dado para salvar! É necessário ter eliminações registradas.');
         return false;
     }
 }
@@ -924,80 +854,45 @@ document.addEventListener('DOMContentLoaded', async function() {
         else { config = { etapa: 4 }; db.ref('config').set(config); }
         const selectEtapa = document.getElementById('adminSelectEtapa');
         if (selectEtapa) selectEtapa.value = config.etapa || 4;
-        
         const tituloClassificacao = document.querySelector('#telaVerificarClassificacao .verificar-header h1');
-        if (tituloClassificacao) {
-            tituloClassificacao.innerHTML = `📊 CLASSIFICAÇÃO GERAL DA ${config.etapa}ª ETAPA`;
-        }
+        if (tituloClassificacao) tituloClassificacao.innerHTML = `📊 CLASSIFICAÇÃO GERAL DA ${config.etapa}ª ETAPA`;
     });
     
-    db.ref('torneioFinalizado').on('value', (snapshot) => {
-        if (snapshot.exists()) {
-            torneioFinalizado = snapshot.val();
-        } else {
-            torneioFinalizado = false;
-        }
-    });
-    
-    db.ref('mesaFinalAtiva').on('value', (snapshot) => {
-        if (snapshot.exists()) {
-            mesaFinalAtiva = snapshot.val();
-        } else {
-            mesaFinalAtiva = false;
-        }
-        atualizarBotoesMesaFinal();
-    });
-    
-    db.ref('fotosJogadores').on('value', (snapshot) => {
-        if (snapshot.exists()) fotosJogadores = snapshot.val();
-        atualizarGridJogadores();
-        renderizarMesaFinal();
-        atualizarSelectMelhorMao();
-        atualizarClassificacaoAtual();
-    });
-    
+    db.ref('torneioFinalizado').on('value', (snapshot) => { torneioFinalizado = snapshot.exists() ? snapshot.val() : false; });
+    db.ref('mesaFinalAtiva').on('value', (snapshot) => { mesaFinalAtiva = snapshot.exists() ? snapshot.val() : false; atualizarBotoesMesaFinal(); });
+    db.ref('fotosJogadores').on('value', (snapshot) => { if (snapshot.exists()) fotosJogadores = snapshot.val(); atualizarGridJogadores(); renderizarMesaFinal(); atualizarSelectMelhorMao(); atualizarClassificacaoAtual(); });
     db.ref('mesas').on('value', (snapshot) => {
         if (snapshot.exists()) mesasData = snapshot.val();
         else { mesasData = { preta: [], amarela: [] }; db.ref('mesas').set(mesasData); }
-        
         const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
         const totalJogadoresInscritos = todosJogadores.length;
         const totalVivos = todosJogadores.filter(j => !j.eliminado).length;
         const totalEliminados = todosJogadores.filter(j => j.eliminado).length;
-        
         const totalGeralSpan = document.getElementById('totalGeralJogadores');
         const totalVivosSpan = document.getElementById('totalVivos');
         const totalEliminadosSpan = document.getElementById('totalEliminados');
-        
         if (totalGeralSpan) totalGeralSpan.textContent = totalJogadoresInscritos;
         if (totalVivosSpan) totalVivosSpan.textContent = totalVivos;
         if (totalEliminadosSpan) totalEliminadosSpan.textContent = totalEliminados;
-        
         const pretaVivos = (mesasData.preta || []).filter(j => !j.eliminado).length;
         const pretaEliminados = (mesasData.preta || []).filter(j => j.eliminado).length;
         const pretaTotal = (mesasData.preta || []).length;
         const amarelaVivos = (mesasData.amarela || []).filter(j => !j.eliminado).length;
         const amarelaEliminados = (mesasData.amarela || []).filter(j => j.eliminado).length;
         const amarelaTotal = (mesasData.amarela || []).length;
-        
         const pretaVivosSpan = document.getElementById('pretaVivos');
         const pretaEliminadosSpan = document.getElementById('pretaEliminados');
         const pretaTotalSpan = document.getElementById('pretaTotal');
         const amarelaVivosSpan = document.getElementById('amarelaVivos');
         const amarelaEliminadosSpan = document.getElementById('amarelaEliminados');
         const amarelaTotalSpan = document.getElementById('amarelaTotal');
-        
         if (pretaVivosSpan) pretaVivosSpan.textContent = pretaVivos;
         if (pretaEliminadosSpan) pretaEliminadosSpan.textContent = pretaEliminados;
         if (pretaTotalSpan) pretaTotalSpan.textContent = pretaTotal;
         if (amarelaVivosSpan) amarelaVivosSpan.textContent = amarelaVivos;
         if (amarelaEliminadosSpan) amarelaEliminadosSpan.textContent = amarelaEliminados;
         if (amarelaTotalSpan) amarelaTotalSpan.textContent = amarelaTotal;
-        
-        if (totalJogadoresIniciais === 0 && todosJogadores.length > 0 && !torneioFinalizado) {
-            totalJogadoresIniciais = todosJogadores.length;
-        }
-        
+        if (totalJogadoresIniciais === 0 && todosJogadores.length > 0 && !torneioFinalizado) totalJogadoresIniciais = todosJogadores.length;
         atualizarGridJogadores();
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
@@ -1006,62 +901,28 @@ document.addEventListener('DOMContentLoaded', async function() {
         atualizarClassificacaoAtual();
     });
     
-    db.ref('classificacao').on('value', (snapshot) => {
-        if (snapshot.exists()) classificacaoData = snapshot.val();
-        else classificacaoData = [];
-        atualizarClassificacaoAtual();
-        atualizarHistoricoEtapas();
-        atualizarTabelaEliminadosMF();
-    });
-    
-    db.ref('historicoEtapas').on('value', (snapshot) => {
-        if (snapshot.exists()) historicoEtapas = snapshot.val();
-        else historicoEtapas = [];
-        atualizarHistoricoEtapas();
-    });
-    
-    db.ref('melhorMao').on('value', (snapshot) => {
-        if (snapshot.exists()) melhorMaoAtual = snapshot.val();
-        else melhorMaoAtual = null;
-        atualizarGridJogadores();
-        atualizarInfoMelhorMao();
-        atualizarAdminResumo();
-        atualizarAdminEstatisticas();
-    });
+    db.ref('classificacao').on('value', (snapshot) => { classificacaoData = snapshot.exists() ? snapshot.val() : []; atualizarClassificacaoAtual(); atualizarHistoricoEtapas(); atualizarTabelaEliminadosMF(); });
+    db.ref('historicoEtapas').on('value', (snapshot) => { historicoEtapas = snapshot.exists() ? snapshot.val() : []; atualizarHistoricoEtapas(); });
+    db.ref('melhorMao').on('value', (snapshot) => { melhorMaoAtual = snapshot.exists() ? snapshot.val() : null; atualizarGridJogadores(); atualizarInfoMelhorMao(); atualizarAdminResumo(); atualizarAdminEstatisticas(); });
     
     inicializarEventos();
 });
 
-function getFotoJogador(nome) {
-    return fotosJogadores[nome] || `https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=d4a121&color=000&size=45`;
-}
+function getFotoJogador(nome) { return fotosJogadores[nome] || `https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=d4a121&color=000&size=45`; }
 
 function atualizarStatsCards() {
-    const preta = mesasData.preta || [];
-    const amarela = mesasData.amarela || [];
-    
+    const preta = mesasData.preta || [], amarela = mesasData.amarela || [];
     const pretaVivos = preta.filter(j => !j.eliminado).length;
     const pretaEliminados = preta.filter(j => j.eliminado).length;
     const pretaTotal = preta.length;
-    
     const amarelaVivos = amarela.filter(j => !j.eliminado).length;
     const amarelaEliminados = amarela.filter(j => j.eliminado).length;
     const amarelaTotal = amarela.length;
-    
     const totalVivos = pretaVivos + amarelaVivos;
     const totalEliminados = pretaEliminados + amarelaEliminados;
     const totalGeral = pretaTotal + amarelaTotal;
-    
-    const elementos = {
-        pretaVivos, pretaEliminados, pretaTotal,
-        amarelaVivos, amarelaEliminados, amarelaTotal,
-        totalVivos, totalEliminados, totalGeral
-    };
-    
-    for (const [id, value] of Object.entries(elementos)) {
-        const el = document.getElementById(id);
-        if (el) el.textContent = value;
-    }
+    const elementos = { pretaVivos, pretaEliminados, pretaTotal, amarelaVivos, amarelaEliminados, amarelaTotal, totalVivos, totalEliminados, totalGeral };
+    for (const [id, value] of Object.entries(elementos)) { const el = document.getElementById(id); if (el) el.textContent = value; }
 }
 
 function atualizarBotoesMesaFinal() {
@@ -1079,10 +940,8 @@ function atualizarBotoesMesaFinal() {
 function atualizarSelectMelhorMao() {
     const select = document.getElementById('selectMelhorMao');
     if (!select) return;
-    
     const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const vivos = todosJogadores.filter(j => !j.eliminado);
-    
     select.innerHTML = '<option value="">-- Selecione um jogador --</option>';
     vivos.forEach(jogador => {
         const option = document.createElement('option');
@@ -1094,43 +953,25 @@ function atualizarSelectMelhorMao() {
 
 function atualizarInfoMelhorMao() {
     const infoDiv = document.getElementById('melhorMaoInfo');
-    if (melhorMaoAtual && infoDiv) {
-        infoDiv.style.display = 'block';
-        infoDiv.innerHTML = `🃏 MELHOR MÃO: <strong style="color:#FFD700;">${melhorMaoAtual}</strong> - ADDON GRÁTIS! 🃏`;
-    } else if (infoDiv) {
-        infoDiv.style.display = 'none';
-    }
+    if (melhorMaoAtual && infoDiv) { infoDiv.style.display = 'block'; infoDiv.innerHTML = `🃏 MELHOR MÃO: <strong style="color:#FFD700;">${melhorMaoAtual}</strong> - ADDON GRÁTIS! 🃏`; }
+    else if (infoDiv) infoDiv.style.display = 'none';
 }
 
 function aplicarMelhorMao() {
     const select = document.getElementById('selectMelhorMao');
     const jogadorNome = select.value;
-    
-    if (!jogadorNome) {
-        mostrarToast('Selecione um jogador!');
-        return;
-    }
-    
+    if (!jogadorNome) { mostrarToast('Selecione um jogador!'); return; }
     if (confirm(`Confirmar que ${jogadorNome} fez a MELHOR MÃO da etapa anterior? Ele ganhará ADDON GRÁTIS.`)) {
         db.ref('melhorMao').set(jogadorNome);
-        
         let jogadorEncontrado = null;
-        
-        if (mesasData.preta?.some(j => j.nome === jogadorNome)) {
-            jogadorEncontrado = mesasData.preta.find(j => j.nome === jogadorNome);
-        } else if (mesasData.amarela?.some(j => j.nome === jogadorNome)) {
-            jogadorEncontrado = mesasData.amarela.find(j => j.nome === jogadorNome);
-        }
-        
+        if (mesasData.preta?.some(j => j.nome === jogadorNome)) jogadorEncontrado = mesasData.preta.find(j => j.nome === jogadorNome);
+        else if (mesasData.amarela?.some(j => j.nome === jogadorNome)) jogadorEncontrado = mesasData.amarela.find(j => j.nome === jogadorNome);
         if (jogadorEncontrado && !jogadorEncontrado.addon && !jogadorEncontrado.eliminado) {
             jogadorEncontrado.addon = true;
             jogadorEncontrado.addonGratis = true;
             db.ref('mesas').set(mesasData);
             mostrarToast(`✅ ${jogadorNome} ganhou ADDON GRÁTIS pela melhor mão!`);
-        } else if (jogadorEncontrado && jogadorEncontrado.addon) {
-            mostrarToast(`⚠️ ${jogadorNome} já possui addon registrado!`);
-        }
-        
+        } else if (jogadorEncontrado && jogadorEncontrado.addon) mostrarToast(`⚠️ ${jogadorNome} já possui addon registrado!`);
         atualizarGridJogadores();
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
@@ -1141,49 +982,25 @@ function atualizarTabelaEliminadosMF() {
     const eliminados = classificacaoData.filter(c => c.posicao <= 9 && c.posicao >= 1).sort((a,b) => a.posicao - b.posicao);
     const tbody = document.getElementById('eliminadosMesaFinalBody');
     const tabelaDiv = document.getElementById('tabelaEliminadosMF');
-    
-    if (tbody && eliminados.length > 0) {
-        tabelaDiv.style.display = 'block';
-        tbody.innerHTML = eliminados.map(e => `
-            <tr>
-                <td><strong>${e.posicao}º</strong></td>
-                <td>${e.nome}</td>
-                <td>${e.kos || 0}</td>
-                <td>${e.premio ? `R$ ${e.premio.toFixed(2)}` : '-'}</td>
-            </tr>
-        `).join('');
-    } else if (tabelaDiv) {
-        tabelaDiv.style.display = 'none';
-    }
+    if (tbody && eliminados.length > 0) { tabelaDiv.style.display = 'block'; tbody.innerHTML = eliminados.map(e => `<tr><td><strong>${e.posicao}º</strong></td><td>${e.nome}</td><td>${e.kos || 0}</td><td>${e.premio ? `R$ ${e.premio.toFixed(2)}` : '-'}</td></tr>`).join(''); }
+    else if (tabelaDiv) tabelaDiv.style.display = 'none';
 }
 
 function atualizarClassificacaoAtual() {
     const tbody = document.getElementById('classificacaoBodyAtual');
     if (!tbody) return;
-    
     const ordenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
     const top20 = ordenada.slice(0, 20);
-    
-    if (top20.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda</td></tr>';
-        return;
-    }
-    
+    if (top20.length === 0) { tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda</td></tr>'; return; }
     tbody.innerHTML = top20.map(j => {
         const pontosTotais = (j.pontosPosicao || 0) + (j.kos || 0);
         const fotoUrl = getFotoJogador(j.nome);
         const temPix = chavesPix[j.nome] && chavesPix[j.nome].chave;
         let premioDisplay = j.premio ? `R$ ${j.premio.toFixed(2)}` : '-';
-        
         return `<tr class="${j.posicao === 1 ? 'top-1' : j.posicao === 2 ? 'top-2' : j.posicao === 3 ? 'top-3' : ''}">
                     <td><strong>${j.posicao}º</strong></td>
-                    <td class="classificacao-nome">
-                        <img class="classificacao-foto" src="${fotoUrl}" onerror="this.style.display='none'">
-                        ${j.nome}
-                    </td>
-                    <td>${j.mesa || '-'}</td>
-                    <td>${j.pontosPosicao || 0}</td>
-                    <td>${j.kos || 0}</td>
+                    <td class="classificacao-nome"><img class="classificacao-foto" src="${fotoUrl}" onerror="this.style.display='none'">${j.nome}</td>
+                    <td>${j.mesa || '-'}</td><td>${j.pontosPosicao || 0}</td><td>${j.kos || 0}</td>
                     <td><strong style="color:#d4a121;">${pontosTotais}</strong></td>
                     <td>${premioDisplay}</td>
                     <td>${temPix ? `<button class="btn-copiar-pix-classif" onclick="copiarPix('${j.nome.replace(/'/g, "\\'")}')">📋 COPIAR PIX</button>` : '❌ Sem Pix'}</td>
@@ -1193,10 +1010,8 @@ function atualizarClassificacaoAtual() {
 
 function verificarMesaFinal() {
     if (torneioFinalizado) return;
-    
     const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const vivos = todosJogadores.filter(j => !j.eliminado);
-    
     if (vivos.length === 9 && !mesaFinalAtiva) {
         mesaFinalAtiva = true;
         db.ref('mesaFinalAtiva').set(true);
@@ -1206,13 +1021,10 @@ function verificarMesaFinal() {
         tocarAlertaMesaFinal();
         mostrarToast('🃏 MESA FINAL! Restam 9 jogadores! 🃏');
     }
-    
     if (mesaFinalAtiva && !torneioFinalizado) {
         renderizarMesaFinal();
         atualizarStatsCards();
-        if (vivos.length === 0) {
-            finalizarTorneio();
-        }
+        if (vivos.length === 0) finalizarTorneio();
         atualizarTabelaEliminadosMF();
     }
 }
@@ -1221,22 +1033,14 @@ function renderizarMesaFinal() {
     const grid = document.getElementById('jogadoresMesaFinalGrid');
     const indicator = document.getElementById('mesaFinalIndicatorText');
     if (!grid) return;
-    
     const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const vivos = todosJogadores.filter(j => !j.eliminado);
     const jogadoresOrdenados = [...vivos].sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
-    
     if (indicator) indicator.textContent = `🃏 MESA FINAL - ${jogadoresOrdenados.length} JOGADORES 🃏`;
-    if (jogadoresOrdenados.length === 0) { 
-        grid.innerHTML = '<div style="text-align:center;padding:40px;">🃏 TORNEIO FINALIZADO! 🃏</div>'; 
-        return; 
-    }
-    
+    if (jogadoresOrdenados.length === 0) { grid.innerHTML = '<div style="text-align:center;padding:40px;">🃏 TORNEIO FINALIZADO! 🃏</div>'; return; }
     grid.innerHTML = jogadoresOrdenados.map((j, idx) => {
         const isMelhorMao = melhorMaoAtual === j.nome;
-        const addonGratis = isAddonGratis(j.nome);
-        const addonTexto = j.addon ? (addonGratis ? 'GRÁTIS' : '') : '';
-        
+        const addonTexto = j.addon ? (isMelhorMao ? 'GRÁTIS' : '') : '';
         return `<div class="jogador-card ${isMelhorMao ? 'melhor-mao' : ''}">
                     <div class="jogador-posicao-numero">${idx + 1}</div>
                     <img class="jogador-foto" src="${getFotoJogador(j.nome)}">
@@ -1257,10 +1061,7 @@ function renderizarMesaFinal() {
 
 function abrirModalEliminarMF(nome) {
     jogadorEliminandoMF = nome;
-    const premioGroup = document.getElementById('premioMFGroup');
-    premioGroup.style.display = 'block';
     document.getElementById('premioMF').value = 0;
-    
     document.getElementById('eliminarMFJogadorNome').textContent = nome;
     document.getElementById('quantidadeKOsMF').value = 0;
     document.getElementById('modalEliminarMesaFinal').classList.add('active');
@@ -1271,51 +1072,22 @@ function confirmarEliminacaoMF() {
         const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
         const vivos = todosJogadores.filter(j => !j.eliminado);
         const jogador = vivos.find(j => j.nome === jogadorEliminandoMF);
-        
         if (jogador) {
             const posicao = vivos.length;
             const qtdKos = parseInt(document.getElementById('quantidadeKOsMF').value) || 0;
             const premio = parseFloat(document.getElementById('premioMF').value) || 0;
-            
             jogador.premio = premio;
-            
             const pontosPosicaoCalculado = getPontosPosicao(posicao);
-            const item = { 
-                nome: jogador.nome, 
-                mesa: mesasData.preta?.some(m => m.nome === jogador.nome) ? 'Preta' : 'Amarela', 
-                posicao: posicao, 
-                pontosPosicao: pontosPosicaoCalculado, 
-                kos: qtdKos, 
-                pontosKOs: qtdKos, 
-                pontosTotal: pontosPosicaoCalculado + qtdKos, 
-                dataEliminacao: new Date().toISOString(), 
-                etapa: config.etapa,
-                premio: premio
-            };
+            const item = { nome: jogador.nome, mesa: mesasData.preta?.some(m => m.nome === jogador.nome) ? 'Preta' : 'Amarela', posicao: posicao, pontosPosicao: pontosPosicaoCalculado, kos: qtdKos, pontosKOs: qtdKos, pontosTotal: pontosPosicaoCalculado + qtdKos, dataEliminacao: new Date().toISOString(), etapa: config.etapa, premio: premio };
             classificacaoData.push(item);
             db.ref('classificacao').set(classificacaoData);
-            
             const original = todosJogadores.find(j => j.nome === jogador.nome);
-            if (original) { 
-                original.eliminado = true; 
-                original.posicaoFinal = posicao; 
-                original.kos = qtdKos;
-                original.premio = premio;
-                db.ref('mesas').set(mesasData); 
-            }
-            
+            if (original) { original.eliminado = true; original.posicaoFinal = posicao; original.kos = qtdKos; original.premio = premio; db.ref('mesas').set(mesasData); }
             let msg = `✅ ${jogador.nome} eliminado na ${posicao}ª posição com ${qtdKos} KO(s)!`;
-            if (premio > 0) {
-                msg += `\n💰 Premiação: R$ ${premio.toFixed(2)}`;
-            }
+            if (premio > 0) msg += `\n💰 Premiação: R$ ${premio.toFixed(2)}`;
             mostrarToast(msg);
-            
             const novosVivos = todosJogadores.filter(j => j.nome !== jogadorEliminandoMF && !j.eliminado);
-            
-            if (novosVivos.length === 0) {
-                finalizarTorneio();
-            }
-            
+            if (novosVivos.length === 0) finalizarTorneio();
             renderizarMesaFinal();
             atualizarStatsCards();
             atualizarTabelaEliminadosMF();
@@ -1326,62 +1098,48 @@ function confirmarEliminacaoMF() {
     jogadorEliminandoMF = null;
 }
 
-function finalizarTorneio() { 
+function finalizarTorneio() {
     if (torneioFinalizado) return;
-    
     torneioFinalizado = true;
     db.ref('torneioFinalizado').set(true);
     db.ref('mesaFinalAtiva').set(false);
     mesaFinalAtiva = false;
-    
-    // Salvar automaticamente a etapa ao finalizar
     salvarEtapaNoHistorico();
-    
     mostrarTelaVerificarClassificacao();
-    tocarAlertaMesaFinal(); 
-    mostrarToast('🃏 TORNEIO FINALIZADO! Etapa salva no histórico! 🃏'); 
+    tocarAlertaMesaFinal();
+    mostrarToast('🃏 TORNEIO FINALIZADO! Etapa salva no histórico! 🃏');
 }
 
-function irParaMesaFinal() { 
-    if (mesaFinalAtiva && !torneioFinalizado) { 
-        document.getElementById('appContainer').classList.add('hidden'); 
-        document.getElementById('mesaFinalApp').classList.remove('hidden'); 
-        renderizarMesaFinal(); 
-        atualizarStatsCards(); 
-        atualizarTabelaEliminadosMF(); 
-    } else if (torneioFinalizado) {
-        mostrarToast('O torneio já foi finalizado! Inicie uma nova etapa para começar outro torneio.');
-    }
+function irParaMesaFinal() {
+    if (mesaFinalAtiva && !torneioFinalizado) {
+        document.getElementById('appContainer').classList.add('hidden');
+        document.getElementById('mesaFinalApp').classList.remove('hidden');
+        renderizarMesaFinal();
+        atualizarStatsCards();
+        atualizarTabelaEliminadosMF();
+    } else if (torneioFinalizado) mostrarToast('O torneio já foi finalizado! Inicie uma nova etapa para começar outro torneio.');
 }
 
-function irParaMesaFinalTopo() { 
-    if (mesaFinalAtiva && !torneioFinalizado) { 
-        document.getElementById('telaSelecao').classList.add('hidden'); 
-        document.getElementById('mesaFinalApp').classList.remove('hidden'); 
-        renderizarMesaFinal(); 
-        atualizarStatsCards(); 
-        atualizarTabelaEliminadosMF(); 
-    } else if (torneioFinalizado) {
-        mostrarToast('O torneio já foi finalizado! Inicie uma nova etapa para começar outro torneio.');
-    }
+function irParaMesaFinalTopo() {
+    if (mesaFinalAtiva && !torneioFinalizado) {
+        document.getElementById('telaSelecao').classList.add('hidden');
+        document.getElementById('mesaFinalApp').classList.remove('hidden');
+        renderizarMesaFinal();
+        atualizarStatsCards();
+        atualizarTabelaEliminadosMF();
+    } else if (torneioFinalizado) mostrarToast('O torneio já foi finalizado! Inicie uma nova etapa para começar outro torneio.');
 }
 
-function voltarDaMesaFinal() { 
-    document.getElementById('mesaFinalApp').classList.add('hidden'); 
-    document.getElementById('appContainer').classList.remove('hidden'); 
-    atualizarGridJogadores(); 
-    atualizarStatsCards(); 
+function voltarDaMesaFinal() {
+    document.getElementById('mesaFinalApp').classList.add('hidden');
+    document.getElementById('appContainer').classList.remove('hidden');
+    atualizarGridJogadores();
+    atualizarStatsCards();
 }
 
 function iniciarApp() {
-    if (mesaFinalAtiva && !torneioFinalizado) {
-        mostrarToast('A mesa final está ativa! Acesse a mesa final pelo botão especial.');
-        return;
-    }
-    if (torneioFinalizado) {
-        mostrarToast('O torneio foi finalizado! Inicie uma nova etapa para começar outro torneio.');
-        return;
-    }
+    if (mesaFinalAtiva && !torneioFinalizado) { mostrarToast('A mesa final está ativa! Acesse a mesa final pelo botão especial.'); return; }
+    if (torneioFinalizado) { mostrarToast('O torneio foi finalizado! Inicie uma nova etapa para começar outro torneio.'); return; }
     document.getElementById('telaSelecao').classList.add('hidden');
     document.getElementById('appContainer').classList.remove('hidden');
     const indicator = document.getElementById('mesaIndicator');
@@ -1394,62 +1152,39 @@ function iniciarApp() {
 
 function atualizarGridJogadores() {
     const jogadores = mesasData[mesaAtual] || [];
-    const gridEsquerda = document.getElementById('jogadoresGridEsquerda');
-    const gridDireita = document.getElementById('jogadoresGridDireita');
-    
-    if (!gridEsquerda || !gridDireita) return;
-    
+    const grid = document.getElementById('jogadoresGrid');
+    if (!grid) return;
     if (jogadores.length === 0) {
-        const emptyMessage = `
-            <div class="empty-state">
-                <h3>📋 NENHUM JOGADOR CADASTRADO</h3>
-                <p>Você precisa importar o layout das mesas primeiro.</p>
-                <button class="btn-ir-admin" onclick="fecharAppEIrAdmin()">🔐 IR PARA ADMINISTRAÇÃO</button>
-            </div>
-        `;
-        gridEsquerda.innerHTML = emptyMessage;
-        gridDireita.innerHTML = '';
+        grid.innerHTML = `<div class="empty-state"><h3>📋 NENHUM JOGADOR CADASTRADO</h3><p>Você precisa importar o layout das mesas primeiro.</p><button class="btn-ir-admin" onclick="fecharAppEIrAdmin()">🔐 IR PARA ADMINISTRAÇÃO</button></div>`;
         return;
     }
-    
     const ordenados = [...jogadores].sort((a,b) => (a.posicao||999) - (b.posicao||999));
-    const metade = Math.ceil(ordenados.length / 2);
-    const ladoEsquerdo = ordenados.slice(0, metade);
-    const ladoDireito = ordenados.slice(metade);
-    
-    function renderizarLado(jogadoresLista) {
-        return jogadoresLista.map(j => {
-            const isMelhorMao = melhorMaoAtual === j.nome;
-            const addonGratis = isAddonGratis(j.nome);
-            const addonTexto = j.addon ? (addonGratis ? 'GRÁTIS' : '') : '';
-            
-            return `<div class="jogador-card ${j.eliminado ? 'eliminado' : ''} ${isMelhorMao ? 'melhor-mao' : ''}">
-                        <div class="jogador-posicao-numero">${j.posicao || '?'}</div>
-                        <img class="jogador-foto" src="${getFotoJogador(j.nome)}">
-                        <div class="jogador-info">
-                            <div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🃏' : ''}</div>
-                            <div class="jogador-valores">
-                                ${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}
-                                ${j.addon ? `<span class="badge ${isMelhorMao ? 'badge-addon-melhor-mao' : 'badge-addon'}">💎 Addon ${addonTexto}</span>` : ''}
-                                ${j.eliminado ? `<span class="badge badge-eliminado">❌ Elim (${j.posicaoFinal}º)</span>` : ''}
-                                ${j.premio ? `<span class="badge badge-premio">💰 R$ ${j.premio}</span>` : ''}
-                            </div>
+    grid.innerHTML = ordenados.map(j => {
+        const isMelhorMao = melhorMaoAtual === j.nome;
+        const addonTexto = j.addon ? (isMelhorMao ? 'GRÁTIS' : '') : '';
+        return `<div class="jogador-card ${j.eliminado ? 'eliminado' : ''} ${isMelhorMao ? 'melhor-mao' : ''}">
+                    <div class="jogador-posicao-numero">${j.posicao || '?'}</div>
+                    <img class="jogador-foto" src="${getFotoJogador(j.nome)}">
+                    <div class="jogador-info">
+                        <div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🃏' : ''}</div>
+                        <div class="jogador-valores">
+                            ${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}
+                            ${j.addon ? `<span class="badge ${isMelhorMao ? 'badge-addon-melhor-mao' : 'badge-addon'}">💎 Addon ${addonTexto}</span>` : ''}
+                            ${j.eliminado ? `<span class="badge badge-eliminado">❌ Elim (${j.posicaoFinal}º)</span>` : ''}
+                            ${j.premio ? `<span class="badge badge-premio">💰 R$ ${j.premio}</span>` : ''}
                         </div>
-                        <div class="jogador-actions">
-                            ${!j.eliminado && !torneioFinalizado ? `
-                                <button class="action-btn btn-rebuy" onclick="adicionarRebuy('${j.nome}', 'simples')">REBUY</button>
-                                <button class="action-btn btn-rebuy-duplo" onclick="adicionarRebuy('${j.nome}', 'duplo')">2x</button>
-                                ${!j.addon ? `<button class="action-btn btn-addon" onclick="adicionarAddon('${j.nome}')">ADDON</button>` : ''}
-                                <button class="action-btn btn-corrigir" onclick="abrirCorrecao('${j.nome}')">✏️</button>
-                                <button class="action-btn btn-eliminar" onclick="abrirModalEliminar('${j.nome}')">❌</button>
-                            ` : ''}
-                        </div>
-                    </div>`;
-        }).join('');
-    }
-    
-    gridEsquerda.innerHTML = renderizarLado(ladoEsquerdo);
-    gridDireita.innerHTML = renderizarLado(ladoDireito);
+                    </div>
+                    <div class="jogador-actions">
+                        ${!j.eliminado && !torneioFinalizado ? `
+                            <button class="action-btn btn-rebuy" onclick="adicionarRebuy('${j.nome}', 'simples')">REBUY</button>
+                            <button class="action-btn btn-rebuy-duplo" onclick="adicionarRebuy('${j.nome}', 'duplo')">2x</button>
+                            ${!j.addon ? `<button class="action-btn btn-addon" onclick="adicionarAddon('${j.nome}')">ADDON</button>` : ''}
+                            <button class="action-btn btn-corrigir" onclick="abrirCorrecao('${j.nome}')">✏️</button>
+                            <button class="action-btn btn-eliminar" onclick="abrirModalEliminar('${j.nome}')">❌</button>
+                        ` : ''}
+                    </div>
+                </div>`;
+    }).join('');
 }
 
 function fecharAppEIrAdmin() {
@@ -1458,44 +1193,27 @@ function fecharAppEIrAdmin() {
     document.getElementById('modalSenhaAdmin').classList.add('active');
 }
 
-function adicionarRebuy(nome, tipo) { 
-    if (torneioFinalizado) {
-        mostrarToast('O torneio já foi finalizado!');
-        return;
-    }
-    
-    let mensagem = '';
-    let somTipo = '';
-    
-    if (tipo === 'simples') {
-        mensagem = `REBUY SIMPLES para ${nome}?`;
-        somTipo = 'rebuySimples';
-    } else {
-        mensagem = `REBUY DUPLO para ${nome}? (2 rebuys)`;
-        somTipo = 'rebuyDuplo';
-    }
-    
-    if (confirm(mensagem)) { 
+function adicionarRebuy(nome, tipo) {
+    if (torneioFinalizado) { mostrarToast('O torneio já foi finalizado!'); return; }
+    let mensagem = tipo === 'simples' ? `REBUY SIMPLES para ${nome}?` : `REBUY DUPLO para ${nome}? (2 rebuys)`;
+    if (confirm(mensagem)) {
         const qtd = tipo === 'simples' ? 1 : 2;
-        const jogador = mesasData[mesaAtual].find(j => j.nome === nome); 
-        if (jogador) { 
-            jogador.rebuys = (jogador.rebuys || 0) + qtd; 
-            db.ref('mesas').set(mesasData); 
-            tocarSom(somTipo);
+        const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
+        if (jogador) {
+            jogador.rebuys = (jogador.rebuys || 0) + qtd;
+            db.ref('mesas').set(mesasData);
+            tocarSom(tipo === 'simples' ? 'rebuySimples' : 'rebuyDuplo');
             mostrarToast(`✅ ${tipo === 'simples' ? 'Rebuy simples' : 'Rebuy duplo'} adicionado para ${nome}!`);
             atualizarGridJogadores();
             atualizarStatsCards();
             atualizarAdminResumo();
             atualizarAdminEstatisticas();
-        } 
-    } 
+        }
+    }
 }
 
-function adicionarAddon(nome) { 
-    if (torneioFinalizado) {
-        mostrarToast('O torneio já foi finalizado!');
-        return;
-    }
+function adicionarAddon(nome) {
+    if (torneioFinalizado) { mostrarToast('O torneio já foi finalizado!'); return; }
     const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
     if (jogador && !jogador.addon && !jogador.eliminado) {
         if (confirm(`ADDON para ${nome}?`)) {
@@ -1509,52 +1227,45 @@ function adicionarAddon(nome) {
             atualizarAdminResumo();
             atualizarAdminEstatisticas();
         }
-    } else if (jogador && jogador.addon) {
-        mostrarToast(`${nome} já possui addon!`);
+    } else if (jogador && jogador.addon) mostrarToast(`${nome} já possui addon!`);
+}
+
+function abrirCorrecao(nome) {
+    const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
+    if (jogador) {
+        jogadorCorrigindo = nome;
+        document.getElementById('corrigirJogadorNome').textContent = nome;
+        document.getElementById('corrigirRebuys').value = jogador.rebuys || 0;
+        document.getElementById('corrigirAddon').checked = jogador.addon || false;
+        document.getElementById('modalCorrigir').classList.add('active');
     }
 }
 
-function abrirCorrecao(nome) { 
-    const jogador = mesasData[mesaAtual].find(j => j.nome === nome); 
-    if (jogador) { 
-        jogadorCorrigindo = nome; 
-        document.getElementById('corrigirJogadorNome').textContent = nome; 
-        document.getElementById('corrigirRebuys').value = jogador.rebuys || 0; 
-        document.getElementById('corrigirAddon').checked = jogador.addon || false; 
-        document.getElementById('modalCorrigir').classList.add('active'); 
-    } 
-}
-
-function salvarCorrecao() { 
-    if (jogadorCorrigindo) { 
-        const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorCorrigindo); 
-        if (jogador) { 
-            jogador.rebuys = parseInt(document.getElementById('corrigirRebuys').value) || 0; 
+function salvarCorrecao() {
+    if (jogadorCorrigindo) {
+        const jogador = mesasData[mesaAtual].find(j => j.nome === jogadorCorrigindo);
+        if (jogador) {
+            jogador.rebuys = parseInt(document.getElementById('corrigirRebuys').value) || 0;
             jogador.addon = document.getElementById('corrigirAddon').checked;
-            if(jogador.addon && (isAddonGratis(jogador.nome) || isAddonSemValor(jogador.nome))) {
-                jogador.addonGratis = true;
-            }
-            db.ref('mesas').set(mesasData); 
+            if(jogador.addon && (isAddonGratis(jogador.nome) || isAddonSemValor(jogador.nome))) jogador.addonGratis = true;
+            db.ref('mesas').set(mesasData);
             mostrarToast(`✅ Correção salva para ${jogador.nome}`);
             atualizarGridJogadores();
             atualizarStatsCards();
             atualizarAdminResumo();
             atualizarAdminEstatisticas();
-        } 
-    } 
-    document.getElementById('modalCorrigir').classList.remove('active'); 
-    jogadorCorrigindo = null; 
+        }
+    }
+    document.getElementById('modalCorrigir').classList.remove('active');
+    jogadorCorrigindo = null;
 }
 
-function abrirModalEliminar(nome) { 
-    if (torneioFinalizado) {
-        mostrarToast('O torneio já foi finalizado!');
-        return;
-    }
-    jogadorEliminando = nome; 
-    document.getElementById('eliminarJogadorNome').textContent = nome; 
-    document.getElementById('quantidadeKOs').value = 0; 
-    document.getElementById('modalEliminar').classList.add('active'); 
+function abrirModalEliminar(nome) {
+    if (torneioFinalizado) { mostrarToast('O torneio já foi finalizado!'); return; }
+    jogadorEliminando = nome;
+    document.getElementById('eliminarJogadorNome').textContent = nome;
+    document.getElementById('quantidadeKOs').value = 0;
+    document.getElementById('modalEliminar').classList.add('active');
 }
 
 function confirmarEliminacao() {
@@ -1578,12 +1289,9 @@ function confirmarEliminacao() {
             verificarMesaFinal();
             atualizarSelectMelhorMao();
             atualizarClassificacaoAtual();
-            
             const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
             const vivos = todosJogadores.filter(j => !j.eliminado);
-            if (vivos.length === 0) {
-                finalizarTorneio();
-            }
+            if (vivos.length === 0) finalizarTorneio();
         }
     }
     document.getElementById('modalEliminar').classList.remove('active');
@@ -1610,11 +1318,7 @@ function salvarEProximaEtapa() {
 
 function enviarClassificacaoWhatsApp() {
     const ordenada = [...classificacaoData].sort((a,b) => a.posicao - b.posicao);
-    if (ordenada.length === 0) {
-        alert('Nenhum jogador eliminado para enviar!');
-        return;
-    }
-    
+    if (ordenada.length === 0) { alert('Nenhum jogador eliminado para enviar!'); return; }
     let mensagem = `🃏 *CLASSIFICAÇÃO ${config.etapa}ª ETAPA - POKER DE QUINTA* 🃏\n\n`;
     ordenada.slice(0, 20).forEach(j => {
         const pontosTotais = (j.pontosPosicao || 0) + (j.kos || 0);
@@ -1623,25 +1327,16 @@ function enviarClassificacaoWhatsApp() {
         mensagem += `\n`;
     });
     mensagem += `\n📅 ${new Date().toLocaleString('pt-BR')}`;
-    
     const numero = '41987210685';
-    const url = `https://wa.me/55${numero}?text=${encodeURIComponent(mensagem)}`;
-    window.open(url, '_blank');
+    window.open(`https://wa.me/55${numero}?text=${encodeURIComponent(mensagem)}`, '_blank');
 }
 
 function iniciarEtapaAdmin() {
     const novaEtapa = parseInt(document.getElementById('adminSelectEtapa').value);
-    
     if (confirm(`INICIAR ${novaEtapa}ª ETAPA?\n\nIsso irá:\n- Salvar a etapa atual no histórico (se houver dados)\n- Limpar todos os dados atuais\n- Preparar o sistema para a nova etapa\n\nDeseja continuar?`)) {
-        
-        if (classificacaoData.length > 0 || totalJogadoresIniciais > 0) {
-            salvarEtapaNoHistorico();
-            mostrarToast(`✅ ${config.etapa}ª ETAPA salva no histórico!`);
-        }
-        
+        if (classificacaoData.length > 0 || totalJogadoresIniciais > 0) salvarEtapaNoHistorico();
         config.etapa = novaEtapa;
         db.ref('config').set(config);
-        
         mesasData = { preta: [], amarela: [] };
         classificacaoData = [];
         contadorEliminados = 0;
@@ -1649,13 +1344,11 @@ function iniciarEtapaAdmin() {
         totalJogadoresIniciais = 0;
         melhorMaoAtual = null;
         torneioFinalizado = false;
-        
         db.ref('mesas').set(mesasData);
         db.ref('classificacao').set(classificacaoData);
         db.ref('melhorMao').set(null);
         db.ref('mesaFinalAtiva').set(false);
         db.ref('torneioFinalizado').set(false);
-        
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
         atualizarHistoricoEtapas();
@@ -1663,41 +1356,23 @@ function iniciarEtapaAdmin() {
         atualizarBotoesMesaFinal();
         atualizarSelectMelhorMao();
         atualizarClassificacaoAtual();
-        
-        const infoDiv = document.getElementById('proximaEtapaInfo');
-        if (infoDiv) infoDiv.style.display = 'none';
-        
+        document.getElementById('proximaEtapaInfo').style.display = 'none';
         mostrarToast(`✅ ${novaEtapa}ª ETAPA iniciada!\n\nImporte o layout das mesas para começar.`);
-        
         const tituloClassificacao = document.querySelector('#telaVerificarClassificacao .verificar-header h1');
-        if (tituloClassificacao) {
-            tituloClassificacao.innerHTML = `📊 CLASSIFICAÇÃO GERAL DA ${config.etapa}ª ETAPA`;
-        }
+        if (tituloClassificacao) tituloClassificacao.innerHTML = `📊 CLASSIFICAÇÃO GERAL DA ${config.etapa}ª ETAPA`;
     }
 }
 
 function finalizarEtapaMostrarClassificacao() {
     const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const vivos = todosJogadores.filter(j => !j.eliminado);
-    
     if (vivos.length > 0) {
         if (confirm(`Ainda existem ${vivos.length} jogadores vivos. Deseja finalizar a etapa mesmo assim? Os jogadores vivos serão eliminados na ordem atual e a etapa será salva.`)) {
             const jogadoresOrdenados = [...vivos].sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
             for (let i = 0; i < jogadoresOrdenados.length; i++) {
                 const jogador = jogadoresOrdenados[i];
                 const posicaoAtual = totalJogadoresIniciais - (contadorEliminados);
-                const item = { 
-                    nome: jogador.nome, 
-                    mesa: mesasData.preta?.includes(jogador) ? 'Preta' : 'Amarela', 
-                    posicao: posicaoAtual, 
-                    pontosPosicao: getPontosPosicao(posicaoAtual), 
-                    kos: jogador.kos || 0, 
-                    pontosKOs: jogador.kos || 0, 
-                    pontosTotal: getPontosPosicao(posicaoAtual) + (jogador.kos || 0), 
-                    dataEliminacao: new Date().toISOString(), 
-                    etapa: config.etapa,
-                    premio: jogador.premio || 0
-                };
+                const item = { nome: jogador.nome, mesa: mesasData.preta?.includes(jogador) ? 'Preta' : 'Amarela', posicao: posicaoAtual, pontosPosicao: getPontosPosicao(posicaoAtual), kos: jogador.kos || 0, pontosKOs: jogador.kos || 0, pontosTotal: getPontosPosicao(posicaoAtual) + (jogador.kos || 0), dataEliminacao: new Date().toISOString(), etapa: config.etapa, premio: jogador.premio || 0 };
                 classificacaoData.push(item);
                 jogador.eliminado = true;
                 jogador.posicaoFinal = posicaoAtual;
@@ -1708,40 +1383,23 @@ function finalizarEtapaMostrarClassificacao() {
             finalizarETAPARegistrarProxima(true);
             mostrarTelaVerificarClassificacao();
         }
-    } else {
-        finalizarETAPARegistrarProxima(true);
-        mostrarTelaVerificarClassificacao();
-    }
+    } else { finalizarETAPARegistrarProxima(true); mostrarTelaVerificarClassificacao(); }
 }
 
 function atualizarAdminResumo() {
     const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const tbody = document.getElementById('adminResumoBody');
     if (!tbody) return;
-    if (todos.length === 0) { 
-        tbody.innerHTML = '<tr><td colspan="7">Nenhum dado<\/td><\/tr>'; 
-        document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; 
-        return; 
-    }
-    
+    if (todos.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum dado</td></tr>'; document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; return; }
     const todosOrdenados = [...todos].sort((a, b) => a.nome.localeCompare(b.nome));
-    
     let totalGeral = 0;
-    tbody.innerHTML = todosOrdenados.map(j => { 
-        const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'; 
+    tbody.innerHTML = todosOrdenados.map(j => {
+        const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela';
         const valorAddon = getAddonValor(j.nome, j.addon);
         const total = VALOR_BUYIN + (j.rebuys || 0) * VALOR_REBUY + valorAddon;
-        totalGeral += total; 
+        totalGeral += total;
         const addonTexto = getAddonTexto(j.nome, j.addon);
-        return `<tr>
-                    <td>${j.nome}${j.eliminado ? ' ❌' : ''}${j.eliminado ? ` (${j.posicaoFinal}º)` : ''}${j.premio ? ` 💰 R$ ${j.premio}` : ''}<\/td>
-                    <td>${mesa}<\/td>
-                    <td>${j.posicao || '-'}<\/td>
-                    <td>R$ ${VALOR_BUYIN}<\/td>
-                    <td>${j.rebuys || 0}<\/td>
-                    <td>${addonTexto}<\/td>
-                    <td><strong>R$ ${total}<\/strong><\/td>
-                <\/tr>`; 
+        return `<tr><td>${j.nome}${j.eliminado ? ' ❌' : ''}${j.eliminado ? ` (${j.posicaoFinal}º)` : ''}${j.premio ? ` 💰 R$ ${j.premio}` : ''}</td><td>${mesa}</td><td>${j.posicao || '-'}</td><td>R$ ${VALOR_BUYIN}</td><td>${j.rebuys || 0}</td><td>${addonTexto}</td><td><strong>R$ ${total}</strong></td></tr>`;
     }).join('');
     document.getElementById('adminTotalGeral').textContent = `TOTAL GERAL: R$ ${totalGeral},00`;
 }
@@ -1750,7 +1408,6 @@ function atualizarAdminEstatisticas() {
     const preta = mesasData.preta || [];
     const amarela = mesasData.amarela || [];
     const todos = [...preta, ...amarela];
-    
     const elementos = {
         adminStatPretaJogadores: preta.length,
         adminStatPretaRebuys: preta.reduce((s,j) => s + (j.rebuys||0), 0),
@@ -1763,22 +1420,12 @@ function atualizarAdminEstatisticas() {
         adminStatTotalRebuys: todos.reduce((s,j) => s + (j.rebuys||0), 0),
         adminStatTotalAddons: todos.filter(j => j.addon).length
     };
-    
-    for (const [id, value] of Object.entries(elementos)) {
-        const el = document.getElementById(id);
-        if (el) el.textContent = value;
-    }
-    
+    for (const [id, value] of Object.entries(elementos)) { const el = document.getElementById(id); if (el) el.textContent = value; }
     const ranking = [...todos].filter(j => (j.rebuys||0) > 0).sort((a,b) => (b.rebuys||0) - (a.rebuys||0)).slice(0,5);
     const rankingBody = document.getElementById('adminRankingBody');
     if (rankingBody) {
-        if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy<\/td><\/tr>';
-        else rankingBody.innerHTML = ranking.map((j,i) => `<tr>
-                    <td>${i+1}<\/td>
-                    <td>${j.nome}${j.premio ? ` 💰 R$ ${j.premio}` : ''}<\/td>
-                    <td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}<\/td>
-                    <td>${j.rebuys}<\/td>
-                <\/tr>`).join('');
+        if (ranking.length === 0) rankingBody.innerHTML = '</tr><td colspan="4">Nenhum rebuy</td></tr>';
+        else rankingBody.innerHTML = ranking.map((j,i) => `<tr><td>${i+1}</td><td>${j.nome}${j.premio ? ` 💰 R$ ${j.premio}` : ''}</td><td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}</td><td>${j.rebuys}</td></tr>`).join('');
     }
 }
 
@@ -1790,170 +1437,105 @@ function atualizarHistoricoEtapas() {
         const data = new Date(etapa.data).toLocaleString('pt-BR');
         const num = etapa.etapaNumero;
         const classificacaoOrdenada = (etapa.classificacao || []).filter(j => j && j.posicao).sort((a, b) => a.posicao - b.posicao);
-        return `<div class="etapa-card">
-                    <div class="etapa-header" onclick="toggleEtapaVerificar(${idx})">
-                        <div>
-                            <strong>📅 ${num}ª ETAPA</strong>
-                            <div class="etapa-data">${data}</div>
-                        </div>
-                        <div style="display: flex; gap: 10px; align-items: center;">
-                            <span>🃏 ${etapa.totalJogadores || 0} jogadores | ${classificacaoOrdenada.length} classificados</span>
-                            <button class="btn btn-danger" onclick="event.stopPropagation(); removerEtapaHistorico(${idx})" style="padding: 4px 8px; font-size: 0.7em;">🗑️ REMOVER</button>
-                        </div>
-                    </div>
-                    <div class="etapa-classificacao" id="etapaVerificar-${idx}">
-                        <table class="etapa-table">
-                            <thead>
-                                <tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th><th>Prêmio</th></tr>
-                            </thead>
-                            <tbody>
-                                ${classificacaoOrdenada.slice(0, 20).map(j => `
-                                    <tr>
-                                        <td><strong>${j.posicao}º</strong></td>
-                                        <td>${j.nome || '?'}${j.premio ? ` 💰` : ''}</td>
-                                        <td>${j.mesa || '-'}</td>
-                                        <td>${j.pontosPosicao || 0}</td>
-                                        <td>${j.kos || 0}</td>
-                                        <td><strong>${j.pontosTotal || j.pontosPosicao || 0}</strong></td>
-                                        <td>${j.premio ? `R$ ${j.premio}` : '-'}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>`;
+        return `<div class="etapa-card"><div class="etapa-header" onclick="toggleEtapaVerificar(${idx})"><div><strong>📅 ${num}ª ETAPA</strong><div class="etapa-data">${data}</div></div><div><span>🃏 ${etapa.totalJogadores || 0} jogadores | ${classificacaoOrdenada.length} classificados</span><button class="btn btn-danger" onclick="event.stopPropagation(); removerEtapaHistorico(${idx})" style="padding: 4px 8px; font-size: 0.7em; margin-left: 10px;">🗑️ REMOVER</button></div></div><div class="etapa-classificacao" id="etapaVerificar-${idx}"><table class="etapa-table"><thead><tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th><th>Prêmio</th></tr></thead><tbody>${classificacaoOrdenada.slice(0, 20).map(j => `<tr><td><strong>${j.posicao}º</strong></td><td>${j.nome || '?'}${j.premio ? ` 💰` : ''}</td><td>${j.mesa || '-'}</td><td>${j.pontosPosicao || 0}</td><td>${j.kos || 0}</td><td><strong>${j.pontosTotal || j.pontosPosicao || 0}</strong></td><td>${j.premio ? `R$ ${j.premio}` : '-'}</td></tr>`).join('')}</tbody></table></div></div>`;
     }).join('');
 }
 
-function toggleEtapaVerificar(idx) { 
-    const el = document.getElementById(`etapaVerificar-${idx}`); 
-    if (el) el.classList.toggle('show'); 
+function toggleEtapaVerificar(idx) { const el = document.getElementById(`etapaVerificar-${idx}`); if (el) el.classList.toggle('show'); }
+function removerEtapaHistorico(idx) { if (confirm(`Tem certeza que deseja remover a ${historicoEtapas[idx].etapaNumero}ª ETAPA do histórico?`)) { historicoEtapas.splice(idx, 1); db.ref('historicoEtapas').set(historicoEtapas); atualizarHistoricoEtapas(); mostrarToast('✅ Etapa removida do histórico!'); } }
+function apagarHistorico() { if (confirm('⚠️ Apagar TODO o histórico de etapas?')) { historicoEtapas = []; db.ref('historicoEtapas').set([]); mostrarToast('✅ Histórico apagado!'); atualizarHistoricoEtapas(); } }
+
+function processarLayout() {
+    if (!arquivoSelecionado) { alert('Selecione um arquivo!'); return; }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const html = e.target.result;
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const rows = doc.querySelectorAll('tr');
+        layoutImportado = { preta: [], amarela: [] };
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length >= 3) {
+                const seat = cells[2]?.textContent?.trim() || '';
+                const matchPreta = seat.match(/MESA\s*PRETA\s*Seat\s*(\d+)/i);
+                const matchAmarela = seat.match(/MESA\s*AMARELA\s*Seat\s*(\d+)/i);
+                let mesa = null, pos = null;
+                if (matchPreta) { mesa = 'preta'; pos = parseInt(matchPreta[1]); }
+                else if (matchAmarela) { mesa = 'amarela'; pos = parseInt(matchAmarela[1]); }
+                if (mesa && pos) {
+                    const nome = cells[1]?.textContent?.trim()?.replace(/\.+/g, '').trim();
+                    if (nome) layoutImportado[mesa].push({ posicao: pos, nome });
+                }
+            }
+        });
+        layoutImportado.preta.sort((a,b) => a.posicao - b.posicao);
+        layoutImportado.amarela.sort((a,b) => a.posicao - b.posicao);
+        document.getElementById('previewCountPreta').textContent = layoutImportado.preta.length;
+        document.getElementById('previewCountAmarela').textContent = layoutImportado.amarela.length;
+        document.getElementById('previewPreta').innerHTML = layoutImportado.preta.map(p => `<div>Pos ${p.posicao}: ${p.nome}</div>`).join('');
+        document.getElementById('previewAmarela').innerHTML = layoutImportado.amarela.map(p => `<div>Pos ${p.posicao}: ${p.nome}</div>`).join('');
+        document.getElementById('previewMesas').style.display = 'grid';
+        document.getElementById('importResult').style.display = 'block';
+        document.getElementById('importResult').innerHTML = `✅ Analisado! Preta: ${layoutImportado.preta.length} | Amarela: ${layoutImportado.amarela.length}`;
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-success';
+        btn.textContent = '✅ APLICAR LAYOUT';
+        btn.style.marginTop = '20px';
+        btn.style.width = '100%';
+        btn.onclick = aplicarLayout;
+        const old = document.querySelector('#previewMesas + button');
+        if (old) old.remove();
+        document.getElementById('previewMesas').after(btn);
+    };
+    reader.readAsText(arquivoSelecionado);
 }
 
-function removerEtapaHistorico(idx) {
-    if (confirm(`Tem certeza que deseja remover a ${historicoEtapas[idx].etapaNumero}ª ETAPA do histórico?`)) {
-        historicoEtapas.splice(idx, 1);
-        db.ref('historicoEtapas').set(historicoEtapas);
-        atualizarHistoricoEtapas();
-        mostrarToast('✅ Etapa removida do histórico!');
-    }
-}
-
-function apagarHistorico() { 
-    if (confirm('⚠️ Apagar TODO o histórico de etapas?')) { 
-        historicoEtapas = []; 
-        db.ref('historicoEtapas').set([]); 
-        mostrarToast('✅ Histórico apagado!'); 
-        atualizarHistoricoEtapas(); 
-    } 
-}
-
-function processarLayout() { 
-    if (!arquivoSelecionado) { 
-        alert('Selecione um arquivo!'); 
-        return; 
-    } 
-    const reader = new FileReader(); 
-    reader.onload = (e) => { 
-        const html = e.target.result; 
-        const parser = new DOMParser(); 
-        const doc = parser.parseFromString(html, 'text/html'); 
-        const rows = doc.querySelectorAll('tr'); 
-        layoutImportado = { preta: [], amarela: [] }; 
-        rows.forEach(row => { 
-            const cells = row.querySelectorAll('td'); 
-            if (cells.length >= 3) { 
-                const seat = cells[2]?.textContent?.trim() || ''; 
-                const matchPreta = seat.match(/MESA\s*PRETA\s*Seat\s*(\d+)/i); 
-                const matchAmarela = seat.match(/MESA\s*AMARELA\s*Seat\s*(\d+)/i); 
-                let mesa = null, pos = null; 
-                if (matchPreta) { mesa = 'preta'; pos = parseInt(matchPreta[1]); } 
-                else if (matchAmarela) { mesa = 'amarela'; pos = parseInt(matchAmarela[1]); } 
-                if (mesa && pos) { 
-                    const nome = cells[1]?.textContent?.trim()?.replace(/\.+/g, '').trim(); 
-                    if (nome) layoutImportado[mesa].push({ posicao: pos, nome }); 
-                } 
-            } 
-        }); 
-        layoutImportado.preta.sort((a,b) => a.posicao - b.posicao); 
-        layoutImportado.amarela.sort((a,b) => a.posicao - b.posicao); 
-        document.getElementById('previewCountPreta').textContent = layoutImportado.preta.length; 
-        document.getElementById('previewCountAmarela').textContent = layoutImportado.amarela.length; 
-        document.getElementById('previewPreta').innerHTML = layoutImportado.preta.map(p => `<div>Pos ${p.posicao}: ${p.nome}</div>`).join(''); 
-        document.getElementById('previewAmarela').innerHTML = layoutImportado.amarela.map(p => `<div>Pos ${p.posicao}: ${p.nome}</div>`).join(''); 
-        document.getElementById('previewMesas').style.display = 'grid'; 
-        document.getElementById('importResult').style.display = 'block'; 
-        document.getElementById('importResult').innerHTML = `✅ Analisado! Preta: ${layoutImportado.preta.length} | Amarela: ${layoutImportado.amarela.length}`; 
-        const btn = document.createElement('button'); 
-        btn.className = 'btn btn-success'; 
-        btn.textContent = '✅ APLICAR LAYOUT'; 
-        btn.style.marginTop = '20px'; 
-        btn.style.width = '100%'; 
-        btn.onclick = aplicarLayout; 
-        const old = document.querySelector('#previewMesas + button'); 
-        if (old) old.remove(); 
-        document.getElementById('previewMesas').after(btn); 
-    }; 
-    reader.readAsText(arquivoSelecionado); 
-}
-
-function aplicarLayout() { 
-    mesasData.preta = layoutImportado.preta.map(p => ({ nome: p.nome, posicao: p.posicao, rebuys: 0, addon: false, addonGratis: isAddonGratis(p.nome) || isAddonSemValor(p.nome), eliminado: false, timestamp: Date.now() })); 
-    mesasData.amarela = layoutImportado.amarela.map(p => ({ nome: p.nome, posicao: p.posicao, rebuys: 0, addon: false, addonGratis: isAddonGratis(p.nome) || isAddonSemValor(p.nome), eliminado: false, timestamp: Date.now() })); 
-    totalJogadoresIniciais = mesasData.preta.length + mesasData.amarela.length; 
-    contadorEliminados = 0; 
-    mesaFinalAtiva = false; 
+function aplicarLayout() {
+    mesasData.preta = layoutImportado.preta.map(p => ({ nome: p.nome, posicao: p.posicao, rebuys: 0, addon: false, addonGratis: isAddonGratis(p.nome) || isAddonSemValor(p.nome), eliminado: false, timestamp: Date.now() }));
+    mesasData.amarela = layoutImportado.amarela.map(p => ({ nome: p.nome, posicao: p.posicao, rebuys: 0, addon: false, addonGratis: isAddonGratis(p.nome) || isAddonSemValor(p.nome), eliminado: false, timestamp: Date.now() }));
+    totalJogadoresIniciais = mesasData.preta.length + mesasData.amarela.length;
+    contadorEliminados = 0;
+    mesaFinalAtiva = false;
     torneioFinalizado = false;
-    db.ref('mesas').set(mesasData); 
+    db.ref('mesas').set(mesasData);
     db.ref('mesaFinalAtiva').set(false);
     db.ref('torneioFinalizado').set(false);
-    mostrarToast(`✅ Layout aplicado!\nPreta: ${mesasData.preta.length}\nAmarela: ${mesasData.amarela.length}\nTotal: ${totalJogadoresIniciais}`); 
-    atualizarAdminResumo(); 
-    atualizarAdminEstatisticas(); 
-    atualizarStatsCards(); 
+    mostrarToast(`✅ Layout aplicado!\nPreta: ${mesasData.preta.length}\nAmarela: ${mesasData.amarela.length}\nTotal: ${totalJogadoresIniciais}`);
+    atualizarAdminResumo();
+    atualizarAdminEstatisticas();
+    atualizarStatsCards();
     atualizarSelectMelhorMao();
     atualizarClassificacaoAtual();
 }
 
-function exportarCSVSimples() { 
-    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])]; 
-    if (todos.length === 0) { 
-        alert('Nenhum jogador!'); 
-        return; 
-    } 
-    let csv = ''; 
-    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => { 
-        const addonValor = j.addon ? '1' : '0';
-        csv += `${j.nome},${j.rebuys || 0},${addonValor}\n`; 
-    }); 
-    downloadCSV(csv, `rebuy-addon-etapa${config.etapa}.csv`); 
+function exportarCSVSimples() {
+    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+    if (todos.length === 0) { alert('Nenhum jogador!'); return; }
+    let csv = '';
+    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => { csv += `${j.nome},${j.rebuys || 0},${j.addon ? '1' : '0'}\n`; });
+    downloadCSV(csv, `rebuy-addon-etapa${config.etapa}.csv`);
 }
 
-function exportarCSVCompleto() { 
-    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])]; 
-    if (todos.length === 0) { 
-        alert('Nenhum jogador!'); 
-        return; 
-    } 
-    let csv = 'Nome,Mesa,Posição,Buy-in,Rebuys,Addon,Total\n'; 
-    let totalGeralValor = 0; 
-    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => { 
-        const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'; 
+function exportarCSVCompleto() {
+    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+    if (todos.length === 0) { alert('Nenhum jogador!'); return; }
+    let csv = 'Nome,Mesa,Posição,Buy-in,Rebuys,Addon,Total\n';
+    let totalGeralValor = 0;
+    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => {
+        const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela';
         const valorAddon = getAddonValor(j.nome, j.addon);
-        const total = VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + valorAddon; 
-        totalGeralValor += total; 
+        const total = VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + valorAddon;
+        totalGeralValor += total;
         const addonTexto = getAddonTexto(j.nome, j.addon);
-        csv += `"${j.nome}",${mesa},${j.posicao||''},${VALOR_BUYIN},${j.rebuys||0},${addonTexto},${total}\n`; 
-    }); 
-    csv += `\n"TOTAL GERAL",,,,,,${totalGeralValor}\n`; 
-    downloadCSV(csv, `caixa-completo-etapa${config.etapa}.csv`); 
+        csv += `"${j.nome}",${mesa},${j.posicao||''},${VALOR_BUYIN},${j.rebuys||0},${addonTexto},${total}\n`;
+    });
+    csv += `\n"TOTAL GERAL",,,,,,${totalGeralValor}\n`;
+    downloadCSV(csv, `caixa-completo-etapa${config.etapa}.csv`);
 }
 
 function exportarClassificacaoCSV() {
-    if (classificacaoData.length === 0) {
-        alert('Nenhum classificado!');
-        return;
-    }
+    if (classificacaoData.length === 0) { alert('Nenhum classificado!'); return; }
     let csv = 'Posição,Jogador,Mesa,Pontos Posição,KO\'s,Pontos Totais,Prêmio (R$)\n';
     [...classificacaoData].sort((a,b) => a.posicao - b.posicao).slice(0,20).forEach(j => {
         const pontosTotais = (j.pontosPosicao || 0) + (j.kos || 0);
@@ -1962,77 +1544,54 @@ function exportarClassificacaoCSV() {
     downloadCSV(csv, `classificacao-etapa${config.etapa}.csv`);
 }
 
-function exportarHistoricoCSV() { 
-    if (historicoEtapas.length === 0) { 
-        alert('Nenhuma etapa!'); 
-        return; 
-    } 
-    let csv = 'Etapa,Data,Jogador,Posição,Mesa,Pontos Posição,KO\'s,Pontos Total,Prêmio\n'; 
-    historicoEtapas.forEach((etapa, idx) => { 
-        const data = new Date(etapa.data).toLocaleString('pt-BR'); 
-        const num = etapa.etapaNumero; 
-        [...etapa.classificacao].sort((a,b) => a.posicao - b.posicao).forEach(j => { 
-            csv += `${num},"${data}","${j.nome}",${j.posicao},"${j.mesa}",${j.pontosPosicao},${j.kos||0},${j.pontosTotal||j.pontosPosicao},${j.premio || 0}\n`; 
-        }); 
-    }); 
-    downloadCSV(csv, 'historico-etapas.csv'); 
+function exportarHistoricoCSV() {
+    if (historicoEtapas.length === 0) { alert('Nenhuma etapa!'); return; }
+    let csv = 'Etapa,Data,Jogador,Posição,Mesa,Pontos Posição,KO\'s,Pontos Total,Prêmio\n';
+    historicoEtapas.forEach(etapa => {
+        const data = new Date(etapa.data).toLocaleString('pt-BR');
+        const num = etapa.etapaNumero;
+        [...etapa.classificacao].sort((a,b) => a.posicao - b.posicao).forEach(j => {
+            csv += `${num},"${data}","${j.nome}",${j.posicao},"${j.mesa}",${j.pontosPosicao},${j.kos||0},${j.pontosTotal||j.pontosPosicao},${j.premio || 0}\n`;
+        });
+    });
+    downloadCSV(csv, 'historico-etapas.csv');
 }
 
-function copiarCSV() { 
-    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])]; 
-    if (todos.length === 0) { 
-        alert('Nenhum jogador!'); 
-        return; 
-    } 
-    let csv = ''; 
-    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => { 
-        const addonValor = j.addon ? '1' : '0';
-        csv += `${j.nome},${j.rebuys || 0},${addonValor}\n`; 
-    }); 
-    navigator.clipboard.writeText(csv).then(() => mostrarToast('✅ Dados copiados! (Nome,Rebuys,Addon)')).catch(() => mostrarToast('❌ Erro ao copiar')); 
+function copiarCSV() {
+    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+    if (todos.length === 0) { alert('Nenhum jogador!'); return; }
+    let csv = '';
+    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => { csv += `${j.nome},${j.rebuys || 0},${j.addon ? '1' : '0'}\n`; });
+    navigator.clipboard.writeText(csv).then(() => mostrarToast('✅ Dados copiados! (Nome,Rebuys,Addon)')).catch(() => mostrarToast('❌ Erro ao copiar'));
 }
 
-function downloadCSV(csv, nome) { 
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); 
-    const link = document.createElement('a'); 
-    link.href = URL.createObjectURL(blob); 
-    link.download = nome; 
-    link.click(); 
-}
-
-function apagarTodosDados() { 
-    if (confirm('⚠️ Apagar TODOS os dados? Digite a senha para confirmar.')) { 
-        document.getElementById('modalSenhaApagar').classList.add('active');
-    } 
-}
+function downloadCSV(csv, nome) { const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = nome; link.click(); }
+function apagarTodosDados() { if (confirm('⚠️ Apagar TODOS os dados? Digite a senha para confirmar.')) document.getElementById('modalSenhaApagar').classList.add('active'); }
 
 function confirmarApagarTodos() {
     if (document.getElementById('senhaApagar').value === 'poker2026') {
-        mesasData = { preta: [], amarela: [] }; 
-        classificacaoData = []; 
-        historicoEtapas = []; 
-        contadorEliminados = 0; 
-        mesaFinalAtiva = false; 
-        totalJogadoresIniciais = 0; 
-        melhorMaoAtual = null; 
+        mesasData = { preta: [], amarela: [] };
+        classificacaoData = [];
+        historicoEtapas = [];
+        contadorEliminados = 0;
+        mesaFinalAtiva = false;
+        totalJogadoresIniciais = 0;
+        melhorMaoAtual = null;
         torneioFinalizado = false;
-        db.ref('mesas').set(mesasData); 
-        db.ref('classificacao').set(classificacaoData); 
-        db.ref('historicoEtapas').set([]); 
-        db.ref('melhorMao').set(null); 
+        db.ref('mesas').set(mesasData);
+        db.ref('classificacao').set(classificacaoData);
+        db.ref('historicoEtapas').set([]);
+        db.ref('melhorMao').set(null);
         db.ref('mesaFinalAtiva').set(false);
         db.ref('torneioFinalizado').set(false);
-        document.getElementById('telaAdmin').classList.add('hidden'); 
-        document.getElementById('telaSelecao').classList.remove('hidden'); 
-        atualizarStatsCards(); 
-        atualizarBotoesMesaFinal(); 
-        mostrarToast('✅ Todos os dados foram apagados!'); 
+        document.getElementById('telaAdmin').classList.add('hidden');
+        document.getElementById('telaSelecao').classList.remove('hidden');
+        atualizarStatsCards();
+        atualizarBotoesMesaFinal();
+        mostrarToast('✅ Todos os dados foram apagados!');
         document.getElementById('modalSenhaApagar').classList.remove('active');
         document.getElementById('senhaApagar').value = '';
-    } else { 
-        alert('❌ Senha incorreta!'); 
-        document.getElementById('senhaApagar').value = '';
-    } 
+    } else { alert('❌ Senha incorreta!'); document.getElementById('senhaApagar').value = ''; }
 }
 
 function inicializarEventos() {
@@ -2078,8 +1637,8 @@ function inicializarEventos() {
     const fileInput = document.getElementById('fileInput');
     
     if (logoAdmin) logoAdmin.onclick = () => document.getElementById('modalSenhaAdmin').classList.add('active');
-    if (btnPreta) btnPreta.onclick = () => { if (!mesaFinalAtiva && !torneioFinalizado) { mesaAtual = 'preta'; iniciarApp(); } else if (torneioFinalizado) { mostrarToast('O torneio foi finalizado! Inicie uma nova etapa.'); } };
-    if (btnAmarela) btnAmarela.onclick = () => { if (!mesaFinalAtiva && !torneioFinalizado) { mesaAtual = 'amarela'; iniciarApp(); } else if (torneioFinalizado) { mostrarToast('O torneio foi finalizado! Inicie uma nova etapa.'); } };
+    if (btnPreta) btnPreta.onclick = () => { if (!mesaFinalAtiva && !torneioFinalizado) { mesaAtual = 'preta'; iniciarApp(); } else if (torneioFinalizado) mostrarToast('O torneio foi finalizado! Inicie uma nova etapa.'); };
+    if (btnAmarela) btnAmarela.onclick = () => { if (!mesaFinalAtiva && !torneioFinalizado) { mesaAtual = 'amarela'; iniciarApp(); } else if (torneioFinalizado) mostrarToast('O torneio foi finalizado! Inicie uma nova etapa.'); };
     if (btnVoltar) btnVoltar.onclick = () => { if (!mesaFinalAtiva && !torneioFinalizado) { document.getElementById('appContainer').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); } };
     if (btnIrFinal) btnIrFinal.onclick = irParaMesaFinal;
     if (btnFinalTopo) btnFinalTopo.onclick = irParaMesaFinalTopo;
@@ -2129,7 +1688,6 @@ function inicializarEventos() {
     });
 }
 
-// Funções globais para os botões
 window.adicionarRebuy = adicionarRebuy;
 window.adicionarAddon = adicionarAddon;
 window.abrirCorrecao = abrirCorrecao;
