@@ -646,6 +646,7 @@ let jogadorEliminandoMF = null;
 let melhorMaoAtual = null;
 let audioContext = null;
 let fotosJogadores = {};
+let vozMasculina = null;
 
 const chavesPix = {
     'Amarildo': { chave: '41987779470', tipo: 'Telefone' },
@@ -680,7 +681,22 @@ function mostrarToast(mensagem) {
     setTimeout(() => { if (toast && toast.remove) toast.remove(); }, 3000);
 }
 
-// Função para gerar fala usando Web Speech API
+// Função para obter voz masculina natural
+function obterVozMasculina() {
+    return new Promise((resolve) => {
+        const voices = window.speechSynthesis.getVoices();
+        // Priorizar vozes masculinas em português do Brasil
+        const voz = voices.find(v => 
+            (v.lang === 'pt-BR' && (v.name.includes('Marcelo') || v.name.includes('Luciano') || v.name.includes('Ricardo') || v.name.includes('Felipe'))) ||
+            (v.lang === 'pt-BR' && v.name.includes('Google') && v.name.includes('português')) ||
+            (v.lang === 'pt' && v.name.includes('português')) ||
+            voices.find(vv => vv.lang === 'pt-BR')
+        ) || voices.find(v => v.lang === 'pt-BR') || voices[0];
+        resolve(voz);
+    });
+}
+
+// Função para falar com voz masculina natural
 function falar(texto) {
     if (!window.speechSynthesis) return;
     
@@ -689,36 +705,44 @@ function falar(texto) {
     
     const utterance = new SpeechSynthesisUtterance(texto);
     utterance.lang = 'pt-BR';
-    utterance.rate = 0.9;
-    utterance.pitch = 1.1;
+    utterance.rate = 0.85; // Velocidade mais natural
+    utterance.pitch = 0.9; // Tom mais grave (masculino)
     utterance.volume = 1;
     
-    // Tenta encontrar uma voz feminina em português
-    const voices = window.speechSynthesis.getVoices();
-    const portugueseVoice = voices.find(voice => voice.lang === 'pt-BR' && voice.name.includes('Google'));
-    if (portugueseVoice) utterance.voice = portugueseVoice;
+    // Usar voz masculina se disponível
+    if (vozMasculina) {
+        utterance.voice = vozMasculina;
+    }
     
-    window.speechSynthesis.speak(utterance);
+    // Adicionar pequeno delay para dar mais naturalidade
+    setTimeout(() => {
+        window.speechSynthesis.speak(utterance);
+    }, 50);
+}
+
+// Inicializar voz masculina
+async function inicializarVoz() {
+    vozMasculina = await obterVozMasculina();
 }
 
 function tocarSomEliminacao(jogadorNome, mesa) {
-    falar(`ELIMINAÇÃO! ${jogadorNome} foi eliminado da mesa ${mesa}!`);
+    falar(`Eliminação. ${jogadorNome} foi eliminado da mesa ${mesa}.`);
 }
 
 function tocarSomRebuySimples() {
-    falar("REBUY SIMPLES");
+    falar("Rebuy simples");
 }
 
 function tocarSomRebuyDuplo() {
-    falar("REBUY DUPLO");
+    falar("Rebuy duplo");
 }
 
 function tocarSomAddon() {
-    falar("ADDON");
+    falar("Addon");
 }
 
 function tocarAlertaMesaFinal() {
-    falar("MESA FINAL! ATENÇÃO!");
+    falar("Mesa final. Atenção.");
     if (navigator.vibrate) navigator.vibrate([300, 200, 300, 200, 500]);
 }
 
@@ -813,8 +837,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('statusIndicator').textContent = '✅ Conectado';
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
-    // Carregar vozes para o speech synthesis
-    window.speechSynthesis.getVoices();
+    // Inicializar voz masculina
+    await inicializarVoz();
     
     db.ref('config').on('value', (snapshot) => {
         if (snapshot.exists()) config = snapshot.val();
@@ -949,7 +973,7 @@ function atualizarTabelaEliminadosMF() {
     const eliminados = classificacaoData.filter(c => c.posicao <= 9 && c.posicao >= 1).sort((a,b) => a.posicao - b.posicao);
     const tbody = document.getElementById('eliminadosMesaFinalBody');
     const tabelaDiv = document.getElementById('tabelaEliminadosMF');
-    if (tbody && eliminados.length > 0) { tabelaDiv.style.display = 'block'; tbody.innerHTML = eliminados.map(e => `<tr><td><strong>${e.posicao}º</strong></td><td>${e.nome}</td><td>${e.kos || 0}</td><td>${e.premio ? `R$ ${e.premio.toFixed(2)}` : '-'}</td>`).join(''); }
+    if (tbody && eliminados.length > 0) { tabelaDiv.style.display = 'block'; tbody.innerHTML = eliminados.map(e => `<tr><td class="posicao-numero">${e.posicao}º</td><td>${e.nome}</td><td>${e.kos || 0}</td><td>${e.premio ? `R$ ${e.premio.toFixed(2)}` : '-'}</td>`).join(''); }
     else if (tabelaDiv) tabelaDiv.style.display = 'none';
 }
 
@@ -958,7 +982,7 @@ function atualizarClassificacaoAtual() {
     if (!tbody) return;
     const ordenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
     const top20 = ordenada.slice(0, 20);
-    if (top20.length === 0) { tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda</td></tr>'; return; }
+    if (top20.length === 0) { tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda<\/td><\/tr>'; return; }
     tbody.innerHTML = top20.map(j => {
         const pontosTotais = (j.pontosPosicao || 0) + (j.kos || 0);
         const fotoUrl = getFotoJogador(j.nome);
@@ -1369,7 +1393,7 @@ function atualizarAdminResumo() {
     const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const tbody = document.getElementById('adminResumoBody');
     if (!tbody) return;
-    if (todos.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum dado</td></tr>'; document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; return; }
+    if (todos.length === 0) { tbody.innerHTML = '<tr><td colspan="7">Nenhum dado<\/td><\/tr>'; document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; return; }
     const todosOrdenados = [...todos].sort((a, b) => a.nome.localeCompare(b.nome));
     let totalGeral = 0;
     tbody.innerHTML = todosOrdenados.map(j => {
@@ -1378,7 +1402,7 @@ function atualizarAdminResumo() {
         const total = VALOR_BUYIN + (j.rebuys || 0) * VALOR_REBUY + valorAddon;
         totalGeral += total;
         const addonTexto = getAddonTexto(j.nome, j.addon);
-        return `<tr><td>${j.nome}${j.eliminado ? ' ❌' : ''}${j.eliminado ? ` (${j.posicaoFinal}º)` : ''}${j.premio ? ` 💰 R$ ${j.premio}` : ''}</td><td>${mesa}</td><td>${j.posicao || '-'}</td><td>R$ ${VALOR_BUYIN}</td><td>${j.rebuys || 0}</td><td>${addonTexto}</td><td><strong>R$ ${total}</strong></td></tr>`;
+        return `<tr><td>${j.nome}${j.eliminado ? ' ❌' : ''}${j.eliminado ? ` (${j.posicaoFinal}º)` : ''}${j.premio ? ` 💰 R$ ${j.premio}` : ''}<\/td><td>${mesa}<\/td><td>${j.posicao || '-'}<\/td><td>R$ ${VALOR_BUYIN}<\/td><td>${j.rebuys || 0}<\/td><td>${addonTexto}<\/td><td><strong>R$ ${total}<\/strong><\/td><\/tr>`;
     }).join('');
     document.getElementById('adminTotalGeral').textContent = `TOTAL GERAL: R$ ${totalGeral},00`;
 }
@@ -1403,8 +1427,8 @@ function atualizarAdminEstatisticas() {
     const ranking = [...todos].filter(j => (j.rebuys||0) > 0).sort((a,b) => (b.rebuys||0) - (a.rebuys||0)).slice(0,5);
     const rankingBody = document.getElementById('adminRankingBody');
     if (rankingBody) {
-        if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy</td></tr>';
-        else rankingBody.innerHTML = ranking.map((j,i) => `<tr><td>${i+1}</td><td>${j.nome}${j.premio ? ` 💰 R$ ${j.premio}` : ''}</td><td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}</td><td>${j.rebuys}</td></tr>`).join('');
+        if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy<\/td><\/tr>';
+        else rankingBody.innerHTML = ranking.map((j,i) => `<tr><td>${i+1}<\/td><td>${j.nome}${j.premio ? ` 💰 R$ ${j.premio}` : ''}<\/td><td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}<\/td><td>${j.rebuys}<\/td><\/tr>`).join('');
     }
 }
 
