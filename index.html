@@ -34,21 +34,6 @@
             color: #fff;
             min-height: 100vh;
             overflow: hidden;
-            position: relative;
-        }
-
-        /* Animated background pattern */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: radial-gradient(rgba(212,161,33,0.05) 1px, transparent 1px);
-            background-size: 30px 30px;
-            pointer-events: none;
-            z-index: 0;
         }
 
         /* Glassmorphism effect */
@@ -86,8 +71,6 @@
 
         /* Tela de Seleção */
         .tela-selecao {
-            position: relative;
-            z-index: 1;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
@@ -99,19 +82,17 @@
         .selecao-logo { margin-bottom: 20px; cursor: pointer; transition: transform 0.3s; }
         .selecao-logo:hover { transform: scale(1.05); }
         .selecao-logo img { max-width: 100px; }
-        .selecao-titulo { font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--gold-primary); font-size: 1.6em; margin-bottom: 20px; text-shadow: 0 0 20px rgba(212,161,33,0.5); letter-spacing: 1px; }
+        .selecao-titulo { font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--gold-primary); font-size: 1.6em; margin-bottom: 20px; text-shadow: 0 0 20px rgba(212,161,33,0.5); }
         .selecao-botoes { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
         .selecao-btn { padding: 14px; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1.2em; border: 2px solid var(--gold-primary); border-radius: 12px; cursor: pointer; transition: all 0.3s; }
         .selecao-btn.preta { background: #1a1a1a; color: #fff; border-color: #fff; }
         .selecao-btn.amarela { background: var(--gold-primary); color: #000; border-color: var(--gold-light); }
         .selecao-btn:hover { transform: scale(1.02); box-shadow: 0 0 25px rgba(212,161,33,0.5); }
-        .btn-mesa-final-topo { margin-top: 10px; padding: 10px; background: var(--gold-primary); color: #000; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.9em; width: 100%; font-family: 'Poppins', sans-serif; animation: pulse 1.5s infinite; transition: all 0.3s; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(212,161,33,0.4); } 50% { transform: scale(1.01); box-shadow: 0 0 0 10px rgba(212,161,33,0); } }
+        .btn-mesa-final-topo { margin-top: 10px; padding: 10px; background: var(--gold-primary); color: #000; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.9em; width: 100%; font-family: 'Poppins', sans-serif; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.01); } }
 
         /* App Container */
         .app-container, .mesa-final-app {
-            position: relative;
-            z-index: 1;
             display: flex;
             flex-direction: column;
             height: 100vh;
@@ -137,8 +118,8 @@
             border-radius: 12px;
             gap: 8px;
         }
-        .logo-top img { max-width: 40px; height: auto; }
-        .logo-top h2 { font-family: 'Poppins', sans-serif; font-size: 0.75em; color: var(--gold-primary); margin: 0; text-shadow: 0 0 5px rgba(212,161,33,0.3); letter-spacing: 0.5px; }
+        .logo-top img { max-width: 40px; }
+        .logo-top h2 { font-family: 'Poppins', sans-serif; font-size: 0.75em; color: var(--gold-primary); margin: 0; }
         .btn-voltar-mesa, .btn-voltar-mesa-final {
             padding: 5px 10px;
             background: linear-gradient(135deg, var(--red-danger), var(--red-dark));
@@ -151,7 +132,7 @@
             font-family: 'Poppins', sans-serif;
             transition: all 0.2s;
         }
-        .btn-voltar-mesa:hover, .btn-voltar-mesa-final:hover { transform: scale(1.02); filter: brightness(1.1); }
+        .btn-voltar-mesa:hover, .btn-voltar-mesa-final:hover { transform: scale(1.02); }
         .btn-ir-mesa-final {
             padding: 5px 10px;
             background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
@@ -162,7 +143,6 @@
             cursor: pointer;
             font-size: 0.65em;
             font-family: 'Poppins', sans-serif;
-            transition: all 0.2s;
             animation: pulse 1.5s infinite;
         }
 
@@ -175,16 +155,11 @@
             padding: 6px;
             text-align: center;
             backdrop-filter: blur(8px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            transition: all 0.2s;
         }
         .stat-card.preta { border: 1px solid #ffffff; background: linear-gradient(135deg, #1a1a1a, #0d0d0d); }
         .stat-card.amarela { border: 1px solid var(--gold-light); background: linear-gradient(135deg, #d4a12120, #00000040); }
         .stat-card.total { border: 1px solid var(--gold-primary); background: linear-gradient(135deg, #d4a12130, #00000040); }
         .stat-card-titulo { font-family: 'Poppins', sans-serif; font-size: 0.65em; font-weight: 600; margin-bottom: 3px; }
-        .stat-card.preta .stat-card-titulo { color: #ffffff; }
-        .stat-card.amarela .stat-card-titulo { color: var(--gold-light); }
-        .stat-card.total .stat-card-titulo { color: var(--gold-primary); }
         .stat-card-numeros { font-family: 'Poppins', sans-serif; font-size: 0.9em; font-weight: 700; display: flex; justify-content: center; gap: 8px; }
         .vivos { color: #4CAF50; }
         .eliminados { color: var(--red-danger); }
@@ -197,9 +172,8 @@
             padding: 4px;
             text-align: center;
             margin-bottom: 5px;
-            backdrop-filter: blur(8px);
         }
-        .mesa-indicator-text { font-family: 'Poppins', sans-serif; font-size: 0.8em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .mesa-indicator-text { font-family: 'Poppins', sans-serif; font-size: 0.8em; font-weight: 700; text-transform: uppercase; }
 
         /* Jogadores Grid */
         .jogadores-container {
@@ -232,7 +206,6 @@
         }
         .jogador-card.eliminado { opacity: 0.6; background: rgba(199,44,72,0.15); border-color: var(--red-danger); }
 
-        /* Posição Number */
         .jogador-posicao-numero { 
             font-family: 'Poppins', sans-serif; 
             font-size: 0.75em; 
@@ -245,18 +218,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
 
-        /* Foto */
         .jogador-foto { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--gold-primary); background: var(--green-light); }
-
-        /* Info */
         .jogador-info { flex: 1; min-width: 70px; }
-        .jogador-nome { font-weight: 700; font-size: 0.7em; font-family: 'Poppins', sans-serif; letter-spacing: 0.3px; }
+        .jogador-nome { font-weight: 700; font-size: 0.7em; font-family: 'Poppins', sans-serif; }
         .jogador-valores { display: flex; gap: 3px; margin-top: 2px; flex-wrap: wrap; }
 
-        /* Badges */
         .badge { padding: 1px 5px; border-radius: 8px; font-size: 0.55em; font-weight: 600; font-family: 'Poppins', sans-serif; }
         .badge-rebuy { background: linear-gradient(135deg, var(--orange-rebuy), #cc5200); color: #fff; }
         .badge-addon { background: linear-gradient(135deg, #4CAF50, #2d6a2d); color: #fff; }
@@ -264,7 +232,6 @@
         .badge-eliminado { background: linear-gradient(135deg, var(--red-danger), var(--red-dark)); color: #fff; }
         .badge-premio { background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark)); color: #000; }
 
-        /* Actions Buttons */
         .jogador-actions { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
         .action-btn {
             padding: 4px 8px;
@@ -285,10 +252,9 @@
         .btn-corrigir { background: linear-gradient(135deg, #FFA500, #cc8400); color: #000; }
         .btn-eliminar { background: linear-gradient(135deg, var(--red-danger), var(--red-dark)); color: #fff; }
 
-        /* Empty State */
         .empty-state { text-align: center; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px; margin: 10px; }
         .empty-state h3 { font-family: 'Poppins', sans-serif; color: var(--gold-primary); margin-bottom: 10px; font-size: 0.9em; }
-        .btn-ir-admin { background: var(--gold-primary); color: #000; padding: 8px 20px; border: none; border-radius: 8px; font-family: 'Poppins', sans-serif; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .btn-ir-admin { background: var(--gold-primary); color: #000; padding: 8px 20px; border: none; border-radius: 8px; font-family: 'Poppins', sans-serif; font-weight: 700; cursor: pointer; }
 
         /* Professional Confirmation Popup */
         .confirmation-overlay {
@@ -314,12 +280,12 @@
             max-width: 380px;
             width: 90%;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 30px rgba(212,161,33,0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
             animation: slideUp 0.3s ease;
         }
         @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .confirmation-popup .confirmation-icon { font-size: 3em; margin-bottom: 10px; }
-        .confirmation-popup h3 { font-family: 'Poppins', sans-serif; font-size: 1.4em; color: var(--gold-primary); margin-bottom: 15px; letter-spacing: 1px; }
+        .confirmation-popup h3 { font-family: 'Poppins', sans-serif; font-size: 1.4em; color: var(--gold-primary); margin-bottom: 15px; }
         .confirmation-popup .confirmation-details { font-family: 'Poppins', sans-serif; font-size: 1.1em; margin: 15px 0; padding: 12px; background: rgba(0,0,0,0.4); border-radius: 12px; }
         .confirmation-popup .confirmation-details span { color: var(--gold-light); font-weight: bold; }
         .confirmation-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
@@ -333,22 +299,21 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .confirmation-buttons button:hover { transform: scale(1.03); filter: brightness(1.05); }
-        .btn-confirm { background: linear-gradient(135deg, #4CAF50, #2d6a2d); color: #fff; box-shadow: 0 2px 10px rgba(76,175,80,0.3); }
+        .confirmation-buttons button:hover { transform: scale(1.03); }
+        .btn-confirm { background: linear-gradient(135deg, #4CAF50, #2d6a2d); color: #fff; }
         .btn-cancel { background: linear-gradient(135deg, var(--red-danger), var(--red-dark)); color: #fff; }
 
         /* Modais */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(5px); }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; z-index: 1000; }
         .modal.active { display: flex; }
         .modal-content { background: linear-gradient(135deg, #1a2e1a, #0d1a0d); border: 2px solid var(--gold-primary); border-radius: 16px; padding: 20px; width: 90%; max-width: 350px; }
+        .modal-buttons { display: flex; gap: 10px; margin-top: 15px; justify-content: center; }
         .form-group { margin-bottom: 12px; }
         .form-group label { color: var(--gold-primary); font-weight: 700; display: block; margin-bottom: 5px; font-family: 'Poppins', sans-serif; font-size: 0.8em; }
         .form-group input { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--green-light); background: #1a3d1a; color: #fff; font-size: 0.9em; }
 
         /* Admin e Classificação */
         .tela-admin, .tela-verificar-classificacao {
-            position: relative;
-            z-index: 1;
             min-height: 100vh;
             padding: 15px;
             background: linear-gradient(135deg, var(--green-dark) 0%, #0b150b 100%);
@@ -359,11 +324,13 @@
         .admin-header, .verificar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid var(--gold-primary); flex-wrap: wrap; gap: 10px; }
         .voltar-btn, .voltar-inicio-btn { padding: 8px 20px; background: linear-gradient(135deg, var(--red-danger), var(--red-dark)); color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Poppins', sans-serif; }
         .btn { padding: 8px 15px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.8em; font-family: 'Poppins', sans-serif; transition: all 0.2s; }
-        .btn:hover { transform: scale(1.02); filter: brightness(1.05); }
+        .btn:hover { transform: scale(1.02); }
         .btn-primary { background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark)); color: #000; }
         .btn-secondary { background: var(--green-light); color: #fff; }
         .btn-danger { background: linear-gradient(135deg, var(--red-danger), var(--red-dark)); color: #fff; }
         .btn-success { background: linear-gradient(135deg, #4CAF50, #2d6a2d); color: #fff; }
+        .btn-warning { background: linear-gradient(135deg, var(--orange-rebuy), #cc5200); color: #fff; }
+        .btn-info { background: #2196F3; color: #fff; }
         .resumo-table, .classificacao-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.75em; }
         .resumo-table th, .resumo-table td, .classificacao-table th, .classificacao-table td { padding: 8px; border-bottom: 1px solid var(--green-light); text-align: left; }
         .classificacao-table td { text-align: center; }
@@ -388,18 +355,19 @@
             font-weight: 700;
             z-index: 10001;
             animation: toastFade 3s ease forwards;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             font-size: 0.8em;
-            text-align: center;
             white-space: nowrap;
         }
-        @keyframes toastFade { 0% { opacity: 0; transform: translateX(-50%) translateY(20px); } 15% { opacity: 1; transform: translateX(-50%) translateY(0); } 85% { opacity: 1; transform: translateX(-50%) translateY(0); } 100% { opacity: 0; transform: translateX(-50%) translateY(-20px); visibility: hidden; } }
+        @keyframes toastFade { 0% { opacity: 0; transform: translateX(-50%) translateY(20px); } 15% { opacity: 1; transform: translateX(-50%) translateY(0); } 85% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
         .hidden { display: none !important; }
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: var(--green-dark); border-radius: 3px; }
         ::-webkit-scrollbar-thumb { background: var(--gold-primary); border-radius: 3px; }
         .mesa-final-app .stats-cards { display: none; }
-        .tabela-eliminados-mf { margin-top: 10px; background: rgba(16,40,16,0.8); border-radius: 10px; padding: 10px; backdrop-filter: blur(5px); }
+        .tabela-eliminados-mf { margin-top: 10px; background: rgba(16,40,16,0.8); border-radius: 10px; padding: 10px; }
+        .nav-tab-admin { padding: 6px 15px; background: transparent; border: none; color: #fff; cursor: pointer; font-weight: 700; font-size: 0.85em; }
+        .nav-tab-admin.active { background: var(--gold-primary); color: #000; border-radius: 8px; }
+        .admin-tab-content.hidden { display: none; }
     </style>
 </head>
 <body>
@@ -428,20 +396,33 @@
         <h3>🔐 ACESSO ADMIN</h3>
         <p style="margin-bottom:10px;">Digite a senha administrativa:</p>
         <div class="form-group"><input type="password" id="senhaAdmin" placeholder="Senha"></div>
-        <div class="modal-buttons" style="display:flex; gap:10px;"><button class="btn btn-danger" id="btnCancelarSenhaAdmin">Cancelar</button><button class="btn btn-success" id="btnConfirmarSenhaAdmin">Acessar</button></div>
+        <div class="modal-buttons">
+            <button class="btn btn-danger" id="btnCancelarSenhaAdmin">Cancelar</button>
+            <button class="btn btn-success" id="btnConfirmarSenhaAdmin">Acessar</button>
+        </div>
     </div>
 </div>
 
 <!-- Tela Admin -->
 <div class="tela-admin hidden" id="telaAdmin">
     <div class="admin-container">
-        <div class="admin-header"><h1>⚙️ ADMINISTRAÇÃO</h1><div><button class="btn btn-danger" id="btnApagarDados" style="margin-right:8px;">🗑️ LIMPAR TUDO</button><button class="voltar-btn" id="btnVoltarAdmin">← VOLTAR</button></div></div>
+        <div class="admin-header">
+            <h1>⚙️ ADMINISTRAÇÃO</h1>
+            <div>
+                <button class="btn btn-danger" id="btnApagarDados" style="margin-right:8px;">🗑️ LIMPAR TUDO</button>
+                <button class="voltar-btn" id="btnVoltarAdmin">← VOLTAR</button>
+            </div>
+        </div>
+        
         <div class="melhor-mao-section" style="background:linear-gradient(135deg,#d4a12120,#00000040); border:1px solid var(--gold-primary); border-radius:12px; padding:12px; margin-bottom:15px;">
             <h3 style="color:var(--gold-primary); margin-bottom:10px; font-size:0.9em;">🏆 MELHOR MÃO DA ETAPA ANTERIOR</h3>
-            <select id="selectMelhorMao" style="width:100%; padding:8px; background:var(--green-light); color:#fff; border:1px solid var(--gold-primary); border-radius:8px; margin-bottom:10px;"><option value="">-- Selecione --</option></select>
+            <select id="selectMelhorMao" style="width:100%; padding:8px; background:var(--green-light); color:#fff; border:1px solid var(--gold-primary); border-radius:8px; margin-bottom:10px;">
+                <option value="">-- Selecione --</option>
+            </select>
             <button class="btn btn-primary" id="btnAplicarMelhorMao" style="width:100%;">🎯 APLICAR BONUS</button>
             <div id="melhorMaoInfo" style="margin-top:10px; display:none; text-align:center; font-size:0.8em;"></div>
         </div>
+        
         <div style="background:rgba(0,0,0,0.3); padding:10px; border-radius:10px; margin-bottom:15px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
             <label style="color:var(--gold-primary); font-weight:700;">📅 ETAPA:</label>
             <select id="adminSelectEtapa" style="padding:6px 10px; background:var(--green-light); color:#fff; border:1px solid var(--gold-primary); border-radius:6px;">
@@ -452,23 +433,81 @@
             <button class="btn btn-success" id="btnIniciarEtapaAdmin">🚀 INICIAR</button>
             <button class="btn btn-warning" id="btnFinalizarEtapaMostrarClassificacao">🏁 FINALIZAR ETAPA</button>
         </div>
+        
         <div style="background:rgba(0,0,0,0.3); padding:10px; border-radius:10px; margin-bottom:15px;">
             <h3 style="font-size:0.9em; margin-bottom:10px;">📂 IMPORTAR LAYOUT</h3>
-            <div style="display:flex; gap:8px;"><button class="btn btn-primary" id="btnEscolherArquivo">📁 ESCOLHER</button><input type="file" id="fileInput" accept=".html,.htm" style="display:none;" /><button class="btn btn-success" id="btnProcessarLayout" style="display:none;">✅ PROCESSAR</button></div>
+            <div style="display:flex; gap:8px;">
+                <button class="btn btn-primary" id="btnEscolherArquivo">📁 ESCOLHER</button>
+                <input type="file" id="fileInput" accept=".html,.htm" style="display:none;" />
+                <button class="btn btn-success" id="btnProcessarLayout" style="display:none;">✅ PROCESSAR</button>
+            </div>
             <div id="previewMesas" style="margin-top:10px; display:none;"></div>
         </div>
-        <div style="display:flex; gap:5px; margin-bottom:10px; border-bottom:1px solid var(--gold-primary);"><button class="nav-tab-admin active" data-admin-tab="resumo" style="padding:6px 15px; background:transparent; border:none; color:#fff; cursor:pointer; font-weight:700;">📋 RESUMO</button><button class="nav-tab-admin" data-admin-tab="estatisticas" style="padding:6px 15px; background:transparent; border:none; color:#fff; cursor:pointer; font-weight:700;">📈 ESTATÍSTICAS</button></div>
-        <div id="admin-resumo" class="admin-tab-content"><div style="max-height:300px; overflow-y:auto;"><table class="resumo-table"><thead><tr><th>Jogador</th><th>Mesa</th><th>Buy-in</th><th>Rebuys</th><th>Addon</th><th>Total</th></tr></thead><tbody id="adminResumoBody"></tbody></table></div><div class="total-geral" id="adminTotalGeral" style="margin-top:10px; padding:8px; background:var(--green-light); border-radius:8px; text-align:right; font-weight:700;">💰 TOTAL: R$ 0</div><button class="btn btn-secondary" id="btnAdminExportarCSV" style="margin-top:8px; width:100%;">📊 EXPORTAR CSV</button><button class="btn btn-info" id="btnCopiarCSV" style="margin-top:5px; width:100%;">📋 COPIAR</button></div>
-        <div id="admin-estatisticas" class="admin-tab-content hidden"><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;"><div style="background:rgba(0,0,0,0.3); padding:10px; border-radius:10px; text-align:center;"><h4>♠️ MESA PRETA</h4><div>Rebuys: <strong id="adminStatPretaRebuys">0</strong></div><div>Addons: <strong id="adminStatPretaAddons">0</strong></div><div>Total: <strong id="adminStatPretaTotal">R$0</strong></div></div><div style="background:rgba(0,0,0,0.3); padding:10px; border-radius:10px; text-align:center;"><h4>♦️ MESA AMARELA</h4><div>Rebuys: <strong id="adminStatAmarelaRebuys">0</strong></div><div>Addons: <strong id="adminStatAmarelaAddons">0</strong></div><div>Total: <strong id="adminStatAmarelaTotal">R$0</strong></div></div></div><h4>🏆 RANKING REBUYS</h4><table class="resumo-table"><thead><tr><th>#</th><th>Jogador</th><th>Rebuys</th></tr></thead><tbody id="adminRankingBody"></tbody></table><button class="btn btn-secondary" id="btnAdminExportarCompleto" style="margin-top:10px; width:100%;">📊 EXPORTAR COMPLETO</button></div>
+        
+        <div style="display:flex; gap:5px; margin-bottom:10px; border-bottom:1px solid var(--gold-primary);">
+            <button class="nav-tab-admin active" data-admin-tab="resumo">📋 RESUMO</button>
+            <button class="nav-tab-admin" data-admin-tab="estatisticas">📈 ESTATÍSTICAS</button>
+        </div>
+        
+        <div id="admin-resumo" class="admin-tab-content">
+            <div style="max-height:300px; overflow-y:auto;">
+                <table class="resumo-table">
+                    <thead><tr><th>Jogador</th><th>Mesa</th><th>Buy-in</th><th>Rebuys</th><th>Addon</th><th>Total</th></tr></thead>
+                    <tbody id="adminResumoBody"></tbody>
+                </table>
+            </div>
+            <div class="total-geral" id="adminTotalGeral" style="margin-top:10px; padding:8px; background:var(--green-light); border-radius:8px; text-align:right; font-weight:700;">💰 TOTAL: R$ 0</div>
+            <button class="btn btn-secondary" id="btnAdminExportarCSV" style="margin-top:8px; width:100%;">📊 EXPORTAR CSV</button>
+            <button class="btn btn-info" id="btnCopiarCSV" style="margin-top:5px; width:100%;">📋 COPIAR</button>
+        </div>
+        
+        <div id="admin-estatisticas" class="admin-tab-content hidden">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;">
+                <div style="background:rgba(0,0,0,0.3); padding:10px; border-radius:10px; text-align:center;">
+                    <h4>♠️ MESA PRETA</h4>
+                    <div>Rebuys: <strong id="adminStatPretaRebuys">0</strong></div>
+                    <div>Addons: <strong id="adminStatPretaAddons">0</strong></div>
+                    <div>Total: <strong id="adminStatPretaTotal">R$0</strong></div>
+                </div>
+                <div style="background:rgba(0,0,0,0.3); padding:10px; border-radius:10px; text-align:center;">
+                    <h4>♦️ MESA AMARELA</h4>
+                    <div>Rebuys: <strong id="adminStatAmarelaRebuys">0</strong></div>
+                    <div>Addons: <strong id="adminStatAmarelaAddons">0</strong></div>
+                    <div>Total: <strong id="adminStatAmarelaTotal">R$0</strong></div>
+                </div>
+            </div>
+            <h4>🏆 RANKING REBUYS</h4>
+            <table class="resumo-table">
+                <thead><tr><th>#</th><th>Jogador</th><th>Rebuys</th></tr></thead>
+                <tbody id="adminRankingBody"></tbody>
+            </table>
+            <button class="btn btn-secondary" id="btnAdminExportarCompleto" style="margin-top:10px; width:100%;">📊 EXPORTAR COMPLETO</button>
+        </div>
     </div>
 </div>
 
 <!-- Tela de Verificar Classificação -->
 <div class="tela-verificar-classificacao hidden" id="telaVerificarClassificacao">
     <div class="verificar-container">
-        <div class="verificar-header"><h1>🏆 CLASSIFICAÇÃO</h1><div><button class="btn btn-warning" id="btnSalvarEProximaEtapa" style="margin-right:8px;">💾 SALVAR</button><button class="btn btn-info" id="btnEnviarWhatsApp" style="margin-right:8px;">📱 WHATSAPP</button><button class="voltar-inicio-btn" id="btnVoltarVerificarInicio">← VOLTAR</button></div></div>
-        <div style="overflow-x:auto; margin-bottom:20px;"><h3>📊 RANKING ATUAL</h3><table class="classificacao-table"><thead><tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th><th>Prêmio</th><th>PIX</th></tr></thead><tbody id="classificacaoBodyAtual"></tbody></table></div>
-        <div><h3>📜 HISTÓRICO</h3><div id="etapasListVerificar" style="max-height:250px; overflow-y:auto;"></div></div>
+        <div class="verificar-header">
+            <h1>🏆 CLASSIFICAÇÃO</h1>
+            <div>
+                <button class="btn btn-warning" id="btnSalvarEProximaEtapa" style="margin-right:8px;">💾 SALVAR</button>
+                <button class="btn btn-info" id="btnEnviarWhatsApp" style="margin-right:8px;">📱 WHATSAPP</button>
+                <button class="voltar-inicio-btn" id="btnVoltarVerificarInicio">← VOLTAR</button>
+            </div>
+        </div>
+        <div style="overflow-x:auto; margin-bottom:20px;">
+            <h3>📊 RANKING ATUAL</h3>
+            <table class="classificacao-table">
+                <thead><tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th><th>Prêmio</th><th>PIX</th></tr></thead>
+                <tbody id="classificacaoBodyAtual"></tbody>
+            </table>
+        </div>
+        <div>
+            <h3>📜 HISTÓRICO</h3>
+            <div id="etapasListVerificar" style="max-height:250px; overflow-y:auto;"></div>
+        </div>
     </div>
 </div>
 
@@ -478,7 +517,10 @@
         <div class="logo-top">
             <img src="logo pdq.png" alt="Poker de Quinta" onerror="this.style.display='none'">
             <h2>PROFESSIONAL DEALER SYSTEM</h2>
-            <div><button class="btn-voltar-mesa" id="btnVoltarParaSelecao">↩️ SAIR</button><button class="btn-ir-mesa-final" id="btnIrMesaFinal" style="display:none;">🏆 FINAL</button></div>
+            <div>
+                <button class="btn-voltar-mesa" id="btnVoltarParaSelecao">↩️ SAIR</button>
+                <button class="btn-ir-mesa-final" id="btnIrMesaFinal" style="display:none;">🏆 FINAL</button>
+            </div>
         </div>
         <div class="stats-cards" id="statsCards">
             <div class="stat-card preta"><div class="stat-card-titulo">♠️ PRETA</div><div class="stat-card-numeros"><span class="vivos" id="pretaVivos">0</span><span>|</span><span class="eliminados" id="pretaEliminados">0</span><span>|</span><span class="total-num" id="pretaTotal">0</span></div></div>
@@ -493,18 +535,71 @@
 <!-- Tela Mesa Final -->
 <div class="mesa-final-app hidden" id="mesaFinalApp">
     <div class="app-header">
-        <div class="logo-top"><img src="logo pdq.png" alt="Poker de Quinta" onerror="this.style.display='none'"><h2>🏆 MESA FINAL</h2><div><button class="btn-voltar-mesa-final" id="btnVoltarMesaFinalSelecao">↩️ SAIR</button><button class="btn-info" id="btnVerificarClassificacaoMF" style="padding:4px 10px; margin-left:5px; font-size:0.7em;">📊 CLASSIF</button></div></div>
+        <div class="logo-top">
+            <img src="logo pdq.png" alt="Poker de Quinta" onerror="this.style.display='none'">
+            <h2>🏆 MESA FINAL</h2>
+            <div>
+                <button class="btn-voltar-mesa-final" id="btnVoltarMesaFinalSelecao">↩️ SAIR</button>
+                <button class="btn-info" id="btnVerificarClassificacaoMF" style="padding:4px 10px; margin-left:5px; font-size:0.7em;">📊 CLASSIF</button>
+            </div>
+        </div>
         <div class="mesa-indicator"><div class="mesa-indicator-text" id="mesaFinalIndicatorText">🏆 MESA FINAL</div></div>
     </div>
-    <div class="jogadores-container"><div class="jogadores-grid" id="jogadoresMesaFinalGrid"></div><div class="tabela-eliminados-mf" id="tabelaEliminadosMF" style="display:none;"><h4>📋 ELIMINADOS</h4><table style="width:100%; font-size:0.7em;"><thead><tr><th>Pos</th><th>Jogador</th><th>KO's</th><th>Prêmio</th></tr></thead><tbody id="eliminadosMesaFinalBody"></tbody></table></div></div>
+    <div class="jogadores-container">
+        <div class="jogadores-grid" id="jogadoresMesaFinalGrid"></div>
+        <div class="tabela-eliminados-mf" id="tabelaEliminadosMF" style="display:none;">
+            <h4>📋 ELIMINADOS</h4>
+            <table style="width:100%; font-size:0.7em;"><thead><tr><th>Pos</th><th>Jogador</th><th>KO's</th><th>Prêmio</th></tr></thead><tbody id="eliminadosMesaFinalBody"></tbody></table>
+        </div>
+    </div>
 </div>
 
 <!-- Modais -->
-<div class="modal" id="modalCorrigir"><div class="modal-content"><h3>🔧 CORRIGIR</h3><p id="corrigirJogadorNome"></p><div class="form-group"><label>REBUYS</label><input type="number" id="corrigirRebuys" min="0" value="0"></div><div class="form-group"><label><input type="checkbox" id="corrigirAddon"> ADDON</label></div><div class="modal-buttons" style="display:flex; gap:10px;"><button class="btn btn-danger" id="btnCancelarCorrigir">Cancelar</button><button class="btn btn-success" id="btnSalvarCorrigir">Salvar</button></div></div></div>
-<div class="modal" id="modalEliminar"><div class="modal-content"><h3>⚠️ ELIMINAR</h3><p id="eliminarJogadorNome"></p><div class="form-group"><label>KOs</label><input type="number" id="quantidadeKOs" min="0" value="0"></div><div class="modal-buttons" style="display:flex; gap:10px;"><button class="btn btn-danger" id="btnCancelarEliminar">Cancelar</button><button class="btn btn-warning" id="btnConfirmarEliminar">Confirmar</button></div></div></div>
-<div class="modal" id="modalEliminarMesaFinal"><div class="modal-content"><h3>⚠️ ELIMINAR</h3><p id="eliminarMFJogadorNome"></p><div class="form-group"><label>KOs</label><input type="number" id="quantidadeKOsMF" min="0" value="0"></div><div class="form-group"><label>💰 PRÊMIO (R$)</label><input type="number" id="premioMF" min="0" step="0.01" value="0"></div><div class="modal-buttons" style="display:flex; gap:10px;"><button class="btn btn-danger" id="btnCancelarEliminarMF">Cancelar</button><button class="btn btn-warning" id="btnConfirmarEliminarMF">Confirmar</button></div></div></div>
-<div class="modal" id="modalSenhaApagar"><div class="modal-content"><h3>🔐 SEGURANÇA</h3><p>Digite a senha para confirmar:</p><div class="form-group"><input type="password" id="senhaApagar" placeholder="Senha"></div><div class="modal-buttons" style="display:flex; gap:10px;"><button class="btn btn-danger" id="btnCancelarSenhaApagar">Cancelar</button><button class="btn btn-success" id="btnConfirmarSenhaApagar">Confirmar</button></div></div></div>
-<div class="modal" id="modalApagarHistorico"><div class="modal-content"><h3>🗑️ APAGAR HISTÓRICO</h3><p>Esta ação é irreversível!</p><div class="modal-buttons" style="display:flex; gap:10px;"><button class="btn btn-danger" id="btnCancelarApagarHistorico">Cancelar</button><button class="btn btn-warning" id="btnConfirmarApagarHistorico">Confirmar</button></div></div></div>
+<div class="modal" id="modalCorrigir">
+    <div class="modal-content">
+        <h3>🔧 CORRIGIR</h3>
+        <p id="corrigirJogadorNome"></p>
+        <div class="form-group"><label>REBUYS</label><input type="number" id="corrigirRebuys" min="0" value="0"></div>
+        <div class="form-group"><label><input type="checkbox" id="corrigirAddon"> ADDON</label></div>
+        <div class="modal-buttons"><button class="btn btn-danger" id="btnCancelarCorrigir">Cancelar</button><button class="btn btn-success" id="btnSalvarCorrigir">Salvar</button></div>
+    </div>
+</div>
+
+<div class="modal" id="modalEliminar">
+    <div class="modal-content">
+        <h3>⚠️ ELIMINAR</h3>
+        <p id="eliminarJogadorNome"></p>
+        <div class="form-group"><label>KOs</label><input type="number" id="quantidadeKOs" min="0" value="0"></div>
+        <div class="modal-buttons"><button class="btn btn-danger" id="btnCancelarEliminar">Cancelar</button><button class="btn btn-warning" id="btnConfirmarEliminar">Confirmar</button></div>
+    </div>
+</div>
+
+<div class="modal" id="modalEliminarMesaFinal">
+    <div class="modal-content">
+        <h3>⚠️ ELIMINAR</h3>
+        <p id="eliminarMFJogadorNome"></p>
+        <div class="form-group"><label>KOs</label><input type="number" id="quantidadeKOsMF" min="0" value="0"></div>
+        <div class="form-group"><label>💰 PRÊMIO (R$)</label><input type="number" id="premioMF" min="0" step="0.01" value="0"></div>
+        <div class="modal-buttons"><button class="btn btn-danger" id="btnCancelarEliminarMF">Cancelar</button><button class="btn btn-warning" id="btnConfirmarEliminarMF">Confirmar</button></div>
+    </div>
+</div>
+
+<div class="modal" id="modalSenhaApagar">
+    <div class="modal-content">
+        <h3>🔐 SEGURANÇA</h3>
+        <p>Digite a senha para confirmar:</p>
+        <div class="form-group"><input type="password" id="senhaApagar" placeholder="Senha"></div>
+        <div class="modal-buttons"><button class="btn btn-danger" id="btnCancelarSenhaApagar">Cancelar</button><button class="btn btn-success" id="btnConfirmarSenhaApagar">Confirmar</button></div>
+    </div>
+</div>
+
+<div class="modal" id="modalApagarHistorico">
+    <div class="modal-content">
+        <h3>🗑️ APAGAR HISTÓRICO</h3>
+        <p>Esta ação é irreversível!</p>
+        <div class="modal-buttons"><button class="btn btn-danger" id="btnCancelarApagarHistorico">Cancelar</button><button class="btn btn-warning" id="btnConfirmarApagarHistorico">Confirmar</button></div>
+    </div>
+</div>
 
 <script>
 // ============================================
@@ -530,6 +625,7 @@ const VALOR_BUYIN = 100;
 const VALOR_REBUY = 30;
 const VALOR_ADDON = 50;
 const ADDON_GRATIS = ['Gaspar', 'Matheus', 'Ricardo Linhares', 'Diego'];
+const SENHA_ADMIN = "poker2026";
 
 const PONTOS_POSICAO = { 1:27,2:25,3:23,4:21,5:19,6:17,7:15,8:13,9:11,10:9,11:7,12:6,13:5,14:5,15:5,16:5,17:5,18:5,19:5,20:5 };
 function getPontosPosicao(posicao) { return PONTOS_POSICAO[posicao] || 5; }
@@ -590,7 +686,6 @@ async function tocarSom(tipo) {
         
         switch(tipo) {
             case 'rebuySimples':
-                // Som de slot machine clássico
                 const notasSlot = [523.25, 587.33, 659.25, 698.46];
                 notasSlot.forEach((freq, i) => {
                     const osc = audioContext.createOscillator();
@@ -607,7 +702,6 @@ async function tocarSom(tipo) {
                 break;
                 
             case 'rebuyDuplo':
-                // Som de jackpot com vibrato
                 const oscA = audioContext.createOscillator();
                 const oscB = audioContext.createOscillator();
                 const gainA = audioContext.createGain();
@@ -623,7 +717,6 @@ async function tocarSom(tipo) {
                 gainA.gain.value = 0.18;
                 gainB.gain.value = 0.18;
                 
-                // Vibrato effect
                 const lfo = audioContext.createOscillator();
                 const lfoGain = audioContext.createGain();
                 lfo.connect(lfoGain);
@@ -640,7 +733,6 @@ async function tocarSom(tipo) {
                 oscB.stop(now + 0.8);
                 setTimeout(() => lfo.stop(), 800);
                 
-                // Adicionar efeito de "ding" no final
                 setTimeout(() => {
                     const oscDing = audioContext.createOscillator();
                     const gainDing = audioContext.createGain();
@@ -656,7 +748,6 @@ async function tocarSom(tipo) {
                 break;
                 
             case 'addon':
-                // Fanfarra triunfante
                 const fanfarra = [523.25, 659.25, 783.99, 1046.50, 783.99, 659.25, 523.25, 783.99, 1046.50];
                 fanfarra.forEach((freq, i) => {
                     const osc = audioContext.createOscillator();
@@ -673,7 +764,6 @@ async function tocarSom(tipo) {
                 break;
                 
             case 'eliminacao':
-                // Trombeta dramática de eliminação
                 const trombeta = [440, 349.23, 293.66, 261.63, 196.00];
                 trombeta.forEach((freq, i) => {
                     const osc = audioContext.createOscillator();
@@ -690,7 +780,6 @@ async function tocarSom(tipo) {
                 break;
                 
             case 'alerta':
-                // Alerta de mesa final - som impactante
                 const alerta = [880, 660, 880, 660, 880, 1046.50];
                 alerta.forEach((freq, index) => {
                     const osc = audioContext.createOscillator();
@@ -735,7 +824,7 @@ function mostrarPopupConfirmacao(titulo, mensagem, icon, onConfirm, onCancel) {
     
     const confirmBtn = document.getElementById('popupConfirmBtn');
     const cancelBtn = document.getElementById('popupCancelBtn');
-    const close = () => { overlay.remove(); if(confirmBtn) confirmBtn.removeEventListener('click', handleConfirm); if(cancelBtn) cancelBtn.removeEventListener('click', handleCancel); };
+    const close = () => { overlay.remove(); };
     const handleConfirm = () => { close(); if(onConfirm) onConfirm(); };
     const handleCancel = () => { close(); if(onCancel) onCancel(); };
     confirmBtn.addEventListener('click', handleConfirm);
@@ -832,6 +921,7 @@ document.addEventListener('DOMContentLoaded', async function(){
     document.getElementById('statusIndicator').innerHTML = '🎰 Conectado';
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
+    // Inicializar Firebase listeners
     db.ref('config').on('value', (snapshot)=>{
         if(snapshot.exists()) config=snapshot.val();
         else { config={etapa:4}; db.ref('config').set(config); }
@@ -840,16 +930,20 @@ document.addEventListener('DOMContentLoaded', async function(){
         const titulo=document.querySelector('#telaVerificarClassificacao .verificar-header h1');
         if(titulo) titulo.innerHTML=`🏆 CLASSIFICAÇÃO ${config.etapa}ª ETAPA`;
     });
+    
     db.ref('torneioFinalizado').on('value', (s)=>{ torneioFinalizado=s.exists()?s.val():false; });
     db.ref('mesaFinalAtiva').on('value', (s)=>{ mesaFinalAtiva=s.exists()?s.val():false; atualizarBotoesMesaFinal(); });
     db.ref('fotosJogadores').on('value', (s)=>{ if(s.exists()) fotosJogadores=s.val(); atualizarGridJogadores(); renderizarMesaFinal(); atualizarSelectMelhorMao(); atualizarClassificacaoAtual(); });
+    
     db.ref('mesas').on('value', (snapshot)=>{
         if(snapshot.exists()) mesasData=snapshot.val();
         else { mesasData={preta:[],amarela:[]}; db.ref('mesas').set(mesasData); }
+        
         const todos = [...(mesasData.preta||[]),...(mesasData.amarela||[])];
         const totalInscritos = todos.length;
         const totalVivos = todos.filter(j=>!j.eliminado).length;
         const totalEliminados = todos.filter(j=>j.eliminado).length;
+        
         const totalSpan=document.getElementById('totalGeralJogadores');
         const vivosSpan=document.getElementById('totalVivos');
         const elimSpan=document.getElementById('totalEliminados');
@@ -885,9 +979,11 @@ document.addEventListener('DOMContentLoaded', async function(){
         atualizarSelectMelhorMao();
         atualizarClassificacaoAtual();
     });
+    
     db.ref('classificacao').on('value', (s)=>{ classificacaoData=s.exists()?s.val():[]; atualizarClassificacaoAtual(); atualizarHistoricoEtapas(); atualizarTabelaEliminadosMF(); });
     db.ref('historicoEtapas').on('value', (s)=>{ historicoEtapas=s.exists()?s.val():[]; atualizarHistoricoEtapas(); });
     db.ref('melhorMao').on('value', (s)=>{ melhorMaoAtual=s.exists()?s.val():null; atualizarGridJogadores(); atualizarInfoMelhorMao(); atualizarAdminResumo(); atualizarAdminEstatisticas(); });
+    
     inicializarEventos();
 });
 
@@ -947,7 +1043,7 @@ function atualizarTabelaEliminadosMF() {
     const elim=classificacaoData.filter(c=>c.posicao<=9 && c.posicao>=1).sort((a,b)=>a.posicao-b.posicao);
     const tbody=document.getElementById('eliminadosMesaFinalBody');
     const div=document.getElementById('tabelaEliminadosMF');
-    if(tbody && elim.length>0){ div.style.display='block'; tbody.innerHTML=elim.map(e=>`<tr><td>${e.posicao}º</td><td>${e.nome}</td><td>${e.kos||0}</td><td>${e.premio?`R$ ${e.premio.toFixed(2)}`:'-'}</td></tr>`).join(''); }
+    if(tbody && elim.length>0){ div.style.display='block'; tbody.innerHTML=elim.map(e=>`<tr><td class="posicao-numero">${e.posicao}º</td><td>${e.nome}</td><td>${e.kos||0}</td><td>${e.premio?`R$ ${e.premio.toFixed(2)}`:'-'}</td></tr>`).join(''); }
     else if(div) div.style.display='none';
 }
 
@@ -1079,7 +1175,7 @@ function voltarDaMesaFinal(){
 }
 
 function iniciarApp(){
-    if(mesaFinalAtiva && !torneioFinalizado){ mostrarToast('Acesse a MESA FINAL!'); return; }
+    if(mesaFinalAtiva && !torneioFinalizado){ mostrarToast('Acesse a MESA FINAL pelo botão!'); return; }
     if(torneioFinalizado){ mostrarToast('Torneio finalizado! Inicie nova etapa.'); return; }
     document.getElementById('telaSelecao').classList.add('hidden');
     document.getElementById('appContainer').classList.remove('hidden');
@@ -1328,7 +1424,8 @@ function atualizarHistoricoEtapas(){
             </div>
             <div id="etapaVerificar-${idx}" style="display:none; margin-top:8px;">
                 <table style="width:100%; font-size:0.7em; border-collapse:collapse;"><thead><tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th></tr></thead>
-                <tbody>${classif.slice(0,20).map(j=>`<tr><td>${j.posicao}º</td><td>${j.nome||'?'}</td><td>${j.mesa||'-'}</td><td>${j.pontosPosicao||0}</td><td>${j.kos||0}</td><td><strong>${(j.pontosPosicao||0)+(j.kos||0)}</strong></td></tr>`).join('')}</tbody></table>
+                <tbody>${classif.slice(0,20).map(j=>`<tr><td>${j.posicao}º</td><td>${j.nome||'?'}</td><td>${j.mesa||'-'}</td><td>${j.pontosPosicao||0}</td><td>${j.kos||0}</td><td><strong>${(j.pontosPosicao||0)+(j.kos||0)}</strong></td></tr>`).join('')}</tbody>
+                </table>
             </div>
         </div>`;
     }).join('');
@@ -1430,7 +1527,7 @@ function copiarCSV(){
 function downloadCSV(csv,nome){ const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const link=document.createElement('a'); link.href=URL.createObjectURL(blob); link.download=nome; link.click(); }
 function apagarTodosDados(){ if(confirm('⚠️ APAGAR TODOS OS DADOS? Esta ação é irreversível.')) document.getElementById('modalSenhaApagar').classList.add('active'); }
 function confirmarApagarTodos(){
-    if(document.getElementById('senhaApagar').value==='poker2026'){
+    if(document.getElementById('senhaApagar').value===SENHA_ADMIN){
         mesasData={preta:[],amarela:[]}; classificacaoData=[]; historicoEtapas=[]; contadorEliminados=0; mesaFinalAtiva=false; totalJogadoresIniciais=0; melhorMaoAtual=null; torneioFinalizado=false;
         db.ref('mesas').set(mesasData); db.ref('classificacao').set(classificacaoData); db.ref('historicoEtapas').set([]); db.ref('melhorMao').set(null); db.ref('mesaFinalAtiva').set(false); db.ref('torneioFinalizado').set(false);
         document.getElementById('telaAdmin').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden');
@@ -1478,40 +1575,68 @@ function inicializarEventos(){
     const btnCopiar=document.getElementById('btnCopiarCSV');
     const fileInput=document.getElementById('fileInput');
     
+    // ADMIN - SENHA
     if(logo) logo.onclick=()=>document.getElementById('modalSenhaAdmin').classList.add('active');
+    if(btnCancelSenha) btnCancelSenha.onclick=()=>{ document.getElementById('modalSenhaAdmin').classList.remove('active'); document.getElementById('senhaAdmin').value=''; };
+    if(btnConfirmSenha) btnConfirmSenha.onclick=()=>{ 
+        const senha = document.getElementById('senhaAdmin').value;
+        if(senha === SENHA_ADMIN){ 
+            document.getElementById('modalSenhaAdmin').classList.remove('active'); 
+            document.getElementById('telaSelecao').classList.add('hidden'); 
+            document.getElementById('telaAdmin').classList.remove('hidden'); 
+            atualizarAdminResumo(); 
+            atualizarAdminEstatisticas(); 
+            atualizarHistoricoEtapas(); 
+            atualizarSelectMelhorMao(); 
+            mostrarToast('✅ Acesso administrativo concedido!');
+        } else { 
+            alert('❌ Senha incorreta!'); 
+        }
+        document.getElementById('senhaAdmin').value=''; 
+    };
+    
+    // Botões das mesas
     if(btnPreta) btnPreta.onclick=()=>{ if(!mesaFinalAtiva && !torneioFinalizado){ mesaAtual='preta'; iniciarApp(); } else if(torneioFinalizado) mostrarToast('Torneio finalizado!'); };
     if(btnAmarela) btnAmarela.onclick=()=>{ if(!mesaFinalAtiva && !torneioFinalizado){ mesaAtual='amarela'; iniciarApp(); } else if(torneioFinalizado) mostrarToast('Torneio finalizado!'); };
     if(btnVoltar) btnVoltar.onclick=()=>{ if(!mesaFinalAtiva && !torneioFinalizado){ document.getElementById('appContainer').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); } };
+    if(btnVoltarAdmin) btnVoltarAdmin.onclick=()=>{ document.getElementById('telaAdmin').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); };
+    if(btnVoltarVer) btnVoltarVer.onclick=()=>{ document.getElementById('telaVerificarClassificacao').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); };
     if(btnIrFinal) btnIrFinal.onclick=irParaMesaFinal;
     if(btnFinalTopo) btnFinalTopo.onclick=irParaMesaFinalTopo;
     if(btnVoltarFinal) btnVoltarFinal.onclick=voltarDaMesaFinal;
-    if(btnVoltarVer) btnVoltarVer.onclick=()=>{ document.getElementById('telaVerificarClassificacao').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); };
     if(btnVerClass) btnVerClass.onclick=mostrarTelaVerificarClassificacao;
     if(btnVerClassMF) btnVerClassMF.onclick=mostrarTelaVerificarClassificacao;
     if(btnSalvar) btnSalvar.onclick=salvarEProximaEtapa;
     if(btnWhats) btnWhats.onclick=enviarClassificacaoWhatsApp;
     if(btnFinalizar) btnFinalizar.onclick=finalizarEtapaMostrarClassificacao;
     if(btnIniciar) btnIniciar.onclick=iniciarEtapaAdmin;
+    if(btnMelhor) btnMelhor.onclick=aplicarMelhorMao;
     if(btnApagarHist) btnApagarHist.onclick=()=>document.getElementById('modalApagarHistorico').classList.add('active');
     if(btnCancelApagarHist) btnCancelApagarHist.onclick=()=>document.getElementById('modalApagarHistorico').classList.remove('active');
     if(btnConfirmApagarHist) btnConfirmApagarHist.onclick=apagarHistorico;
     if(btnApagarDados) btnApagarDados.onclick=apagarTodosDados;
     if(btnCancelApagar) btnCancelApagar.onclick=()=>{ document.getElementById('modalSenhaApagar').classList.remove('active'); document.getElementById('senhaApagar').value=''; };
     if(btnConfirmApagar) btnConfirmApagar.onclick=confirmarApagarTodos;
-    if(btnMelhor) btnMelhor.onclick=aplicarMelhorMao;
+    
+    // Modais
     if(btnCancelCorr) btnCancelCorr.onclick=()=>document.getElementById('modalCorrigir').classList.remove('active');
     if(btnSalvarCorr) btnSalvarCorr.onclick=salvarCorrecao;
     if(btnCancelElim) btnCancelElim.onclick=()=>document.getElementById('modalEliminar').classList.remove('active');
     if(btnConfirmElim) btnConfirmElim.onclick=confirmarEliminacao;
     if(btnCancelMF) btnCancelMF.onclick=()=>document.getElementById('modalEliminarMesaFinal').classList.remove('active');
     if(btnConfirmMF) btnConfirmMF.onclick=confirmarEliminacaoMF;
+    
+    // Importar layout
     if(btnEscolher && fileInput) btnEscolher.onclick=()=>fileInput.click();
     if(fileInput) fileInput.onchange=(e)=>{ if(e.target.files[0]){ arquivoSelecionado=e.target.files[0]; if(btnProcessar) btnProcessar.style.display='inline-block'; } };
     if(btnProcessar) btnProcessar.onclick=processarLayout;
+    
+    // Exportações
     if(btnExport) btnExport.onclick=exportarCSVSimples;
     if(btnExportCompleto) btnExportCompleto.onclick=exportarCSVCompleto;
     if(btnCopiar) btnCopiar.onclick=copiarCSV;
     
+    // Tabs Admin
     document.querySelectorAll('.nav-tab-admin').forEach(tab=>{
         tab.onclick=()=>{
             document.querySelectorAll('.nav-tab-admin').forEach(t=>t.classList.remove('active'));
@@ -1523,6 +1648,7 @@ function inicializarEventos(){
     });
 }
 
+// Funções globais
 window.adicionarRebuy=adicionarRebuy;
 window.adicionarAddon=adicionarAddon;
 window.abrirCorrecao=abrirCorrecao;
