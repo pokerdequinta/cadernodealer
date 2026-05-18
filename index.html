@@ -62,13 +62,13 @@
         @media (min-width: 600px) and (max-width: 800px) and (orientation: portrait) {
             .jogadores-lados { flex-direction: column !important; }
             .lado-esquerdo { width: 100% !important; }
-            .mesa-final-app .jogadores-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important; }
+            .mesa-final-app .jogadores-grid { grid-template-columns: 1fr !important; }
         }
         
         @media (min-width: 800px) and (orientation: landscape) {
             .jogadores-lados { flex-direction: row !important; }
             .lado-esquerdo { flex: 1 !important; }
-            .mesa-final-app .jogadores-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important; }
+            .mesa-final-app .jogadores-grid { grid-template-columns: 1fr !important; }
         }
         
         @media (max-width: 599px) {
@@ -226,13 +226,8 @@
         }
         .mesa-final-app .jogadores-lados { flex-direction: column; }
         .mesa-final-app .lado-esquerdo { width: 100%; }
-        .mesa-final-app .jogadores-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 10px; }
+        .mesa-final-app .jogadores-grid { display: flex; flex-direction: column; gap: 10px; }
         .mesa-final-app .stats-cards { display: none; }
-        .tabela-eliminados-mf { margin-top: 20px; background: #102810; border-radius: 10px; padding: 15px; }
-        .tabela-eliminados-mf h4 { color: #d4a121; margin-bottom: 10px; font-family: 'Anton', sans-serif; }
-        .tabela-eliminados-mf table { width: 100%; font-size: 0.8em; border-collapse: collapse; }
-        .tabela-eliminados-mf th { background: #1a3d1a; padding: 6px; text-align: center; }
-        .tabela-eliminados-mf td { padding: 5px; text-align: center; border-bottom: 1px solid #2d5016; }
         .btn-copiar-pix-classif { background: #d4a121; color: #000; border: none; border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 0.7em; font-weight: bold; transition: all 0.2s; }
         .btn-copiar-pix-classif:hover { transform: scale(1.05); }
         .toast-notification { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #d4a121; color: #000; padding: 12px 24px; border-radius: 8px; font-family: 'Anton', sans-serif; z-index: 10000; animation: fadeOut 3s forwards; box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-size: 1em; text-align: center; white-space: nowrap; }
@@ -283,44 +278,62 @@
         }
         
         .popup-header h3 {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             letter-spacing: 2px;
             text-shadow: 1px 1px 0 rgba(255,255,255,0.3);
         }
         
         .popup-body {
-            padding: 30px 25px;
+            padding: 25px 20px;
             text-align: center;
         }
         
-        .popup-body .jogador-destaque {
-            font-size: 2rem;
+        .jogador-info-popup {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 20px;
+        }
+        
+        .jogador-foto-popup {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #d4a121;
+        }
+        
+        .jogador-destaque {
+            font-size: 1.6rem;
             color: #d4a121;
             text-shadow: 0 0 10px rgba(212, 161, 33, 0.5);
-            margin: 15px 0;
             letter-spacing: 1px;
             word-break: break-word;
         }
         
         .popup-body p {
-            font-size: 1.1rem;
-            margin-bottom: 15px;
+            font-size: 1rem;
+            margin-bottom: 10px;
             color: #e0e0e0;
         }
         
         .popup-buttons {
             display: flex;
             gap: 15px;
-            padding: 0 25px 30px 25px;
+            padding: 0 20px 25px 20px;
         }
         
         .popup-buttons button {
             flex: 1;
-            padding: 12px 0;
+            padding: 10px 0;
             border: none;
             border-radius: 40px;
             font-family: 'Anton', sans-serif;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -360,20 +373,26 @@
         
         .popup-input-group label {
             color: #d4a121;
-            font-size: 0.9rem;
-            display: block;
-            margin-bottom: 5px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
         }
         
         .popup-input-group input {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
             border: 1px solid #d4a121;
             background: #1a3d1a;
             color: #fff;
             font-size: 1rem;
             text-align: center;
+        }
+        
+        .icone-luva {
+            font-size: 1.2rem;
         }
     </style>
 </head>
@@ -644,16 +663,6 @@
     <div class="jogadores-lados">
         <div class="lado-esquerdo">
             <div class="jogadores-grid" id="jogadoresMesaFinalGrid"></div>
-            
-            <div class="tabela-eliminados-mf" id="tabelaEliminadosMF" style="display: none;">
-                <h4>📋 JOGADORES ELIMINADOS NA MESA FINAL</h4>
-                <table id="eliminadosMesaFinalTable">
-                    <thead>
-                        <tr><th>Posição</th><th>Jogador</th><th>KO's</th><th>Prêmio (R$)</th></tr>
-                    </thead>
-                    <tbody id="eliminadosMesaFinalBody"></tbody>
-                </table>
-            </div>
         </div>
     </div>
 </div>
@@ -779,7 +788,7 @@ const chavesPix = {
     'Van Van': { chave: '41999677977', tipo: 'Telefone' }
 };
 
-// ==================== FUNÇÕES DE ÁUDIO MELHORADAS ====================
+// ==================== FUNÇÕES DE ÁUDIO ====================
 async function tocarSomSlot(tipo) {
     if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -794,7 +803,6 @@ async function tocarSomSlot(tipo) {
     masterGain.connect(audioContext.destination);
     
     if (tipo === 'rebuy') {
-        // Som mais chamativo para Rebuy Simples: 4 notas ascendentes + moeda
         const notas = [523.25, 659.25, 783.99, 1046.50];
         notas.forEach((freq, i) => {
             const osc = audioContext.createOscillator();
@@ -808,7 +816,6 @@ async function tocarSomSlot(tipo) {
             gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.1 + 0.25);
             osc.stop(now + i * 0.1 + 0.25);
         });
-        // Efeito de moeda mais intenso
         const noise = audioContext.createBufferSource();
         const bufferSize = audioContext.sampleRate * 0.3;
         const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
@@ -825,7 +832,6 @@ async function tocarSomSlot(tipo) {
         noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
     } 
     else if (tipo === 'rebuyDuplo') {
-        // Sequência vencedora com 6 notas e efeito de vitória
         const notas = [523.25, 659.25, 783.99, 987.77, 1174.66, 1318.51];
         notas.forEach((freq, i) => {
             const osc = audioContext.createOscillator();
@@ -839,7 +845,6 @@ async function tocarSomSlot(tipo) {
             gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.12 + 0.3);
             osc.stop(now + i * 0.12 + 0.3);
         });
-        // Efeito de "jackpot" prolongado
         const oscEnd = audioContext.createOscillator();
         const gainEnd = audioContext.createGain();
         oscEnd.connect(gainEnd);
@@ -863,7 +868,6 @@ async function tocarSomSlot(tipo) {
         oscEnd2.stop(now + 1.1);
     } 
     else if (tipo === 'addon') {
-        // Jingle de power-up com 4 notas e efeito ascendente
         const notas = [659.25, 783.99, 987.77, 1318.51];
         notas.forEach((freq, i) => {
             const osc = audioContext.createOscillator();
@@ -877,7 +881,6 @@ async function tocarSomSlot(tipo) {
             gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.12 + 0.35);
             osc.stop(now + i * 0.12 + 0.35);
         });
-        // Efeito de "power up" mais pronunciado
         const oscPower = audioContext.createOscillator();
         const gainPower = audioContext.createGain();
         oscPower.connect(gainPower);
@@ -890,7 +893,6 @@ async function tocarSomSlot(tipo) {
         oscPower.stop(now + 0.9);
     }
     else if (tipo === 'eliminacao') {
-        // Som grave e impactante para eliminação - "Gong" com ruído de queda
         const osc = audioContext.createOscillator();
         const gain = audioContext.createGain();
         osc.connect(gain);
@@ -902,7 +904,6 @@ async function tocarSomSlot(tipo) {
         gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.5);
         osc.stop(now + 1.5);
         
-        // Segundo som grave
         const osc2 = audioContext.createOscillator();
         const gain2 = audioContext.createGain();
         osc2.connect(gain2);
@@ -914,7 +915,6 @@ async function tocarSomSlot(tipo) {
         gain2.gain.exponentialRampToValueAtTime(0.0001, now + 1.3);
         osc2.stop(now + 1.3);
         
-        // Efeito de "queda" com ruído
         const noise = audioContext.createBufferSource();
         const bufferSize = audioContext.sampleRate * 0.8;
         const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
@@ -958,6 +958,10 @@ function copiarPix(nome) {
     } else {
         mostrarToast(`⚠️ Nenhuma chave PIX cadastrada para ${nome}`);
     }
+}
+
+function getFotoJogador(nome) {
+    return fotosJogadores[nome] || `https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=d4a121&color=000&size=60`;
 }
 
 function isAddonGratis(nome) {
@@ -1066,7 +1070,7 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true) {
 }
 
 // ==================== POPUPS PROFISSIONAIS ====================
-function mostrarPopupConfirmacao(titulo, nomeJogador, onConfirm) {
+function mostrarPopupConfirmacao(titulo, nomeJogador, fotoUrl, onConfirm) {
     const existingPopup = document.querySelector('.popup-confirmacao');
     if (existingPopup) existingPopup.remove();
     
@@ -1078,8 +1082,11 @@ function mostrarPopupConfirmacao(titulo, nomeJogador, onConfirm) {
                 <h3>${titulo}</h3>
             </div>
             <div class="popup-body">
-                <p>Confirmar para o jogador</p>
-                <div class="jogador-destaque">${nomeJogador}</div>
+                <p>Confirmar para</p>
+                <div class="jogador-info-popup">
+                    <img class="jogador-foto-popup" src="${fotoUrl}" onerror="this.style.display='none'">
+                    <div class="jogador-destaque">${nomeJogador}</div>
+                </div>
             </div>
             <div class="popup-buttons">
                 <button class="btn-popup-cancelar" id="popupCancelarBtn">CANCELAR</button>
@@ -1100,7 +1107,7 @@ function mostrarPopupConfirmacao(titulo, nomeJogador, onConfirm) {
     });
 }
 
-function mostrarPopupEliminacao(nomeJogador, onConfirm) {
+function mostrarPopupEliminacao(nomeJogador, fotoUrl, onConfirm) {
     const existingPopup = document.querySelector('.popup-confirmacao');
     if (existingPopup) existingPopup.remove();
     
@@ -1113,9 +1120,12 @@ function mostrarPopupEliminacao(nomeJogador, onConfirm) {
             </div>
             <div class="popup-body">
                 <p>Deseja eliminar</p>
-                <div class="jogador-destaque">${nomeJogador}</div>
+                <div class="jogador-info-popup">
+                    <img class="jogador-foto-popup" src="${fotoUrl}" onerror="this.style.display='none'">
+                    <div class="jogador-destaque">${nomeJogador}</div>
+                </div>
                 <div class="popup-input-group">
-                    <label>📊 Quantidade de KO's que o jogador fez</label>
+                    <label><span class="icone-luva">🥊</span> Quantidade de KO's que o jogador fez</label>
                     <input type="number" id="popupKos" min="0" value="0" step="1">
                 </div>
             </div>
@@ -1224,7 +1234,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         classificacaoData = snapshot.exists() ? snapshot.val() : [];
         atualizarClassificacaoAtual();
         atualizarHistoricoEtapas();
-        atualizarTabelaEliminadosMF();
     });
     
     db.ref('historicoEtapas').on('value', (snapshot) => {
@@ -1242,10 +1251,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     inicializarEventos();
 });
-
-function getFotoJogador(nome) {
-    return fotosJogadores[nome] || `https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=d4a121&color=000&size=45`;
-}
 
 function tocarAlertaMesaFinal() {
     if (!audioContext) return;
@@ -1336,7 +1341,8 @@ function aplicarMelhorMao() {
         mostrarToast('Selecione um jogador!');
         return;
     }
-    mostrarPopupConfirmacao('🏆 MELHOR MÃO', jogadorNome, () => {
+    const fotoUrl = getFotoJogador(jogadorNome);
+    mostrarPopupConfirmacao('🏆 MELHOR MÃO', jogadorNome, fotoUrl, () => {
         db.ref('melhorMao').set(jogadorNome);
         let jogadorEncontrado = null;
         if (mesasData.preta?.some(j => j.nome === jogadorNome)) {
@@ -1358,30 +1364,13 @@ function aplicarMelhorMao() {
     });
 }
 
-function atualizarTabelaEliminadosMF() {
-    const eliminados = classificacaoData.filter(c => c.posicao <= 9 && c.posicao >= 1).sort((a,b) => a.posicao - b.posicao);
-    const tbody = document.getElementById('eliminadosMesaFinalBody');
-    const tabelaDiv = document.getElementById('tabelaEliminadosMF');
-    if (tbody && eliminados.length > 0) {
-        tabelaDiv.style.display = 'block';
-        tbody.innerHTML = eliminados.map(e => `
-            <tr>
-                <td><strong>${e.posicao}º</strong></td>
-                <td>${e.nome}</td>
-                <td>${e.kos || 0}</td>
-                <td>${e.premio ? `R$ ${e.premio.toFixed(2)}` : '-'}</td>
-            </tr>
-        `).join('');
-    } else if (tabelaDiv) tabelaDiv.style.display = 'none';
-}
-
 function atualizarClassificacaoAtual() {
     const tbody = document.getElementById('classificacaoBodyAtual');
     if (!tbody) return;
     const ordenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
     const top20 = ordenada.slice(0, 20);
     if (top20.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda</td><\/tr>';
+        tbody.innerHTML = '</table><td colspan="8">Nenhum jogador eliminado ainda</td><\/tr>';
         return;
     }
     tbody.innerHTML = top20.map(j => {
@@ -1426,7 +1415,6 @@ function verificarMesaFinal() {
         } else if (vivos.length === 1 && !classificacaoData.some(c => c.posicao === 1)) {
             finalizarComCampeao(vivos[0]);
         }
-        atualizarTabelaEliminadosMF();
     }
 }
 
@@ -1516,7 +1504,6 @@ function confirmarEliminacaoMF() {
             }
             renderizarMesaFinal();
             atualizarStatsCards();
-            atualizarTabelaEliminadosMF();
             atualizarClassificacaoAtual();
         }
     }
@@ -1537,10 +1524,12 @@ function finalizarComCampeao(campeao) {
                 <h3>🏆 CAMPEÃO! 🏆</h3>
             </div>
             <div class="popup-body">
-                <p>CAMPEÃO</p>
-                <div class="jogador-destaque">${campeao.nome}</div>
+                <div class="jogador-info-popup">
+                    <img class="jogador-foto-popup" src="${getFotoJogador(campeao.nome)}" onerror="this.style.display='none'">
+                    <div class="jogador-destaque">${campeao.nome}</div>
+                </div>
                 <div class="popup-input-group" style="margin-top: 20px;">
-                    <label>📊 Quantos KO's ele fez no total?</label>
+                    <label>🥊 Quantos KO's ele fez no total?</label>
                     <input type="number" id="popupKosCampeao" min="0" value="0" style="text-align: center;">
                 </div>
                 <div class="popup-input-group">
@@ -1585,7 +1574,6 @@ function finalizarComCampeao(campeao) {
         }
         mostrarTelaVerificarClassificacao();
         tocarAlertaMesaFinal();
-        atualizarTabelaEliminadosMF();
         atualizarClassificacaoAtual();
         popupCampeao.remove();
     };
@@ -1608,7 +1596,6 @@ function irParaMesaFinal() {
         document.getElementById('mesaFinalApp').classList.remove('hidden'); 
         renderizarMesaFinal(); 
         atualizarStatsCards(); 
-        atualizarTabelaEliminadosMF(); 
     } else if (torneioFinalizado) {
         mostrarToast('O torneio já foi finalizado! Inicie uma nova etapa para começar outro torneio.');
     }
@@ -1620,7 +1607,6 @@ function irParaMesaFinalTopo() {
         document.getElementById('mesaFinalApp').classList.remove('hidden'); 
         renderizarMesaFinal(); 
         atualizarStatsCards(); 
-        atualizarTabelaEliminadosMF(); 
     } else if (torneioFinalizado) {
         mostrarToast('O torneio já foi finalizado! Inicie uma nova etapa para começar outro torneio.');
     }
@@ -1701,7 +1687,8 @@ function confirmarRebuy(nome, tipo) {
         return;
     }
     const titulo = tipo === 'simples' ? '🎰 REBUY SIMPLES' : '🎰 REBUY DUPLO';
-    mostrarPopupConfirmacao(titulo, nome, () => {
+    const fotoUrl = getFotoJogador(nome);
+    mostrarPopupConfirmacao(titulo, nome, fotoUrl, () => {
         const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
         if (jogador) {
             const qtd = tipo === 'simples' ? 1 : 2;
@@ -1729,7 +1716,8 @@ function confirmarAddon(nome) {
     }
     const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
     if (jogador && !jogador.addon && !jogador.eliminado) {
-        mostrarPopupConfirmacao('💎 ADDON', nome, () => {
+        const fotoUrl = getFotoJogador(nome);
+        mostrarPopupConfirmacao('💎 ADDON', nome, fotoUrl, () => {
             jogador.addon = true;
             jogador.addonGratis = isAddonGratis(nome) || isAddonSemValor(nome);
             db.ref('mesas').set(mesasData);
@@ -1750,7 +1738,8 @@ function confirmarEliminacaoPopup(nome) {
         mostrarToast('O torneio já foi finalizado!');
         return;
     }
-    mostrarPopupEliminacao(nome, (kos) => {
+    const fotoUrl = getFotoJogador(nome);
+    mostrarPopupEliminacao(nome, fotoUrl, (kos) => {
         const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
         if (jogador && !jogador.eliminado) {
             contadorEliminados++;
@@ -1865,7 +1854,8 @@ function enviarClassificacaoWhatsApp() {
 
 function iniciarEtapaAdmin() {
     const novaEtapa = parseInt(document.getElementById('adminSelectEtapa').value);
-    mostrarPopupConfirmacao('🔄 INICIAR ETAPA', `${novaEtapa}ª ETAPA`, () => {
+    const fotoUrl = 'https://ui-avatars.com/api/?name=Etapa&background=d4a121&color=000&size=60';
+    mostrarPopupConfirmacao('🔄 INICIAR ETAPA', `${novaEtapa}ª ETAPA`, fotoUrl, () => {
         if (classificacaoData.length > 0 || totalJogadoresIniciais > 0) {
             salvarEtapaNoHistorico();
             mostrarToast(`✅ ${config.etapa}ª ETAPA salva no histórico!`);
@@ -1903,7 +1893,8 @@ function finalizarEtapaMostrarClassificacao() {
     const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
     const vivos = todosJogadores.filter(j => !j.eliminado);
     if (vivos.length > 0) {
-        mostrarPopupConfirmacao('⚠️ FINALIZAR ETAPA', '', () => {
+        const fotoUrl = 'https://ui-avatars.com/api/?name=FINAL&background=d4a121&color=000&size=60';
+        mostrarPopupConfirmacao('⚠️ FINALIZAR ETAPA', 'ATENÇÃO!', fotoUrl, () => {
             const jogadoresOrdenados = [...vivos].sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
             for (let i = 0; i < jogadoresOrdenados.length; i++) {
                 const jogador = jogadoresOrdenados[i];
@@ -1990,7 +1981,7 @@ function atualizarAdminEstatisticas() {
     const rankingBody = document.getElementById('adminRankingBody');
     if (rankingBody) {
         if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy<\/td><\/tr>';
-        else rankingBody.innerHTML = ranking.map((j,i) => `<tr>
+        else rankingBody.innerHTML = ranking.map((j,i) => `<td>
                     <td>${i+1}<\/td>
                     <td>${j.nome}${j.premio ? ` 💰 R$ ${j.premio}` : ''}<\/td>
                     <td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}<\/td>
@@ -2036,7 +2027,7 @@ function atualizarHistoricoEtapas() {
                                         <td><strong>${j.pontosTotal || j.pontosPosicao || 0}</strong></td>
                                         <td>${j.premio ? `R$ ${j.premio}` : '-'}</td>
                                         <td>${temPix ? `<button class="btn-copiar-pix-classif" onclick="copiarPix('${j.nome.replace(/'/g, "\\'")}')">📋 COPIAR PIX</button>` : '❌ Sem Pix'}</td>
-                                    </td>`;
+                                    </tr>`;
                                 }).join('')}
                             </tbody>
                         </table>
@@ -2051,7 +2042,8 @@ function toggleEtapaVerificar(idx) {
 }
 
 function removerEtapaHistorico(idx) {
-    mostrarPopupConfirmacao('🗑️ REMOVER ETAPA', `${historicoEtapas[idx].etapaNumero}ª ETAPA`, () => {
+    const fotoUrl = 'https://ui-avatars.com/api/?name=REMOVER&background=d4a121&color=000&size=60';
+    mostrarPopupConfirmacao('🗑️ REMOVER ETAPA', `${historicoEtapas[idx].etapaNumero}ª ETAPA`, fotoUrl, () => {
         historicoEtapas.splice(idx, 1);
         db.ref('historicoEtapas').set(historicoEtapas);
         atualizarHistoricoEtapas();
@@ -2060,7 +2052,8 @@ function removerEtapaHistorico(idx) {
 }
 
 function apagarHistorico() { 
-    mostrarPopupConfirmacao('⚠️ APAGAR HISTÓRICO', '', () => {
+    const fotoUrl = 'https://ui-avatars.com/api/?name=APAGAR&background=d4a121&color=000&size=60';
+    mostrarPopupConfirmacao('⚠️ APAGAR HISTÓRICO', 'HISTÓRICO COMPLETO', fotoUrl, () => {
         historicoEtapas = []; 
         db.ref('historicoEtapas').set([]); 
         mostrarToast('✅ Histórico apagado!'); 
@@ -2191,7 +2184,8 @@ function downloadCSV(csv, nome) {
 }
 
 function apagarTodosDados() { 
-    mostrarPopupConfirmacao('⚠️ APAGAR TODOS OS DADOS', '', () => {
+    const fotoUrl = 'https://ui-avatars.com/api/?name=APAGAR&background=d4a121&color=000&size=60';
+    mostrarPopupConfirmacao('⚠️ APAGAR TODOS OS DADOS', 'TODOS OS DADOS', fotoUrl, () => {
         document.getElementById('modalSenhaApagar').classList.add('active');
     });
 }
