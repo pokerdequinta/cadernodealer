@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -180,6 +181,7 @@
         .flex-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         .nav-tab-admin { padding: 10px 20px; background: transparent; border: none; color: #fff; cursor: pointer; font-weight: bold; border-radius: 8px 8px 0 0; font-family: 'Anton', sans-serif; }
         .nav-tab-admin.active { background: #d4a121; color: #000; }
+        .admin-tab-content { display: block; }
         .admin-tab-content.hidden { display: none; }
         .tela-verificar-classificacao { min-height: 100vh; padding: 20px; background: #0d1b0d; }
         .tela-verificar-classificacao.hidden { display: none; }
@@ -747,7 +749,6 @@ let layoutImportado = { preta: [], amarela: [] };
 let arquivoSelecionado = null;
 let jogadorCorrigindo = null;
 let jogadorEliminando = null;
-let jogadorEliminandoAcao = null;
 let contadorEliminados = 0;
 let totalJogadoresIniciais = 0;
 let mesaFinalAtiva = false;
@@ -803,7 +804,6 @@ async function tocarSomCashout(tipo) {
     masterGain.connect(audioContext.destination);
     
     if (tipo === 'rebuy') {
-        // Som de caixa registradora para Rebuy Simples
         const notas = [440, 440, 523.25, 523.25];
         notas.forEach((freq, i) => {
             const osc = audioContext.createOscillator();
@@ -817,7 +817,6 @@ async function tocarSomCashout(tipo) {
             gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 0.15);
             osc.stop(now + i * 0.08 + 0.15);
         });
-        // Efeito de moeda caindo
         const noise = audioContext.createBufferSource();
         const bufferSize = audioContext.sampleRate * 0.2;
         const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
@@ -834,7 +833,6 @@ async function tocarSomCashout(tipo) {
         noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
     } 
     else if (tipo === 'rebuyDuplo') {
-        // Som de caixa registradora com "ding" duplo
         const notas = [440, 523.25, 659.25, 523.25, 440];
         notas.forEach((freq, i) => {
             const osc = audioContext.createOscillator();
@@ -848,7 +846,6 @@ async function tocarSomCashout(tipo) {
             gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.1 + 0.2);
             osc.stop(now + i * 0.1 + 0.2);
         });
-        // Efeito de moeda dupla
         const noise = audioContext.createBufferSource();
         const bufferSize = audioContext.sampleRate * 0.3;
         const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
@@ -864,7 +861,6 @@ async function tocarSomCashout(tipo) {
         noise.start(now + 0.4);
         noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
         
-        // Segundo "ding" de confirmação
         const oscEnd = audioContext.createOscillator();
         const gainEnd = audioContext.createGain();
         oscEnd.connect(gainEnd);
@@ -943,6 +939,10 @@ async function tocarSomCashout(tipo) {
     setTimeout(() => {
         masterGain.disconnect();
     }, 2000);
+}
+
+function tocarSomSlot(tipo) {
+    tocarSomCashout(tipo);
 }
 // ====================================================================
 
@@ -1440,7 +1440,7 @@ function atualizarClassificacaoAtual() {
     const ordenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
     const top20 = ordenada.slice(0, 20);
     if (top20.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda</td><\/tr>';
+        tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda<\/tr>';
         return;
     }
     tbody.innerHTML = top20.map(j => {
@@ -1554,7 +1554,7 @@ function confirmarEliminacaoMFPopup(nome) {
                 original.premio = premio;
                 db.ref('mesas').set(mesasData); 
             }
-            tocarSomSlot('eliminacao');
+            tocarSomCashout('eliminacao');
             let msg = `✅ ${jogador.nome} eliminado na ${posicao}ª posição com ${kos} KO(s)!`;
             if (premio > 0) msg += `\n💰 Premiação: R$ ${premio.toFixed(2)}`;
             mostrarToast(msg);
@@ -2134,8 +2134,9 @@ function processarLayout() {
                 if (matchPreta) { mesa = 'preta'; pos = parseInt(matchPreta[1]); } 
                 else if (matchAmarela) { mesa = 'amarela'; pos = parseInt(matchAmarela[1]); } 
                 if (mesa && pos) { 
-                    const nome = cells[1]?.textContent?.trim()?.replace(/\.+/g, '').trim(); 
-                    if (nome) layoutImportado[mesa].push({ posicao: pos, nome }); 
+                    let nome = cells[1]?.textContent?.trim() || '';
+                    nome = nome.replace(/\.+/g, '').trim();
+                    if (nome && nome !== 'Seat' && nome !== 'MESA') layoutImportado[mesa].push({ posicao: pos, nome }); 
                 } 
             } 
         }); 
@@ -2148,20 +2149,27 @@ function processarLayout() {
         document.getElementById('previewMesas').style.display = 'grid'; 
         document.getElementById('importResult').style.display = 'block'; 
         document.getElementById('importResult').innerHTML = `✅ Analisado! Preta: ${layoutImportado.preta.length} | Amarela: ${layoutImportado.amarela.length}`; 
+        
+        // Remove botão existente se houver
+        const existingBtn = document.querySelector('#previewMesas + button');
+        if (existingBtn) existingBtn.remove();
+        
         const btn = document.createElement('button'); 
         btn.className = 'btn btn-success'; 
         btn.textContent = '✅ APLICAR LAYOUT'; 
         btn.style.marginTop = '20px'; 
         btn.style.width = '100%'; 
-        btn.onclick = aplicarLayout; 
-        const old = document.querySelector('#previewMesas + button'); 
-        if (old) old.remove(); 
+        btn.onclick = () => aplicarLayout();
         document.getElementById('previewMesas').after(btn); 
     }; 
     reader.readAsText(arquivoSelecionado); 
 }
 
 function aplicarLayout() { 
+    if (layoutImportado.preta.length === 0 && layoutImportado.amarela.length === 0) {
+        mostrarToast('Nenhum jogador encontrado no layout!');
+        return;
+    }
     mesasData.preta = layoutImportado.preta.map(p => ({ nome: p.nome, posicao: p.posicao, rebuys: 0, addon: false, addonGratis: isAddonGratis(p.nome) || isAddonSemValor(p.nome), eliminado: false, timestamp: Date.now() })); 
     mesasData.amarela = layoutImportado.amarela.map(p => ({ nome: p.nome, posicao: p.posicao, rebuys: 0, addon: false, addonGratis: isAddonGratis(p.nome) || isAddonSemValor(p.nome), eliminado: false, timestamp: Date.now() })); 
     totalJogadoresIniciais = mesasData.preta.length + mesasData.amarela.length; 
@@ -2352,7 +2360,15 @@ function inicializarEventos() {
     if (btnCancelCorrigir) btnCancelCorrigir.onclick = () => document.getElementById('modalCorrigir').classList.remove('active');
     if (btnSalvarCorrigir) btnSalvarCorrigir.onclick = salvarCorrecao;
     if (btnCancelEliminarMF) btnCancelEliminarMF.onclick = () => document.getElementById('modalEliminarMesaFinal').classList.remove('active');
-    if (btnConfirmEliminarMF) btnConfirmEliminarMF.onclick = confirmarEliminacaoMF;
+    if (btnConfirmEliminarMF) btnConfirmEliminarMF.onclick = () => {
+        if (jogadorEliminandoMF && !torneioFinalizado) {
+            const kos = parseInt(document.getElementById('quantidadeKOsMF').value) || 0;
+            const premio = parseFloat(document.getElementById('premioMF').value) || 0;
+            confirmarEliminacaoMFPopup(jogadorEliminandoMF);
+        }
+        document.getElementById('modalEliminarMesaFinal').classList.remove('active');
+        jogadorEliminandoMF = null;
+    };
     if (btnEscolherArquivo && fileInput) btnEscolherArquivo.onclick = () => fileInput.click();
     if (fileInput) fileInput.onchange = (e) => { if (e.target.files[0]) { arquivoSelecionado = e.target.files[0]; if (btnProcessarLayout) btnProcessarLayout.style.display = 'inline-block'; } };
     if (btnProcessarLayout) btnProcessarLayout.onclick = processarLayout;
@@ -2361,13 +2377,16 @@ function inicializarEventos() {
     if (btnCopiar) btnCopiar.onclick = copiarCSV;
     if (btnExportarClassificacaoCSV) btnExportarClassificacaoCSV.onclick = exportarClassificacaoCSV;
     
-    document.querySelectorAll('.nav-tab-admin').forEach(tab => {
+    // CORREÇÃO DO BOTÃO ESTATÍSTICAS
+    const navTabs = document.querySelectorAll('.nav-tab-admin');
+    navTabs.forEach(tab => {
         tab.onclick = () => {
-            document.querySelectorAll('.nav-tab-admin').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.add('hidden'));
+            navTabs.forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
-            const tabId = document.getElementById(`admin-${tab.dataset.adminTab}`);
-            if (tabId) tabId.classList.remove('hidden');
+            const tabId = tab.getAttribute('data-admin-tab');
+            document.getElementById('admin-resumo').classList.add('hidden');
+            document.getElementById('admin-estatisticas').classList.add('hidden');
+            document.getElementById(`admin-${tabId}`).classList.remove('hidden');
         };
     });
 }
