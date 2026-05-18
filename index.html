@@ -126,8 +126,9 @@
         .mesa-indicator { background: rgba(16, 40, 16, 0.9); border-radius: 15px; padding: 10px; text-align: center; margin-bottom: 10px; }
         .mesa-indicator-text { font-family: 'Anton', sans-serif; font-size: 1.2em; text-transform: uppercase; }
         .jogadores-lados { display: flex; flex: 1; overflow: hidden; padding: 15px; gap: 20px; }
-        .lado-esquerdo, .lado-direito { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: rgba(0, 0, 0, 0.2); border-radius: 15px; padding: 10px; }
-        .jogadores-grid { display: flex; flex-direction: column; gap: 10px; }
+        .lado-esquerdo { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: rgba(0, 0, 0, 0.2); border-radius: 15px; padding: 10px; }
+        .lado-direito { display: none; } /* Oculta o container direito */
+        .jogadores-grid { display: flex; flex-direction: column; gap: 10px; width: 100%; }
         .jogador-card { background: rgba(255, 255, 255, 0.08); border: 2px solid #d4a121; border-radius: 12px; padding: 10px; display: flex; align-items: center; gap: 10px; transition: all 0.3s; backdrop-filter: blur(5px); }
         .jogador-card.melhor-mao { background: linear-gradient(135deg, #d4a12130, #d4a12110); border: 3px solid #FFD700; box-shadow: 0 0 20px rgba(212, 161, 33, 0.5); animation: glow 1.5s infinite; }
         @keyframes glow { 0%, 100% { box-shadow: 0 0 10px rgba(212, 161, 33, 0.5); } 50% { box-shadow: 0 0 25px rgba(212, 161, 33, 0.8); } }
@@ -559,7 +560,6 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                 <h3>📜 HISTÓRICO DE ETAPAS</h3>
                 <button class="btn btn-danger" id="btnApagarHistoricoVerificar">🗑️ APAGAR HISTÓRICO</button>
-                <button class="btn btn-info" id="btnExportarHistoricoVerificar">📊 EXPORTAR HISTÓRICO</button>
             </div>
             <div id="etapasListVerificar" class="etapas-list"></div>
         </div>
@@ -623,9 +623,7 @@
         <div class="lado-esquerdo">
             <div class="jogadores-grid" id="jogadoresGridEsquerda"></div>
         </div>
-        <div class="lado-direito">
-            <div class="jogadores-grid" id="jogadoresGridDireita"></div>
-        </div>
+        <div class="lado-direito"></div>
     </div>
 </div>
 
@@ -663,7 +661,7 @@
     </div>
 </div>
 
-<!-- Modais Existentes (Mantidos para compatibilidade com correções e eliminações) -->
+<!-- Modais Existentes -->
 <div class="modal" id="modalCorrigir">
     <div class="modal-content">
         <h3>🔧 Corrigir valores</h3>
@@ -714,7 +712,7 @@
 </div>
 
 <script>
-// Configuração do Firebase
+// ==================== CONFIGURAÇÃO DO FIREBASE ====================
 const firebaseConfig = {
     apiKey: "AIzaSyD_XXjcjJYM73wLTTzpDgzKCOZnztcJhjE",
     authDomain: "poker-de-quinta.firebaseapp.com",
@@ -761,7 +759,7 @@ let melhorMaoAtual = null;
 let audioContext = null;
 let fotosJogadores = {};
 
-// Chaves PIX dos jogadores (apenas para a tela de classificação)
+// Chaves PIX dos jogadores
 const chavesPix = {
     'Amarildo': { chave: '41987779470', tipo: 'Telefone' },
     'Boy': { chave: '41998294734', tipo: 'Telefone' },
@@ -807,8 +805,7 @@ async function tocarSomSlot(tipo) {
     masterGain.connect(audioContext.destination);
     
     if (tipo === 'rebuy') {
-        // Som de slot machine para Rebuy Simples: 3 notas ascendentes
-        const notas = [523.25, 659.25, 783.99]; // C5, E5, G5
+        const notas = [523.25, 659.25, 783.99];
         notas.forEach((freq, i) => {
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
@@ -821,7 +818,6 @@ async function tocarSomSlot(tipo) {
             gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.1 + 0.3);
             osc.stop(now + i * 0.1 + 0.3);
         });
-        // Toque de moeda caindo (ruído filtrado)
         const noise = audioContext.createBufferSource();
         const bufferSize = audioContext.sampleRate * 0.2;
         const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
@@ -838,8 +834,7 @@ async function tocarSomSlot(tipo) {
         noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
     } 
     else if (tipo === 'rebuyDuplo') {
-        // Som de slot machine para Rebuy Duplo: sequência de vitória com 5 notas e "ding" final
-        const notas = [523.25, 659.25, 783.99, 987.77, 1174.66]; // C5, E5, G5, B5, D6
+        const notas = [523.25, 659.25, 783.99, 987.77, 1174.66];
         notas.forEach((freq, i) => {
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
@@ -852,7 +847,6 @@ async function tocarSomSlot(tipo) {
             gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.12 + 0.25);
             osc.stop(now + i * 0.12 + 0.25);
         });
-        // Efeito adicional de "jackpot" (ruído com pitch)
         const oscEnd = audioContext.createOscillator();
         const gainEnd = audioContext.createGain();
         oscEnd.connect(gainEnd);
@@ -865,8 +859,7 @@ async function tocarSomSlot(tipo) {
         oscEnd.stop(now + 1.0);
     } 
     else if (tipo === 'addon') {
-        // Som de slot machine para Addon: jingle de 3 notas com "chimes"
-        const notas = [659.25, 783.99, 987.77]; // E5, G5, B5
+        const notas = [659.25, 783.99, 987.77];
         notas.forEach((freq, i) => {
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
@@ -879,7 +872,6 @@ async function tocarSomSlot(tipo) {
             gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.15 + 0.4);
             osc.stop(now + i * 0.15 + 0.4);
         });
-        // Efeito de "power up"
         const oscPower = audioContext.createOscillator();
         const gainPower = audioContext.createGain();
         oscPower.connect(gainPower);
@@ -892,7 +884,6 @@ async function tocarSomSlot(tipo) {
         oscPower.stop(now + 0.8);
     }
     
-    // Desconectar master gain após alguns segundos
     setTimeout(() => {
         masterGain.disconnect();
     }, 1500);
@@ -1045,7 +1036,6 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true) {
 
 // ==================== POPUPS PROFISSIONAIS ====================
 function mostrarPopupConfirmacao(titulo, mensagem, detalhe, onConfirm) {
-    // Remove popup existente se houver
     const existingPopup = document.querySelector('.popup-confirmacao');
     if (existingPopup) existingPopup.remove();
     
@@ -1362,7 +1352,7 @@ function atualizarClassificacaoAtual() {
     const top20 = ordenada.slice(0, 20);
     
     if (top20.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda</td><\/tr>';
+        tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda</td></td>';
         return;
     }
     
@@ -1533,7 +1523,6 @@ function finalizarComCampeao(campeao) {
     torneioFinalizado = true;
     db.ref('torneioFinalizado').set(true);
     
-    // Usando popup profissional para capturar KO's e premiação do campeão
     const popupCampeao = document.createElement('div');
     popupCampeao.className = 'popup-confirmacao';
     popupCampeao.innerHTML = `
@@ -1579,7 +1568,6 @@ function finalizarComCampeao(campeao) {
         classificacaoData.push(item);
         db.ref('classificacao').set(classificacaoData);
         
-        // Marcar todos os jogadores como eliminados
         const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
         todosJogadores.forEach(j => {
             if (!j.eliminado) {
@@ -1673,9 +1661,8 @@ function iniciarApp() {
 function atualizarGridJogadores() {
     const jogadores = mesasData[mesaAtual] || [];
     const gridEsquerda = document.getElementById('jogadoresGridEsquerda');
-    const gridDireita = document.getElementById('jogadoresGridDireita');
     
-    if (!gridEsquerda || !gridDireita) return;
+    if (!gridEsquerda) return;
     
     if (jogadores.length === 0) {
         const emptyMessage = `
@@ -1686,14 +1673,10 @@ function atualizarGridJogadores() {
             </div>
         `;
         gridEsquerda.innerHTML = emptyMessage;
-        gridDireita.innerHTML = '';
         return;
     }
     
     const ordenados = [...jogadores].sort((a,b) => (a.posicao||999) - (b.posicao||999));
-    const metade = Math.ceil(ordenados.length / 2);
-    const ladoEsquerdo = ordenados.slice(0, metade);
-    const ladoDireito = ordenados.slice(metade);
     
     function renderizarLado(jogadoresLista) {
         return jogadoresLista.map(j => {
@@ -1726,21 +1709,22 @@ function atualizarGridJogadores() {
         }).join('');
     }
     
-    gridEsquerda.innerHTML = renderizarLado(ladoEsquerdo);
-    gridDireita.innerHTML = renderizarLado(ladoDireito);
+    gridEsquerda.innerHTML = renderizarLado(ordenados);
 }
 
-// Novas funções com popups profissionais e sons
 function confirmarRebuy(nome, tipo) {
     if (torneioFinalizado) {
         mostrarToast('O torneio já foi finalizado!');
         return;
     }
     const qtdTexto = tipo === 'simples' ? '1x' : '2x (DUPLO)';
+    const valor = VALOR_REBUY * (tipo === 'simples' ? 1 : 2);
+    const titulo = tipo === 'simples' ? '🎰 REBUY SIMPLES' : '🎰 REBUY DUPLO';
+    
     mostrarPopupConfirmacao(
-        '🎰 REBUY',
+        titulo,
         `Confirmar REBUY ${qtdTexto} para ${nome}?`,
-        `Valor: R$ ${VALOR_REBUY * (tipo === 'simples' ? 1 : 2)}`,
+        `Valor: R$ ${valor}`,
         () => {
             const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
             if (jogador) {
@@ -1751,7 +1735,6 @@ function confirmarRebuy(nome, tipo) {
                 atualizarStatsCards();
                 atualizarAdminResumo();
                 atualizarAdminEstatisticas();
-                // Tocar som de slot machine correspondente
                 if (tipo === 'simples') {
                     tocarSomSlot('rebuy');
                 } else {
@@ -2012,7 +1995,7 @@ function atualizarAdminResumo() {
     const tbody = document.getElementById('adminResumoBody');
     if (!tbody) return;
     if (todos.length === 0) { 
-        tbody.innerHTML = '<td><td colspan="7">Nenhum dado<\/td><\/tr>'; 
+        tbody.innerHTML = '<tr><td colspan="7">Nenhum dado<\/td><\/tr>'; 
         document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00'; 
         return; 
     }
@@ -2097,10 +2080,12 @@ function atualizarHistoricoEtapas() {
                     <div class="etapa-classificacao" id="etapaVerificar-${idx}">
                         <table class="etapa-table">
                             <thead>
-                                <tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th><th>Prêmio</th></tr>
+                                <tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th><th>Prêmio</th><th>PIX</th></tr>
                             </thead>
                             <tbody>
-                                ${classificacaoOrdenada.slice(0, 20).map(j => `
+                                ${classificacaoOrdenada.slice(0, 20).map(j => {
+                                    const temPix = chavesPix[j.nome] && chavesPix[j.nome].chave;
+                                    return `
                                     <tr>
                                         <td><strong>${j.posicao}º</strong></td>
                                         <td>${j.nome || '?'}${j.premio ? ` 💰` : ''}</td>
@@ -2109,8 +2094,9 @@ function atualizarHistoricoEtapas() {
                                         <td>${j.kos || 0}</td>
                                         <td><strong>${j.pontosTotal || j.pontosPosicao || 0}</strong></td>
                                         <td>${j.premio ? `R$ ${j.premio}` : '-'}</td>
-                                    </tr>
-                                `).join('')}
+                                        <td>${temPix ? `<button class="btn-copiar-pix-classif" onclick="copiarPix('${j.nome.replace(/'/g, "\\'")}')">📋 COPIAR PIX</button>` : '❌ Sem Pix'}</td>
+                                    </tr>`;
+                                }).join('')}
                             </tbody>
                         </table>
                     </div>
@@ -2265,36 +2251,6 @@ function exportarClassificacaoCSV() {
     downloadCSV(csv, `classificacao-etapa${config.etapa}.csv`);
 }
 
-function exportarHistoricoCSV() { 
-    if (historicoEtapas.length === 0) { 
-        alert('Nenhuma etapa!'); 
-        return; 
-    } 
-    let csv = 'Etapa,Data,Jogador,Posição,Mesa,Pontos Posição,KO\'s,Pontos Total,Prêmio\n'; 
-    historicoEtapas.forEach((etapa, idx) => { 
-        const data = new Date(etapa.data).toLocaleString('pt-BR'); 
-        const num = etapa.etapaNumero; 
-        [...etapa.classificacao].sort((a,b) => a.posicao - b.posicao).forEach(j => { 
-            csv += `${num},"${data}","${j.nome}",${j.posicao},"${j.mesa}",${j.pontosPosicao},${j.kos||0},${j.pontosTotal||j.pontosPosicao},${j.premio || 0}\n`; 
-        }); 
-    }); 
-    downloadCSV(csv, 'historico-etapas.csv'); 
-}
-
-function copiarCSV() { 
-    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])]; 
-    if (todos.length === 0) { 
-        alert('Nenhum jogador!'); 
-        return; 
-    } 
-    let csv = ''; 
-    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => { 
-        const addonValor = j.addon ? '1' : '0';
-        csv += `${j.nome},${j.rebuys || 0},${addonValor}\n`; 
-    }); 
-    navigator.clipboard.writeText(csv).then(() => mostrarToast('✅ Dados copiados! (Nome,Rebuys,Addon)')).catch(() => mostrarToast('❌ Erro ao copiar')); 
-}
-
 function downloadCSV(csv, nome) { 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); 
     const link = document.createElement('a'); 
@@ -2357,12 +2313,10 @@ function inicializarEventos() {
     const btnVoltarVerificar = document.getElementById('btnVoltarVerificarInicio');
     const btnVerificarClassificacao = document.getElementById('btnVerificarClassificacao');
     const btnVerificarClassificacaoMF = document.getElementById('btnVerificarClassificacaoMF');
-    const btnExportarHistoricoVerificar = document.getElementById('btnExportarHistoricoVerificar');
     const btnApagarHistoricoVerificar = document.getElementById('btnApagarHistoricoVerificar');
     const btnSalvarEProxima = document.getElementById('btnSalvarEProximaEtapa');
     const btnEnviarWhatsApp = document.getElementById('btnEnviarWhatsApp');
     const btnFinalizarEtapa = document.getElementById('btnFinalizarEtapaMostrarClassificacao');
-    const btnExportHist = document.getElementById('btnExportarHistorico');
     const btnIniciarEtapa = document.getElementById('btnIniciarEtapaAdmin');
     const btnApagarHist = document.getElementById('btnApagarHistorico');
     const btnCancelApagarHist = document.getElementById('btnCancelarApagarHistorico');
@@ -2395,7 +2349,6 @@ function inicializarEventos() {
     if (btnVoltarVerificar) btnVoltarVerificar.onclick = () => { document.getElementById('telaVerificarClassificacao').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); };
     if (btnVerificarClassificacao) btnVerificarClassificacao.onclick = mostrarTelaVerificarClassificacao;
     if (btnVerificarClassificacaoMF) btnVerificarClassificacaoMF.onclick = mostrarTelaVerificarClassificacao;
-    if (btnExportarHistoricoVerificar) btnExportarHistoricoVerificar.onclick = exportarHistoricoCSV;
     if (btnApagarHistoricoVerificar) btnApagarHistoricoVerificar.onclick = apagarHistorico;
     if (btnCancelSenha) btnCancelSenha.onclick = () => { document.getElementById('modalSenhaAdmin').classList.remove('active'); document.getElementById('senhaAdmin').value = ''; };
     if (btnConfirmSenha) btnConfirmSenha.onclick = () => { if (document.getElementById('senhaAdmin').value === 'poker2026') { document.getElementById('modalSenhaAdmin').classList.remove('active'); document.getElementById('telaSelecao').classList.add('hidden'); document.getElementById('telaAdmin').classList.remove('hidden'); atualizarAdminResumo(); atualizarAdminEstatisticas(); atualizarHistoricoEtapas(); atualizarSelectMelhorMao(); } else alert('❌ Senha incorreta!'); document.getElementById('senhaAdmin').value = ''; };
@@ -2403,7 +2356,6 @@ function inicializarEventos() {
     if (btnSalvarEProxima) btnSalvarEProxima.onclick = salvarEProximaEtapa;
     if (btnEnviarWhatsApp) btnEnviarWhatsApp.onclick = enviarClassificacaoWhatsApp;
     if (btnFinalizarEtapa) btnFinalizarEtapa.onclick = finalizarEtapaMostrarClassificacao;
-    if (btnExportHist) btnExportHist.onclick = exportarHistoricoCSV;
     if (btnIniciarEtapa) btnIniciarEtapa.onclick = iniciarEtapaAdmin;
     if (btnApagarHist) btnApagarHist.onclick = () => document.getElementById('modalApagarHistorico').classList.add('active');
     if (btnCancelApagarHist) btnCancelApagarHist.onclick = () => document.getElementById('modalApagarHistorico').classList.remove('active');
@@ -2437,11 +2389,11 @@ function inicializarEventos() {
     });
 }
 
-// Funções globais para os botões
+// Funções globais
 window.confirmarRebuy = confirmarRebuy;
 window.confirmarAddon = confirmarAddon;
-window.adicionarRebuy = confirmarRebuy; // fallback
-window.adicionarAddon = confirmarAddon; // fallback
+window.adicionarRebuy = confirmarRebuy;
+window.adicionarAddon = confirmarAddon;
 window.abrirCorrecao = abrirCorrecao;
 window.abrirModalEliminar = abrirModalEliminar;
 window.abrirModalEliminarMF = abrirModalEliminarMF;
