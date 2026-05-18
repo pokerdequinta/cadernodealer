@@ -561,7 +561,7 @@
         <div class="verificar-header">
             <h1>📊 CLASSIFICAÇÃO GERAL DA 4ª ETAPA</h1>
             <div>
-                <button class="btn btn-warning" id="btnSalvarEProximaEtapa" style="margin-right: 10px;">💾 SALVAR E IR PARA PRÓXIMA ETAPA</button>
+                <button class="btn btn-warning" id="btnFinalizarEtapaVerificar" style="margin-right: 10px;">🏁 FINALIZAR ETAPA</button>
                 <button class="btn btn-info" id="btnEnviarWhatsApp" style="margin-right: 10px;">📱 ENVIAR PARA WHATSAPP</button>
                 <button class="btn btn-secondary" id="btnExportarClassificacaoCSV" style="margin-right: 10px;">📊 EXPORTAR CSV</button>
                 <button class="voltar-inicio-btn" id="btnVoltarVerificarInicio" style="padding: 12px 25px; background: #c72c48; color: #fff; border: none; border-radius: 8px; cursor: pointer;">← VOLTAR</button>
@@ -1030,11 +1030,12 @@ function prepararProximaEtapa() {
     }
 }
 
-function finalizarETAPARegistrarProxima(mostrarMensagem = true) {
+function finalizarETAPARegistrarProxima(mostrarMensagem = true, voltarParaSelecao = true) {
     const salvou = salvarEtapaNoHistorico();
     if (salvou) {
-        if (mostrarMensagem) mostrarToast(`✅ ${config.etapa}ª ETAPA salva no histórico com sucesso!`);
+        if (mostrarMensagem) mostrarToast(`✅ ${config.etapa}ª ETAPA finalizada e salva no histórico!`);
         prepararProximaEtapa();
+        
         mesasData = { preta: [], amarela: [] };
         classificacaoData = [];
         contadorEliminados = 0;
@@ -1042,11 +1043,13 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true) {
         totalJogadoresIniciais = 0;
         melhorMaoAtual = null;
         torneioFinalizado = false;
+        
         db.ref('mesas').set(mesasData);
         db.ref('classificacao').set(classificacaoData);
         db.ref('melhorMao').set(null);
         db.ref('mesaFinalAtiva').set(false);
         db.ref('torneioFinalizado').set(false);
+        
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
         atualizarHistoricoEtapas();
@@ -1054,10 +1057,19 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true) {
         atualizarBotoesMesaFinal();
         atualizarSelectMelhorMao();
         atualizarClassificacaoAtual();
+        
+        if (voltarParaSelecao) {
+            document.getElementById('telaVerificarClassificacao').classList.add('hidden');
+            document.getElementById('telaSelecao').classList.remove('hidden');
+            document.getElementById('appContainer').classList.add('hidden');
+            document.getElementById('mesaFinalApp').classList.add('hidden');
+            document.getElementById('telaAdmin').classList.add('hidden');
+        }
+        
         if (mostrarMensagem) {
             const proxima = config.etapa + 1;
             if (proxima <= 13) {
-                mostrarToast(`🎯 PRÓXIMA ETAPA: ${proxima}ª ETAPA!\n\nClique em "INICIAR ETAPA SELECIONADA" no painel administrativo para começar a próxima etapa.`);
+                mostrarToast(`🎯 PRÓXIMA ETAPA DISPONÍVEL: ${proxima}ª ETAPA!\n\nClique em "INICIAR ETAPA SELECIONADA" no painel administrativo para começar.`);
             } else {
                 mostrarToast(`🏆 PARABÉNS! Temporada concluída até a 13ª etapa!`);
             }
@@ -1370,7 +1382,7 @@ function atualizarClassificacaoAtual() {
     const ordenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
     const top20 = ordenada.slice(0, 20);
     if (top20.length === 0) {
-        tbody.innerHTML = '</table><td colspan="8">Nenhum jogador eliminado ainda</td><\/tr>';
+        tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda</td><\/tr>';
         return;
     }
     tbody.innerHTML = top20.map(j => {
@@ -1493,6 +1505,7 @@ function confirmarEliminacaoMF() {
                 original.premio = premio;
                 db.ref('mesas').set(mesasData); 
             }
+            tocarSomSlot('eliminacao');
             let msg = `✅ ${jogador.nome} eliminado na ${posicao}ª posição com ${qtdKos} KO(s)!`;
             if (premio > 0) msg += `\n💰 Premiação: R$ ${premio.toFixed(2)}`;
             mostrarToast(msg);
@@ -1572,9 +1585,7 @@ function finalizarComCampeao(campeao) {
         } else {
             mostrarToast(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)!`);
         }
-        mostrarTelaVerificarClassificacao();
-        tocarAlertaMesaFinal();
-        atualizarClassificacaoAtual();
+        finalizarETAPARegistrarProxima(true, true);
         popupCampeao.remove();
     };
 }
@@ -1585,8 +1596,7 @@ function finalizarTorneio() {
     db.ref('torneioFinalizado').set(true);
     db.ref('mesaFinalAtiva').set(false);
     mesaFinalAtiva = false;
-    mostrarTelaVerificarClassificacao();
-    tocarAlertaMesaFinal(); 
+    finalizarETAPARegistrarProxima(true, true);
     mostrarToast('🃏 TORNEIO FINALIZADO! 🃏'); 
 }
 
@@ -1825,12 +1835,8 @@ function mostrarTelaVerificarClassificacao() {
     atualizarHistoricoEtapas();
 }
 
-function salvarEProximaEtapa() {
-    if (finalizarETAPARegistrarProxima(true)) {
-        document.getElementById('telaVerificarClassificacao').classList.add('hidden');
-        document.getElementById('telaSelecao').classList.remove('hidden');
-        document.getElementById('telaAdmin').classList.add('hidden');
-    }
+function finalizarEtapaDaTelaVerificacao() {
+    finalizarETAPARegistrarProxima(true, true);
 }
 
 function enviarClassificacaoWhatsApp() {
@@ -1918,12 +1924,10 @@ function finalizarEtapaMostrarClassificacao() {
             }
             db.ref('classificacao').set(classificacaoData);
             db.ref('mesas').set(mesasData);
-            finalizarETAPARegistrarProxima(true);
-            mostrarTelaVerificarClassificacao();
+            finalizarETAPARegistrarProxima(true, true);
         });
     } else {
-        finalizarETAPARegistrarProxima(true);
-        mostrarTelaVerificarClassificacao();
+        finalizarETAPARegistrarProxima(true, true);
     }
 }
 
@@ -1981,7 +1985,7 @@ function atualizarAdminEstatisticas() {
     const rankingBody = document.getElementById('adminRankingBody');
     if (rankingBody) {
         if (ranking.length === 0) rankingBody.innerHTML = '<tr><td colspan="4">Nenhum rebuy<\/td><\/tr>';
-        else rankingBody.innerHTML = ranking.map((j,i) => `<td>
+        else rankingBody.innerHTML = ranking.map((j,i) => `<tr>
                     <td>${i+1}<\/td>
                     <td>${j.nome}${j.premio ? ` 💰 R$ ${j.premio}` : ''}<\/td>
                     <td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}<\/td>
@@ -2234,9 +2238,8 @@ function inicializarEventos() {
     const btnVerificarClassificacao = document.getElementById('btnVerificarClassificacao');
     const btnVerificarClassificacaoMF = document.getElementById('btnVerificarClassificacaoMF');
     const btnApagarHistoricoVerificar = document.getElementById('btnApagarHistoricoVerificar');
-    const btnSalvarEProxima = document.getElementById('btnSalvarEProximaEtapa');
+    const btnFinalizarEtapaVerificar = document.getElementById('btnFinalizarEtapaVerificar');
     const btnEnviarWhatsApp = document.getElementById('btnEnviarWhatsApp');
-    const btnFinalizarEtapa = document.getElementById('btnFinalizarEtapaMostrarClassificacao');
     const btnIniciarEtapa = document.getElementById('btnIniciarEtapaAdmin');
     const btnApagarHist = document.getElementById('btnApagarHistorico');
     const btnCancelApagarHist = document.getElementById('btnCancelarApagarHistorico');
@@ -2268,12 +2271,11 @@ function inicializarEventos() {
     if (btnVerificarClassificacao) btnVerificarClassificacao.onclick = mostrarTelaVerificarClassificacao;
     if (btnVerificarClassificacaoMF) btnVerificarClassificacaoMF.onclick = mostrarTelaVerificarClassificacao;
     if (btnApagarHistoricoVerificar) btnApagarHistoricoVerificar.onclick = apagarHistorico;
+    if (btnFinalizarEtapaVerificar) btnFinalizarEtapaVerificar.onclick = finalizarEtapaDaTelaVerificacao;
+    if (btnEnviarWhatsApp) btnEnviarWhatsApp.onclick = enviarClassificacaoWhatsApp;
     if (btnCancelSenha) btnCancelSenha.onclick = () => { document.getElementById('modalSenhaAdmin').classList.remove('active'); document.getElementById('senhaAdmin').value = ''; };
     if (btnConfirmSenha) btnConfirmSenha.onclick = () => { if (document.getElementById('senhaAdmin').value === 'poker2026') { document.getElementById('modalSenhaAdmin').classList.remove('active'); document.getElementById('telaSelecao').classList.add('hidden'); document.getElementById('telaAdmin').classList.remove('hidden'); atualizarAdminResumo(); atualizarAdminEstatisticas(); atualizarHistoricoEtapas(); atualizarSelectMelhorMao(); } else alert('❌ Senha incorreta!'); document.getElementById('senhaAdmin').value = ''; };
     if (btnVoltarAdmin) btnVoltarAdmin.onclick = () => { document.getElementById('telaAdmin').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); };
-    if (btnSalvarEProxima) btnSalvarEProxima.onclick = salvarEProximaEtapa;
-    if (btnEnviarWhatsApp) btnEnviarWhatsApp.onclick = enviarClassificacaoWhatsApp;
-    if (btnFinalizarEtapa) btnFinalizarEtapa.onclick = finalizarEtapaMostrarClassificacao;
     if (btnIniciarEtapa) btnIniciarEtapa.onclick = iniciarEtapaAdmin;
     if (btnApagarHist) btnApagarHist.onclick = () => document.getElementById('modalApagarHistorico').classList.add('active');
     if (btnCancelApagarHist) btnCancelApagarHist.onclick = () => document.getElementById('modalApagarHistorico').classList.remove('active');
