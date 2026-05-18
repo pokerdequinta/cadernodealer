@@ -788,8 +788,8 @@ const chavesPix = {
     'Van Van': { chave: '41999677977', tipo: 'Telefone' }
 };
 
-// ==================== FUNÇÕES DE ÁUDIO ====================
-async function tocarSomSlot(tipo) {
+// ==================== FUNÇÕES DE ÁUDIO (CASHOUT) ====================
+async function tocarSomCashout(tipo) {
     if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
@@ -803,7 +803,39 @@ async function tocarSomSlot(tipo) {
     masterGain.connect(audioContext.destination);
     
     if (tipo === 'rebuy') {
-        const notas = [523.25, 659.25, 783.99, 1046.50];
+        // Som de caixa registradora para Rebuy Simples
+        const notas = [440, 440, 523.25, 523.25];
+        notas.forEach((freq, i) => {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.connect(gain);
+            gain.connect(masterGain);
+            osc.frequency.value = freq;
+            osc.type = 'sine';
+            gain.gain.value = 0.25;
+            osc.start(now + i * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 0.15);
+            osc.stop(now + i * 0.08 + 0.15);
+        });
+        // Efeito de moeda caindo
+        const noise = audioContext.createBufferSource();
+        const bufferSize = audioContext.sampleRate * 0.2;
+        const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+        noise.buffer = buffer;
+        const noiseGain = audioContext.createGain();
+        noise.connect(noiseGain);
+        noiseGain.connect(masterGain);
+        noiseGain.gain.value = 0.2;
+        noise.start(now + 0.25);
+        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+    } 
+    else if (tipo === 'rebuyDuplo') {
+        // Som de caixa registradora com "ding" duplo
+        const notas = [440, 523.25, 659.25, 523.25, 440];
         notas.forEach((freq, i) => {
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
@@ -813,9 +845,10 @@ async function tocarSomSlot(tipo) {
             osc.type = 'sine';
             gain.gain.value = 0.3;
             osc.start(now + i * 0.1);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.1 + 0.25);
-            osc.stop(now + i * 0.1 + 0.25);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.1 + 0.2);
+            osc.stop(now + i * 0.1 + 0.2);
         });
+        // Efeito de moeda dupla
         const noise = audioContext.createBufferSource();
         const bufferSize = audioContext.sampleRate * 0.3;
         const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
@@ -828,47 +861,23 @@ async function tocarSomSlot(tipo) {
         noise.connect(noiseGain);
         noiseGain.connect(masterGain);
         noiseGain.gain.value = 0.25;
-        noise.start(now + 0.35);
-        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
-    } 
-    else if (tipo === 'rebuyDuplo') {
-        const notas = [523.25, 659.25, 783.99, 987.77, 1174.66, 1318.51];
-        notas.forEach((freq, i) => {
-            const osc = audioContext.createOscillator();
-            const gain = audioContext.createGain();
-            osc.connect(gain);
-            gain.connect(masterGain);
-            osc.frequency.value = freq;
-            osc.type = 'sine';
-            gain.gain.value = 0.28;
-            osc.start(now + i * 0.12);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.12 + 0.3);
-            osc.stop(now + i * 0.12 + 0.3);
-        });
+        noise.start(now + 0.4);
+        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
+        
+        // Segundo "ding" de confirmação
         const oscEnd = audioContext.createOscillator();
         const gainEnd = audioContext.createGain();
         oscEnd.connect(gainEnd);
         gainEnd.connect(masterGain);
         oscEnd.frequency.value = 880;
         oscEnd.type = 'sine';
-        gainEnd.gain.value = 0.25;
-        oscEnd.start(now + 0.7);
-        gainEnd.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
-        oscEnd.stop(now + 1.2);
-        
-        const oscEnd2 = audioContext.createOscillator();
-        const gainEnd2 = audioContext.createGain();
-        oscEnd2.connect(gainEnd2);
-        gainEnd2.connect(masterGain);
-        oscEnd2.frequency.value = 1760;
-        oscEnd2.type = 'sine';
-        gainEnd2.gain.value = 0.15;
-        oscEnd2.start(now + 0.85);
-        gainEnd2.gain.exponentialRampToValueAtTime(0.0001, now + 1.1);
-        oscEnd2.stop(now + 1.1);
+        gainEnd.gain.value = 0.2;
+        oscEnd.start(now + 0.65);
+        gainEnd.gain.exponentialRampToValueAtTime(0.0001, now + 0.85);
+        oscEnd.stop(now + 0.85);
     } 
     else if (tipo === 'addon') {
-        const notas = [659.25, 783.99, 987.77, 1318.51];
+        const notas = [523.25, 659.25, 783.99];
         notas.forEach((freq, i) => {
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
@@ -876,10 +885,10 @@ async function tocarSomSlot(tipo) {
             gain.connect(masterGain);
             osc.frequency.value = freq;
             osc.type = 'sine';
-            gain.gain.value = 0.32;
+            gain.gain.value = 0.3;
             osc.start(now + i * 0.12);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.12 + 0.35);
-            osc.stop(now + i * 0.12 + 0.35);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.12 + 0.25);
+            osc.stop(now + i * 0.12 + 0.25);
         });
         const oscPower = audioContext.createOscillator();
         const gainPower = audioContext.createGain();
@@ -887,10 +896,10 @@ async function tocarSomSlot(tipo) {
         gainPower.connect(masterGain);
         oscPower.frequency.value = 440;
         oscPower.type = 'sawtooth';
-        gainPower.gain.value = 0.2;
-        oscPower.start(now + 0.45);
-        gainPower.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
-        oscPower.stop(now + 0.9);
+        gainPower.gain.value = 0.15;
+        oscPower.start(now + 0.4);
+        gainPower.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
+        oscPower.stop(now + 0.7);
     }
     else if (tipo === 'eliminacao') {
         const osc = audioContext.createOscillator();
@@ -1159,6 +1168,55 @@ function mostrarPopupEliminacao(nomeJogador, fotoUrl, onConfirm) {
         const kos = parseInt(kosInput.value) || 0;
         fecharPopup();
         if (onConfirm) onConfirm(kos);
+    });
+}
+
+function mostrarPopupEliminacaoMF(nomeJogador, fotoUrl, onConfirm) {
+    const existingPopup = document.querySelector('.popup-confirmacao');
+    if (existingPopup) existingPopup.remove();
+    
+    const popup = document.createElement('div');
+    popup.className = 'popup-confirmacao';
+    popup.innerHTML = `
+        <div class="popup-card">
+            <div class="popup-header">
+                <h3>⚠️ ELIMINAR JOGADOR (MESA FINAL) ⚠️</h3>
+            </div>
+            <div class="popup-body">
+                <p>Deseja eliminar</p>
+                <div class="jogador-info-popup">
+                    <img class="jogador-foto-popup" src="${fotoUrl}" onerror="this.style.display='none'">
+                    <div class="jogador-destaque">${nomeJogador}</div>
+                </div>
+                <div class="popup-input-group">
+                    <label><span class="icone-luva">🥊</span> Quantidade de KO's que o jogador fez</label>
+                    <input type="number" id="popupKosMF" min="0" value="0" step="1">
+                </div>
+                <div class="popup-input-group">
+                    <label>💰 Premiação (R$)</label>
+                    <input type="number" id="popupPremioMF" min="0" step="0.01" value="0" placeholder="Valor em reais">
+                </div>
+            </div>
+            <div class="popup-buttons">
+                <button class="btn-popup-cancelar" id="popupCancelarBtn">CANCELAR</button>
+                <button class="btn-popup-confirmar" id="popupConfirmarBtn">CONFIRMAR</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(popup);
+    
+    const cancelarBtn = document.getElementById('popupCancelarBtn');
+    const confirmarBtn = document.getElementById('popupConfirmarBtn');
+    const kosInput = document.getElementById('popupKosMF');
+    const premioInput = document.getElementById('popupPremioMF');
+    const fecharPopup = () => popup.remove();
+    
+    cancelarBtn.addEventListener('click', fecharPopup);
+    confirmarBtn.addEventListener('click', () => {
+        const kos = parseInt(kosInput.value) || 0;
+        const premio = parseFloat(premioInput.value) || 0;
+        fecharPopup();
+        if (onConfirm) onConfirm(kos, premio);
     });
 }
 // ================================================================
@@ -1458,29 +1516,20 @@ function renderizarMesaFinal() {
                         </div>
                     </div>
                     <div class="jogador-actions">
-                        <button class="action-btn btn-eliminar" onclick="abrirModalEliminarMF('${j.nome}')">❌ ELIMINAR</button>
+                        <button class="action-btn btn-eliminar" onclick="confirmarEliminacaoMFPopup('${j.nome}')">❌ ELIMINAR</button>
                     </div>
                 </div>`;
     }).join('');
 }
 
-function abrirModalEliminarMF(nome) {
-    jogadorEliminandoMF = nome;
-    document.getElementById('premioMF').value = 0;
-    document.getElementById('eliminarMFJogadorNome').textContent = nome;
-    document.getElementById('quantidadeKOsMF').value = 0;
-    document.getElementById('modalEliminarMesaFinal').classList.add('active');
-}
-
-function confirmarEliminacaoMF() {
-    if (jogadorEliminandoMF && !torneioFinalizado) {
+function confirmarEliminacaoMFPopup(nome) {
+    const fotoUrl = getFotoJogador(nome);
+    mostrarPopupEliminacaoMF(nome, fotoUrl, (kos, premio) => {
         const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
         const vivos = todosJogadores.filter(j => !j.eliminado);
-        const jogador = vivos.find(j => j.nome === jogadorEliminandoMF);
-        if (jogador) {
+        const jogador = vivos.find(j => j.nome === nome);
+        if (jogador && !torneioFinalizado) {
             const posicao = vivos.length;
-            const qtdKos = parseInt(document.getElementById('quantidadeKOsMF').value) || 0;
-            const premio = parseFloat(document.getElementById('premioMF').value) || 0;
             jogador.premio = premio;
             const pontosPosicaoCalculado = getPontosPosicao(posicao);
             const item = { 
@@ -1488,9 +1537,9 @@ function confirmarEliminacaoMF() {
                 mesa: mesasData.preta?.some(m => m.nome === jogador.nome) ? 'Preta' : 'Amarela', 
                 posicao: posicao, 
                 pontosPosicao: pontosPosicaoCalculado, 
-                kos: qtdKos, 
-                pontosKOs: qtdKos, 
-                pontosTotal: pontosPosicaoCalculado + qtdKos, 
+                kos: kos, 
+                pontosKOs: kos, 
+                pontosTotal: pontosPosicaoCalculado + kos, 
                 dataEliminacao: new Date().toISOString(), 
                 etapa: config.etapa,
                 premio: premio
@@ -1501,15 +1550,15 @@ function confirmarEliminacaoMF() {
             if (original) { 
                 original.eliminado = true; 
                 original.posicaoFinal = posicao; 
-                original.kos = qtdKos;
+                original.kos = kos;
                 original.premio = premio;
                 db.ref('mesas').set(mesasData); 
             }
             tocarSomSlot('eliminacao');
-            let msg = `✅ ${jogador.nome} eliminado na ${posicao}ª posição com ${qtdKos} KO(s)!`;
+            let msg = `✅ ${jogador.nome} eliminado na ${posicao}ª posição com ${kos} KO(s)!`;
             if (premio > 0) msg += `\n💰 Premiação: R$ ${premio.toFixed(2)}`;
             mostrarToast(msg);
-            const novosVivos = todosJogadores.filter(j => j.nome !== jogadorEliminandoMF && !j.eliminado);
+            const novosVivos = todosJogadores.filter(j => j.nome !== nome && !j.eliminado);
             if (novosVivos.length === 0) {
                 finalizarTorneio();
             } else if (novosVivos.length === 1 && !classificacaoData.some(c => c.posicao === 1)) {
@@ -1519,9 +1568,7 @@ function confirmarEliminacaoMF() {
             atualizarStatsCards();
             atualizarClassificacaoAtual();
         }
-    }
-    document.getElementById('modalEliminarMesaFinal').classList.remove('active');
-    jogadorEliminandoMF = null;
+    });
 }
 
 function finalizarComCampeao(campeao) {
@@ -1696,7 +1743,7 @@ function confirmarRebuy(nome, tipo) {
         mostrarToast('O torneio já foi finalizado!');
         return;
     }
-    const titulo = tipo === 'simples' ? '🎰 REBUY SIMPLES' : '🎰 REBUY DUPLO';
+    const titulo = tipo === 'simples' ? '💰 REBUY SIMPLES' : '💰 REBUY DUPLO';
     const fotoUrl = getFotoJogador(nome);
     mostrarPopupConfirmacao(titulo, nome, fotoUrl, () => {
         const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
@@ -1709,9 +1756,9 @@ function confirmarRebuy(nome, tipo) {
             atualizarAdminResumo();
             atualizarAdminEstatisticas();
             if (tipo === 'simples') {
-                tocarSomSlot('rebuy');
+                tocarSomCashout('rebuy');
             } else {
-                tocarSomSlot('rebuyDuplo');
+                tocarSomCashout('rebuyDuplo');
             }
             const qtdTexto = tipo === 'simples' ? '' : ' DUPLO';
             mostrarToast(`✅ REBUY${qtdTexto} adicionado para ${nome}`);
@@ -1731,7 +1778,7 @@ function confirmarAddon(nome) {
             jogador.addon = true;
             jogador.addonGratis = isAddonGratis(nome) || isAddonSemValor(nome);
             db.ref('mesas').set(mesasData);
-            tocarSomSlot('addon');
+            tocarSomCashout('addon');
             mostrarToast(`✅ Addon registrado para ${nome}`);
             atualizarGridJogadores();
             atualizarStatsCards();
@@ -1772,7 +1819,7 @@ function confirmarEliminacaoPopup(nome) {
             jogador.posicaoFinal = posicao; 
             jogador.kos = kos;
             db.ref('mesas').set(mesasData);
-            tocarSomSlot('eliminacao');
+            tocarSomCashout('eliminacao');
             mostrarToast(`✅ ${jogador.nome} eliminado na ${posicao}ª posição com ${kos} KO(s)!`);
             atualizarGridJogadores();
             atualizarStatsCards();
@@ -2187,6 +2234,24 @@ function downloadCSV(csv, nome) {
     link.click(); 
 }
 
+function copiarCSV() {
+    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+    if (todos.length === 0) {
+        alert('Nenhum jogador!');
+        return;
+    }
+    let csv = '';
+    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => {
+        const addonValor = j.addon ? '1' : '0';
+        csv += `${j.nome},${j.rebuys || 0},${addonValor}\n`;
+    });
+    navigator.clipboard.writeText(csv).then(() => {
+        mostrarToast('✅ Dados copiados! (Nome,Rebuys,Addon)');
+    }).catch(() => {
+        mostrarToast('❌ Erro ao copiar');
+    });
+}
+
 function apagarTodosDados() { 
     const fotoUrl = 'https://ui-avatars.com/api/?name=APAGAR&background=d4a121&color=000&size=60';
     mostrarPopupConfirmacao('⚠️ APAGAR TODOS OS DADOS', 'TODOS OS DADOS', fotoUrl, () => {
@@ -2307,11 +2372,12 @@ function inicializarEventos() {
     });
 }
 
+// Tornar funções globais
 window.confirmarRebuy = confirmarRebuy;
 window.confirmarAddon = confirmarAddon;
 window.confirmarEliminacaoPopup = confirmarEliminacaoPopup;
+window.confirmarEliminacaoMFPopup = confirmarEliminacaoMFPopup;
 window.abrirCorrecao = abrirCorrecao;
-window.abrirModalEliminarMF = abrirModalEliminarMF;
 window.toggleEtapaVerificar = toggleEtapaVerificar;
 window.removerEtapaHistorico = removerEtapaHistorico;
 window.fecharAppEIrAdmin = fecharAppEIrAdmin;
