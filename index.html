@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -81,6 +80,23 @@
             .jogador-nome { font-size: 0.7em !important; }
         }
         
+        /* Animação de scroll para o nome da mesa */
+        @keyframes scrollText {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        .scrolling-text {
+            white-space: nowrap;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .scrolling-text span {
+            display: inline-block;
+            animation: scrollText 15s linear infinite;
+        }
+        
         .tela-selecao { display: flex; flex-direction: column; min-height: 100vh; padding: 20px; background: #0d1b0d; position: relative; }
         .tela-selecao.hidden { display: none; }
         .selecao-container { text-align: center; max-width: 600px; width: 100%; margin: 0 auto; }
@@ -114,8 +130,8 @@
         .vivos { color: #4CAF50; }
         .eliminados { color: #c72c48; }
         .total-num { color: #d4a121; }
-        .mesa-indicator { background: rgba(16, 40, 16, 0.9); border-radius: 15px; padding: 10px; text-align: center; margin-bottom: 10px; }
-        .mesa-indicator-text { font-family: 'Anton', sans-serif; font-size: 1.2em; text-transform: uppercase; }
+        .mesa-indicator { background: rgba(16, 40, 16, 0.9); border-radius: 15px; padding: 10px; text-align: center; margin-bottom: 10px; overflow: hidden; }
+        .mesa-indicator-text { font-family: 'Anton', sans-serif; font-size: 1.2em; text-transform: uppercase; display: inline-block; white-space: nowrap; animation: scrollText 12s linear infinite; }
         .jogadores-lados { display: flex; flex: 1; overflow: hidden; padding: 15px; }
         .lado-esquerdo { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: rgba(0, 0, 0, 0.2); border-radius: 15px; padding: 10px; }
         .jogadores-grid { display: flex; flex-direction: column; gap: 10px; width: 100%; }
@@ -515,8 +531,6 @@
                     </table>
                 </div>
                 <div class="total-geral" id="adminTotalGeral">TOTAL GERAL: R$ 0,00</div>
-                <button class="btn btn-secondary" id="btnAdminExportarCSV" style="margin-top: 15px; width: 100%;">📊 EXPORTAR CSV</button>
-                <button class="btn btn-info" id="btnCopiarCSV" style="margin-top: 10px; width: 100%;">📋 COPIAR</button>
             </div>
             
             <div id="admin-estatisticas" class="admin-tab-content hidden">
@@ -551,7 +565,6 @@
                     <thead><tr><th>#</th><th>Jogador</th><th>Mesa</th><th>Rebuys</th></tr></thead>
                     <tbody id="adminRankingBody"></tbody>
                 </table>
-                <button class="btn btn-secondary" id="btnAdminExportarCompleto" style="margin-top: 20px; width: 100%;">📊 EXPORTAR COMPLETO</button>
             </div>
         </div>
     </div>
@@ -563,9 +576,7 @@
         <div class="verificar-header">
             <h1>📊 CLASSIFICAÇÃO GERAL DA 4ª ETAPA</h1>
             <div>
-                <button class="btn btn-warning" id="btnFinalizarEtapaVerificar" style="margin-right: 10px;">🏁 FINALIZAR ETAPA</button>
                 <button class="btn btn-info" id="btnEnviarWhatsApp" style="margin-right: 10px;">📱 ENVIAR PARA WHATSAPP</button>
-                <button class="btn btn-secondary" id="btnExportarClassificacaoCSV" style="margin-right: 10px;">📊 EXPORTAR CSV</button>
                 <button class="voltar-inicio-btn" id="btnVoltarVerificarInicio" style="padding: 12px 25px; background: #c72c48; color: #fff; border: none; border-radius: 8px; cursor: pointer;">← VOLTAR</button>
             </div>
         </div>
@@ -574,7 +585,7 @@
             <h3>🏆 RANKING ATUAL (Top 20)</h3>
             <table class="classificacao-table" id="classificacaoTableAtual">
                 <thead>
-                    <tr><th>Posição</th><th>Jogador</th><th>Mesa</th><th>Pontos Posição</th><th>KO's</th><th>PONTOS TOTAIS</th><th>Prêmio (R$)</th><th>PIX</th></tr>
+                    <tr><th>Posição</th><th>Jogador</th><th>Pontos Posição</th><th>KO's</th><th>PONTOS TOTAIS</th><th>Prêmio (R$)</th><th>PIX</th></tr>
                 </thead>
                 <tbody id="classificacaoBodyAtual"></tbody>
             </table>
@@ -658,7 +669,7 @@
                 <button class="btn-info" id="btnVerificarClassificacaoMF" style="padding: 8px 12px; margin-left: 10px;">📊 CLASSIFICAÇÃO</button>
             </div>
         </div>
-        <div class="mesa-indicator" style="border-color: #d4a121; background: linear-gradient(135deg, #d4a12120, #00000040);">
+        <div class="mesa-indicator" style="border-color: #d4a121; background: linear-gradient(135deg, #d4a12120, #00000040); overflow: hidden;">
             <div class="mesa-indicator-text" id="mesaFinalIndicatorText">🃏 MESA FINAL</div>
         </div>
     </div>
@@ -789,7 +800,7 @@ const chavesPix = {
     'Van Van': { chave: '41999677977', tipo: 'Telefone' }
 };
 
-// ==================== FUNÇÕES DE ÁUDIO (CASHOUT) ====================
+// ==================== FUNÇÕES DE ÁUDIO (SOM EXTREMAMENTE CHAMATIVO) ====================
 async function tocarSomCashout(tipo) {
     if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -800,52 +811,38 @@ async function tocarSomCashout(tipo) {
     
     const now = audioContext.currentTime;
     const masterGain = audioContext.createGain();
-    masterGain.gain.value = 0.5;
+    masterGain.gain.value = 0.7;
     masterGain.connect(audioContext.destination);
     
     if (tipo === 'rebuy') {
-        const notas = [440, 440, 523.25, 523.25];
+        // Som extremamente chamativo para rebuy simples
+        const notas = [440, 523.25, 659.25, 880, 1046.5];
         notas.forEach((freq, i) => {
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
             osc.connect(gain);
             gain.connect(masterGain);
             osc.frequency.value = freq;
-            osc.type = 'sine';
-            gain.gain.value = 0.25;
+            osc.type = 'square';
+            gain.gain.value = 0.4;
             osc.start(now + i * 0.08);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 0.15);
-            osc.stop(now + i * 0.08 + 0.15);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 0.2);
+            osc.stop(now + i * 0.08 + 0.2);
         });
-        const noise = audioContext.createBufferSource();
-        const bufferSize = audioContext.sampleRate * 0.2;
-        const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
-        }
-        noise.buffer = buffer;
-        const noiseGain = audioContext.createGain();
-        noise.connect(noiseGain);
-        noiseGain.connect(masterGain);
-        noiseGain.gain.value = 0.2;
-        noise.start(now + 0.25);
-        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
-    } 
-    else if (tipo === 'rebuyDuplo') {
-        const notas = [440, 523.25, 659.25, 523.25, 440];
-        notas.forEach((freq, i) => {
-            const osc = audioContext.createOscillator();
-            const gain = audioContext.createGain();
-            osc.connect(gain);
-            gain.connect(masterGain);
-            osc.frequency.value = freq;
-            osc.type = 'sine';
-            gain.gain.value = 0.3;
-            osc.start(now + i * 0.1);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.1 + 0.2);
-            osc.stop(now + i * 0.1 + 0.2);
-        });
+        
+        // Efeito de sirene
+        const sirenOsc = audioContext.createOscillator();
+        const sirenGain = audioContext.createGain();
+        sirenOsc.connect(sirenGain);
+        sirenGain.connect(masterGain);
+        sirenOsc.frequency.value = 440;
+        sirenOsc.type = 'sawtooth';
+        sirenGain.gain.value = 0.35;
+        sirenOsc.start(now);
+        sirenOsc.frequency.exponentialRampToValueAtTime(880, now + 0.3);
+        sirenGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+        sirenOsc.stop(now + 0.6);
+        
         const noise = audioContext.createBufferSource();
         const bufferSize = audioContext.sampleRate * 0.3;
         const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
@@ -857,71 +854,53 @@ async function tocarSomCashout(tipo) {
         const noiseGain = audioContext.createGain();
         noise.connect(noiseGain);
         noiseGain.connect(masterGain);
-        noiseGain.gain.value = 0.25;
-        noise.start(now + 0.4);
-        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
-        
-        const oscEnd = audioContext.createOscillator();
-        const gainEnd = audioContext.createGain();
-        oscEnd.connect(gainEnd);
-        gainEnd.connect(masterGain);
-        oscEnd.frequency.value = 880;
-        oscEnd.type = 'sine';
-        gainEnd.gain.value = 0.2;
-        oscEnd.start(now + 0.65);
-        gainEnd.gain.exponentialRampToValueAtTime(0.0001, now + 0.85);
-        oscEnd.stop(now + 0.85);
+        noiseGain.gain.value = 0.3;
+        noise.start(now + 0.15);
+        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
     } 
-    else if (tipo === 'addon') {
-        const notas = [523.25, 659.25, 783.99];
+    else if (tipo === 'rebuyDuplo') {
+        // Som extremamente chamativo para rebuy duplo (mais intenso)
+        const notas = [440, 523.25, 659.25, 880, 1046.5, 1318.51];
         notas.forEach((freq, i) => {
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
             osc.connect(gain);
             gain.connect(masterGain);
             osc.frequency.value = freq;
-            osc.type = 'sine';
-            gain.gain.value = 0.3;
-            osc.start(now + i * 0.12);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.12 + 0.25);
-            osc.stop(now + i * 0.12 + 0.25);
+            osc.type = 'triangle';
+            gain.gain.value = 0.45;
+            osc.start(now + i * 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.06 + 0.18);
+            osc.stop(now + i * 0.06 + 0.18);
         });
-        const oscPower = audioContext.createOscillator();
-        const gainPower = audioContext.createGain();
-        oscPower.connect(gainPower);
-        gainPower.connect(masterGain);
-        oscPower.frequency.value = 440;
-        oscPower.type = 'sawtooth';
-        gainPower.gain.value = 0.15;
-        oscPower.start(now + 0.4);
-        gainPower.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
-        oscPower.stop(now + 0.7);
-    }
-    else if (tipo === 'eliminacao') {
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        osc.connect(gain);
-        gain.connect(masterGain);
-        osc.frequency.value = 110;
-        osc.type = 'sine';
-        gain.gain.value = 0.5;
-        osc.start(now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.5);
-        osc.stop(now + 1.5);
         
-        const osc2 = audioContext.createOscillator();
-        const gain2 = audioContext.createGain();
-        osc2.connect(gain2);
-        gain2.connect(masterGain);
-        osc2.frequency.value = 82.41;
-        osc2.type = 'triangle';
-        gain2.gain.value = 0.4;
-        osc2.start(now + 0.15);
-        gain2.gain.exponentialRampToValueAtTime(0.0001, now + 1.3);
-        osc2.stop(now + 1.3);
+        // Sirene dupla
+        const siren1 = audioContext.createOscillator();
+        const sirenGain1 = audioContext.createGain();
+        siren1.connect(sirenGain1);
+        sirenGain1.connect(masterGain);
+        siren1.frequency.value = 330;
+        siren1.type = 'sawtooth';
+        sirenGain1.gain.value = 0.4;
+        siren1.start(now);
+        siren1.frequency.exponentialRampToValueAtTime(660, now + 0.4);
+        sirenGain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
+        siren1.stop(now + 0.7);
+        
+        const siren2 = audioContext.createOscillator();
+        const sirenGain2 = audioContext.createGain();
+        siren2.connect(sirenGain2);
+        sirenGain2.connect(masterGain);
+        siren2.frequency.value = 660;
+        siren2.type = 'sawtooth';
+        sirenGain2.gain.value = 0.4;
+        siren2.start(now + 0.1);
+        siren2.frequency.exponentialRampToValueAtTime(330, now + 0.5);
+        sirenGain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+        siren2.stop(now + 0.8);
         
         const noise = audioContext.createBufferSource();
-        const bufferSize = audioContext.sampleRate * 0.8;
+        const bufferSize = audioContext.sampleRate * 0.4;
         const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < bufferSize; i++) {
@@ -933,12 +912,41 @@ async function tocarSomCashout(tipo) {
         noiseGain.connect(masterGain);
         noiseGain.gain.value = 0.35;
         noise.start(now + 0.2);
-        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
+        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+    } 
+    else if (tipo === 'addon') {
+        // Som extremamente chamativo para addon
+        const notas = [523.25, 659.25, 783.99, 1046.5];
+        notas.forEach((freq, i) => {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.connect(gain);
+            gain.connect(masterGain);
+            osc.frequency.value = freq;
+            osc.type = 'sine';
+            gain.gain.value = 0.4;
+            osc.start(now + i * 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.1 + 0.25);
+            osc.stop(now + i * 0.1 + 0.25);
+        });
+        
+        // Som de "power up"
+        const powerOsc = audioContext.createOscillator();
+        const powerGain = audioContext.createGain();
+        powerOsc.connect(powerGain);
+        powerGain.connect(masterGain);
+        powerOsc.frequency.value = 220;
+        powerOsc.type = 'sawtooth';
+        powerGain.gain.value = 0.35;
+        powerOsc.start(now + 0.3);
+        powerOsc.frequency.exponentialRampToValueAtTime(440, now + 0.55);
+        powerGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+        powerOsc.stop(now + 0.8);
     }
     
     setTimeout(() => {
         masterGain.disconnect();
-    }, 2000);
+    }, 1500);
 }
 
 function tocarSomSlot(tipo) {
@@ -1440,7 +1448,7 @@ function atualizarClassificacaoAtual() {
     const ordenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
     const top20 = ordenada.slice(0, 20);
     if (top20.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8">Nenhum jogador eliminado ainda<\/tr>';
+        tbody.innerHTML = '<tr><td colspan="7">Nenhum jogador eliminado ainda<\/tr>';
         return;
     }
     tbody.innerHTML = top20.map(j => {
@@ -1454,7 +1462,6 @@ function atualizarClassificacaoAtual() {
                         <img class="classificacao-foto" src="${fotoUrl}" onerror="this.style.display='none'">
                         ${j.nome}
                     </td>
-                    <td>${j.mesa || '-'}</td>
                     <td>${j.pontosPosicao || 0}</td>
                     <td>${j.kos || 0}</td>
                     <td><strong style="color:#d4a121;">${pontosTotais}</strong></td>
@@ -1883,7 +1890,10 @@ function mostrarTelaVerificarClassificacao() {
 }
 
 function finalizarEtapaDaTelaVerificacao() {
-    finalizarETAPARegistrarProxima(true, true);
+    const fotoUrl = 'https://ui-avatars.com/api/?name=FINAL&background=d4a121&color=000&size=60';
+    mostrarPopupConfirmacao('⚠️ FINALIZAR ETAPA', 'CONFIRMAR FINALIZAÇÃO', fotoUrl, () => {
+        finalizarETAPARegistrarProxima(true, true);
+    });
 }
 
 function enviarClassificacaoWhatsApp() {
@@ -2063,7 +2073,7 @@ function atualizarHistoricoEtapas() {
                     <div class="etapa-classificacao" id="etapaVerificar-${idx}">
                         <table class="etapa-table">
                             <thead>
-                                <tr><th>Pos</th><th>Jogador</th><th>Mesa</th><th>Pontos</th><th>KO's</th><th>Total</th><th>Prêmio</th><th>PIX</th></tr>
+                                <tr><th>Pos</th><th>Jogador</th><th>Pontos</th><th>KO's</th><th>Total</th><th>Prêmio</th><th>PIX</th></tr>
                             </thead>
                             <tbody>
                                 ${classificacaoOrdenada.slice(0, 20).map(j => {
@@ -2072,13 +2082,12 @@ function atualizarHistoricoEtapas() {
                                     <tr>
                                         <td><strong>${j.posicao}º</strong></td>
                                         <td>${j.nome || '?'}${j.premio ? ` 💰` : ''}</td>
-                                        <td>${j.mesa || '-'}</td>
                                         <td>${j.pontosPosicao || 0}</td>
                                         <td>${j.kos || 0}</td>
                                         <td><strong>${j.pontosTotal || j.pontosPosicao || 0}</strong></td>
                                         <td>${j.premio ? `R$ ${j.premio}` : '-'}</td>
                                         <td>${temPix ? `<button class="btn-copiar-pix-classif" onclick="copiarPix('${j.nome.replace(/'/g, "\\'")}')">📋 COPIAR PIX</button>` : '❌ Sem Pix'}</td>
-                                    </tr>`;
+                                    <\/tr>`;
                                 }).join('')}
                             </tbody>
                         </table>
@@ -2150,7 +2159,6 @@ function processarLayout() {
         document.getElementById('importResult').style.display = 'block'; 
         document.getElementById('importResult').innerHTML = `✅ Analisado! Preta: ${layoutImportado.preta.length} | Amarela: ${layoutImportado.amarela.length}`; 
         
-        // Remove botão existente se houver
         const existingBtn = document.querySelector('#previewMesas + button');
         if (existingBtn) existingBtn.remove();
         
@@ -2187,79 +2195,6 @@ function aplicarLayout() {
     atualizarClassificacaoAtual();
 }
 
-function exportarCSVSimples() { 
-    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])]; 
-    if (todos.length === 0) { 
-        alert('Nenhum jogador!'); 
-        return; 
-    } 
-    let csv = ''; 
-    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => { 
-        const addonValor = j.addon ? '1' : '0';
-        csv += `${j.nome},${j.rebuys || 0},${addonValor}\n`; 
-    }); 
-    downloadCSV(csv, `rebuy-addon-etapa${config.etapa}.csv`); 
-}
-
-function exportarCSVCompleto() { 
-    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])]; 
-    if (todos.length === 0) { 
-        alert('Nenhum jogador!'); 
-        return; 
-    } 
-    let csv = 'Nome,Mesa,Posição,Buy-in,Rebuys,Addon,Total\n'; 
-    let totalGeralValor = 0; 
-    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => { 
-        const mesa = mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'; 
-        const valorAddon = getAddonValor(j.nome, j.addon);
-        const total = VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + valorAddon; 
-        totalGeralValor += total; 
-        const addonTexto = getAddonTexto(j.nome, j.addon);
-        csv += `"${j.nome}",${mesa},${j.posicao||''},${VALOR_BUYIN},${j.rebuys||0},${addonTexto},${total}\n`; 
-    }); 
-    csv += `\n"TOTAL GERAL",,,,,,${totalGeralValor}\n`; 
-    downloadCSV(csv, `caixa-completo-etapa${config.etapa}.csv`); 
-}
-
-function exportarClassificacaoCSV() {
-    if (classificacaoData.length === 0) {
-        alert('Nenhum classificado!');
-        return;
-    }
-    let csv = 'Posição,Jogador,Mesa,Pontos Posição,KO\'s,Pontos Totais,Prêmio (R$)\n';
-    [...classificacaoData].sort((a,b) => a.posicao - b.posicao).slice(0,20).forEach(j => {
-        const pontosTotais = (j.pontosPosicao || 0) + (j.kos || 0);
-        csv += `${j.posicao},"${j.nome}",${j.mesa},${j.pontosPosicao || 0},${j.kos || 0},${pontosTotais},${j.premio || 0}\n`;
-    });
-    downloadCSV(csv, `classificacao-etapa${config.etapa}.csv`);
-}
-
-function downloadCSV(csv, nome) { 
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); 
-    const link = document.createElement('a'); 
-    link.href = URL.createObjectURL(blob); 
-    link.download = nome; 
-    link.click(); 
-}
-
-function copiarCSV() {
-    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
-    if (todos.length === 0) {
-        alert('Nenhum jogador!');
-        return;
-    }
-    let csv = '';
-    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => {
-        const addonValor = j.addon ? '1' : '0';
-        csv += `${j.nome},${j.rebuys || 0},${addonValor}\n`;
-    });
-    navigator.clipboard.writeText(csv).then(() => {
-        mostrarToast('✅ Dados copiados! (Nome,Rebuys,Addon)');
-    }).catch(() => {
-        mostrarToast('❌ Erro ao copiar');
-    });
-}
-
 function apagarTodosDados() { 
     const fotoUrl = 'https://ui-avatars.com/api/?name=APAGAR&background=d4a121&color=000&size=60';
     mostrarPopupConfirmacao('⚠️ APAGAR TODOS OS DADOS', 'TODOS OS DADOS', fotoUrl, () => {
@@ -2268,7 +2203,7 @@ function apagarTodosDados() {
 }
 
 function confirmarApagarTodos() {
-    if (document.getElementById('senhaApagar').value === 'poker2026') {
+    if (document.getElementById('senhaApagar').value === 'poker2026excluir') {
         mesasData = { preta: [], amarela: [] }; 
         classificacaoData = []; 
         historicoEtapas = []; 
@@ -2327,10 +2262,6 @@ function inicializarEventos() {
     const btnConfirmEliminarMF = document.getElementById('btnConfirmarEliminarMF');
     const btnEscolherArquivo = document.getElementById('btnEscolherArquivo');
     const btnProcessarLayout = document.getElementById('btnProcessarLayout');
-    const btnExportCSV = document.getElementById('btnAdminExportarCSV');
-    const btnExportCompleto = document.getElementById('btnAdminExportarCompleto');
-    const btnCopiar = document.getElementById('btnCopiarCSV');
-    const btnExportarClassificacaoCSV = document.getElementById('btnExportarClassificacaoCSV');
     const fileInput = document.getElementById('fileInput');
     
     if (logoAdmin) logoAdmin.onclick = () => document.getElementById('modalSenhaAdmin').classList.add('active');
@@ -2372,10 +2303,6 @@ function inicializarEventos() {
     if (btnEscolherArquivo && fileInput) btnEscolherArquivo.onclick = () => fileInput.click();
     if (fileInput) fileInput.onchange = (e) => { if (e.target.files[0]) { arquivoSelecionado = e.target.files[0]; if (btnProcessarLayout) btnProcessarLayout.style.display = 'inline-block'; } };
     if (btnProcessarLayout) btnProcessarLayout.onclick = processarLayout;
-    if (btnExportCSV) btnExportCSV.onclick = exportarCSVSimples;
-    if (btnExportCompleto) btnExportCompleto.onclick = exportarCSVCompleto;
-    if (btnCopiar) btnCopiar.onclick = copiarCSV;
-    if (btnExportarClassificacaoCSV) btnExportarClassificacaoCSV.onclick = exportarClassificacaoCSV;
     
     // CORREÇÃO DO BOTÃO ESTATÍSTICAS
     const navTabs = document.querySelectorAll('.nav-tab-admin');
