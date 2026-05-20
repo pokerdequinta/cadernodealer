@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -22,6 +23,37 @@
             min-height: 100vh;
         }
         
+        /* Aumento da fonte dos números de rebuys */
+        .badge-rebuy {
+            font-size: 0.85em !important;
+            padding: 3px 10px !important;
+        }
+        
+        .badge-addon {
+            font-size: 0.85em !important;
+            padding: 3px 10px !important;
+        }
+        
+        .badge-addon-melhor-mao {
+            font-size: 0.85em !important;
+            padding: 3px 10px !important;
+        }
+        
+        .badge-addon-gratis {
+            font-size: 0.85em !important;
+            padding: 3px 10px !important;
+        }
+        
+        .badge-eliminado {
+            font-size: 0.85em !important;
+            padding: 3px 10px !important;
+        }
+        
+        .badge-premio {
+            font-size: 0.85em !important;
+            padding: 3px 10px !important;
+        }
+        
         @media (min-width: 600px) and (max-width: 1024px) {
             .selecao-logo img { max-width: 100px !important; }
             .selecao-titulo { font-size: 1.8em !important; margin-bottom: 20px !important; }
@@ -34,7 +66,7 @@
             .stat-card-numeros { font-size: 1.2em !important; gap: 10px !important; }
             .jogador-foto { width: 32px !important; height: 32px !important; }
             .jogador-nome { font-size: 0.75em !important; }
-            .badge { font-size: 0.6em !important; padding: 2px 6px !important; }
+            .badge { font-size: 0.7em !important; padding: 3px 8px !important; }
             .action-btn { padding: 8px 12px !important; font-size: 0.8em !important; min-width: 60px !important; }
             .btn-rebuy-duplo { font-size: 0.8em !important; padding: 8px 12px !important; min-width: 60px !important; }
             .jogador-posicao-numero { font-size: 0.9em !important; min-width: 32px !important; }
@@ -78,6 +110,7 @@
             .stat-card-numeros { font-size: 1em !important; gap: 8px !important; }
             .action-btn { padding: 6px 8px !important; font-size: 0.65em !important; }
             .jogador-nome { font-size: 0.7em !important; }
+            .badge { font-size: 0.7em !important; padding: 3px 6px !important; }
         }
         
         @keyframes scrollText {
@@ -131,14 +164,14 @@
         .jogador-foto { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #d4a121; background: #2d5016; }
         .jogador-info { flex: 1; min-width: 100px; }
         .jogador-nome { font-weight: bold; font-size: 0.9em; font-family: 'Anton', sans-serif; letter-spacing: 0.5px; }
-        .jogador-valores { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
-        .badge { padding: 2px 8px; border-radius: 15px; font-size: 0.65em; font-weight: bold; font-family: 'Anton', sans-serif; }
-        .badge-rebuy { background: #FF6600; color: #fff; }
-        .badge-addon { background: #4CAF50; color: #fff; }
-        .badge-addon-gratis { background: #FFD700; color: #000; }
-        .badge-addon-melhor-mao { background: #FFD700; color: #000; }
-        .badge-eliminado { background: #c72c48; color: #fff; }
-        .badge-premio { background: #d4a121; color: #000; }
+        .jogador-valores { display: flex; gap: 6px; margin-top: 5px; flex-wrap: wrap; }
+        .badge { padding: 4px 10px; border-radius: 15px; font-size: 0.8em; font-weight: bold; font-family: 'Anton', sans-serif; }
+        .badge-rebuy { background: #FF6600; color: #fff; font-size: 0.85em; }
+        .badge-addon { background: #4CAF50; color: #fff; font-size: 0.85em; }
+        .badge-addon-gratis { background: #FFD700; color: #000; font-size: 0.85em; }
+        .badge-addon-melhor-mao { background: #FFD700; color: #000; font-size: 0.85em; }
+        .badge-eliminado { background: #c72c48; color: #fff; font-size: 0.85em; }
+        .badge-premio { background: #d4a121; color: #000; font-size: 0.85em; }
         .jogador-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
         .action-btn { padding: 6px 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.75em; white-space: nowrap; font-family: 'Anton', sans-serif; transition: all 0.2s; min-width: 55px; }
         .action-btn:hover { transform: scale(1.05); }
@@ -226,7 +259,7 @@
             .action-btn { padding: 6px 10px; font-size: 0.7em; }
             .btn-rebuy-duplo { font-size: 0.75em; padding: 6px 10px; }
             .jogador-nome { font-size: 0.8em; }
-            .badge { font-size: 0.6em; padding: 2px 6px; }
+            .badge { font-size: 0.7em; padding: 3px 8px; }
             .jogador-foto { width: 35px; height: 35px; }
             .stat-card-numeros { font-size: 1.2em; gap: 15px; }
         }
@@ -436,6 +469,22 @@
         <div class="modal-buttons">
             <button class="btn btn-danger" id="btnCancelarSenhaAdmin">Cancelar</button>
             <button class="btn btn-success" id="btnConfirmarSenhaAdmin">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Senha Apagar Dados -->
+<div class="modal" id="modalSenhaApagar">
+    <div class="modal-content">
+        <h3>🔐 SENHA NECESSÁRIA</h3>
+        <p>Digite a senha para apagar todos os dados:</p>
+        <div class="form-group">
+            <label>Senha</label>
+            <input type="password" id="senhaApagarInput" placeholder="Digite a senha">
+        </div>
+        <div class="modal-buttons">
+            <button class="btn btn-danger" id="btnCancelarSenhaApagar">Cancelar</button>
+            <button class="btn btn-success" id="btnConfirmarSenhaApagar">Confirmar</button>
         </div>
     </div>
 </div>
@@ -689,15 +738,6 @@
     </div>
 </div>
 
-<div class="modal" id="modalSenhaApagar">
-    <div class="modal-content">
-        <h3>🔐 SENHA NECESSÁRIA</h3>
-        <p>Digite a senha para apagar todos os dados:</p>
-        <div class="form-group"><label>Senha</label><input type="password" id="senhaApagarInput" placeholder="Digite a senha"></div>
-        <div class="modal-buttons"><button class="btn btn-danger" id="btnCancelarSenhaApagar">Cancelar</button><button class="btn btn-success" id="btnConfirmarSenhaApagar">Confirmar</button></div>
-    </div>
-</div>
-
 <div class="modal" id="modalApagarHistorico">
     <div class="modal-content">
         <h3>🗑️ APAGAR HISTÓRICO</h3>
@@ -762,6 +802,9 @@ const posicoesRef = db.ref('controlePosicoes');
 let rebuySoundBuffer = null;
 let rebuyDuploSoundBuffer = null;
 
+// Voz masculina para Android
+let vozMasculinaAndroid = null;
+
 // Chaves PIX
 const chavesPix = {
     'Amarildo': { chave: '41987779470', tipo: 'Telefone' },
@@ -818,7 +861,7 @@ async function getProximaPosicao() {
     });
 }
 
-// Função para resetar as posições ao iniciar nova etapa
+// Função para resetar as posições
 async function resetarPosicoes() {
     return new Promise((resolve) => {
         posicoesRef.set({ ultimaPosicao: totalJogadoresIniciais }).then(() => {
@@ -932,7 +975,52 @@ function tocarSomRebuyDuplo() {
     source.start();
 }
 
-// Função para falar com voz masculina brasileira
+// Função para inicializar e selecionar voz masculina
+async function inicializarVozMasculina() {
+    return new Promise((resolve) => {
+        if (!window.speechSynthesis) {
+            resolve(null);
+            return;
+        }
+        
+        const carregarVozes = () => {
+            const voices = window.speechSynthesis.getVoices();
+            
+            // Lista de vozes masculinas brasileiras (prioridade)
+            const vozesMasculinas = [
+                'Google português do Brasil masculino',
+                'Microsoft Daniel - Brazilian Portuguese',
+                'Daniel (pt-BR)',
+                'Microsoft Daniel',
+                'Google português do Brasil',
+                'pt-BR'
+            ];
+            
+            let vozEncontrada = null;
+            for (const nomeVoz of vozesMasculinas) {
+                vozEncontrada = voices.find(v => 
+                    v.lang === 'pt-BR' && 
+                    v.name.toLowerCase().includes(nomeVoz.toLowerCase())
+                );
+                if (vozEncontrada) break;
+            }
+            
+            if (!vozEncontrada) {
+                vozEncontrada = voices.find(v => v.lang === 'pt-BR');
+            }
+            
+            resolve(vozEncontrada);
+        };
+        
+        if (window.speechSynthesis.getVoices().length > 0) {
+            carregarVozes();
+        } else {
+            window.speechSynthesis.onvoiceschanged = carregarVozes;
+        }
+    });
+}
+
+// Função para falar com voz masculina
 async function falar(texto) {
     return new Promise((resolve) => {
         if (!window.speechSynthesis) {
@@ -942,43 +1030,14 @@ async function falar(texto) {
         
         window.speechSynthesis.cancel();
         
-        // Força a obtenção das vozes novamente
-        const voices = window.speechSynthesis.getVoices();
-        
-        // Lista de vozes masculinas brasileiras (prioridade)
-        const vozesMasculinas = [
-            'pt-BR Daniel',
-            'Google português do Brasil masculino',
-            'Microsoft Daniel - Brazilian Portuguese',
-            'Daniel (pt-BR)',
-            'Microsoft Daniel',
-            'Google português do Brasil',
-            'pt-BR',
-            'brazil'
-        ];
-        
-        let vozEncontrada = null;
-        for (const nomeVoz of vozesMasculinas) {
-            vozEncontrada = voices.find(v => 
-                v.lang === 'pt-BR' && 
-                v.name.toLowerCase().includes(nomeVoz.toLowerCase())
-            );
-            if (vozEncontrada) break;
-        }
-        
-        // Se ainda não encontrou, tenta qualquer voz em português do Brasil
-        if (!vozEncontrada) {
-            vozEncontrada = voices.find(v => v.lang === 'pt-BR');
-        }
-        
         const utterance = new SpeechSynthesisUtterance(texto);
         utterance.lang = 'pt-BR';
         utterance.rate = 0.9;
-        utterance.pitch = 0.7;
+        utterance.pitch = 0.7;  // Tom grave para voz masculina
         utterance.volume = 1;
         
-        if (vozEncontrada) {
-            utterance.voice = vozEncontrada;
+        if (vozMasculinaAndroid) {
+            utterance.voice = vozMasculinaAndroid;
         }
         
         utterance.onend = () => resolve();
@@ -1347,11 +1406,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('statusIndicator').textContent = '✅ Conectado';
     
     await inicializarSons();
-    
-    // Carrega as vozes disponíveis
-    if (window.speechSynthesis) {
-        window.speechSynthesis.getVoices();
-    }
+    vozMasculinaAndroid = await inicializarVozMasculina();
     
     db.ref('config').on('value', (snapshot) => {
         if (snapshot.exists()) config = snapshot.val();
@@ -1587,7 +1642,7 @@ function atualizarClassificacaoAtual() {
                     <td><strong style="color:#d4a121;">${pontosTotais}</strong></td>
                     <td>${premioDisplay}</td>
                     <td>${temPix ? `<button class="btn-copiar-pix-classif" onclick="copiarPix('${j.nome.replace(/'/g, "\\'")}')">📋 COPIAR PIX</button>` : '❌ Sem Pix'}</td>
-                </tr>`;
+                </table>`;
     }).join('');
 }
 
@@ -1704,71 +1759,84 @@ async function finalizarComCampeao(campeao) {
     processandoFinalizacao = true;
     await db.ref('torneioFinalizado').set(true);
     
-    // Primeiro, adicionamos o campeão à classificação
-    const itemCampeao = { 
-        nome: campeao.nome, 
-        mesa: mesasData.preta?.find(j => j.nome === campeao.nome) ? 'Preta' : 'Amarela', 
-        posicao: 1, 
-        pontosPosicao: getPontosPosicao(1), 
-        kos: 0,
-        pontosKOs: 0,
-        pontosTotal: getPontosPosicao(1),
-        dataEliminacao: new Date().toISOString(), 
-        etapa: config.etapa,
-        premio: 0
-    };
-    classificacaoData.push(itemCampeao);
-    await db.ref('classificacao').set(classificacaoData);
+    const popupCampeao = document.createElement('div');
+    popupCampeao.className = 'popup-confirmacao';
+    popupCampeao.innerHTML = `
+        <div class="popup-card" style="max-width: 350px;">
+            <div class="popup-header">
+                <h3>🏆 CAMPEÃO! 🏆</h3>
+            </div>
+            <div class="popup-body">
+                <div class="jogador-info-popup">
+                    <img class="jogador-foto-popup" src="${getFotoJogador(campeao.nome)}" onerror="this.style.display='none'">
+                    <div class="jogador-destaque">${campeao.nome}</div>
+                </div>
+                <div class="popup-input-group" style="margin-top: 20px;">
+                    <label>🥊 Quantos KO's ele fez no total?</label>
+                    <input type="number" id="popupKosCampeao" min="0" value="0" style="text-align: center;">
+                </div>
+                <div class="popup-input-group">
+                    <label>💰 Premiação (R$)</label>
+                    <input type="number" id="popupPremioCampeao" min="0" step="0.01" value="" style="text-align: center;" placeholder="Digite o valor da premiação">
+                </div>
+            </div>
+            <div class="popup-buttons">
+                <button class="btn-popup-confirmar" id="popupConfirmarCampeao" style="width: 100%;">CONFIRMAR CAMPEÃO</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(popupCampeao);
     
-    // Depois finalizamos a etapa
-    const salvou = salvarEtapaNoHistorico();
-    
-    if (salvou) {
-        mostrarToast(`✅ ${config.etapa}ª ETAPA finalizada! ${campeao.nome} é o CAMPEÃO!`);
+    const confirmarBtn = document.getElementById('popupConfirmarCampeao');
+    confirmarBtn.onclick = async () => {
+        const kos = parseInt(document.getElementById('popupKosCampeao').value) || 0;
+        const valorPremio = parseFloat(document.getElementById('popupPremioCampeao').value) || 0;
         
-        prepararProximaEtapa();
-        
-        // Limpa todos os dados
-        mesasData = { preta: [], amarela: [] };
-        classificacaoData = [];
-        mesaFinalAtiva = false;
-        totalJogadoresIniciais = 0;
-        melhorMaoAtual = null;
-        torneioFinalizado = false;
-        
-        await db.ref('mesas').set(mesasData);
+        // Adiciona o campeão à classificação com a premiação
+        const itemCampeao = { 
+            nome: campeao.nome, 
+            mesa: mesasData.preta?.find(j => j.nome === campeao.nome) ? 'Preta' : 'Amarela', 
+            posicao: 1, 
+            pontosPosicao: getPontosPosicao(1), 
+            kos: kos,
+            pontosKOs: kos,
+            pontosTotal: getPontosPosicao(1) + kos,
+            dataEliminacao: new Date().toISOString(), 
+            etapa: config.etapa,
+            premio: valorPremio
+        };
+        classificacaoData.push(itemCampeao);
         await db.ref('classificacao').set(classificacaoData);
-        await db.ref('melhorMao').set(null);
+        
+        // Marca todos os jogadores restantes como eliminados
+        const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+        todosJogadores.forEach(j => { 
+            if (!j.eliminado) { 
+                j.eliminado = true; 
+                j.posicaoFinal = 1; 
+                j.premio = 0;
+            } 
+        });
+        await db.ref('mesas').set(mesasData);
         await db.ref('mesaFinalAtiva').set(false);
-        await db.ref('torneioFinalizado').set(false);
-        await posicoesRef.set({ ultimaPosicao: 0 });
+        mesaFinalAtiva = false;
         
-        atualizarAdminResumo();
-        atualizarAdminEstatisticas();
-        atualizarHistoricoEtapas();
-        atualizarStatsCards();
-        atualizarBotoesMesaFinal();
-        atualizarSelectMelhorMao();
-        atualizarClassificacaoAtual();
+        // Voz de comemoração do campeão
+        await falar(`🏆 ${campeao.nome} é o CAMPEÃO com ${kos} KO(s)! Premiação de R$ ${valorPremio.toFixed(2)}! 🏆`);
         
-        // Volta para a tela de seleção
-        document.getElementById('telaVerificarClassificacao').classList.add('hidden');
-        document.getElementById('telaSelecao').classList.remove('hidden');
-        document.getElementById('appContainer').classList.add('hidden');
-        document.getElementById('mesaFinalApp').classList.add('hidden');
-        document.getElementById('telaAdmin').classList.add('hidden');
-        
-        const proxima = config.etapa + 1;
-        if (proxima <= 13) {
-            setTimeout(() => {
-                mostrarToast(`🎯 PRÓXIMA ETAPA DISPONÍVEL: ${proxima}ª ETAPA!\n\nClique em "INICIAR ETAPA SELECIONADA" no painel administrativo para começar.`);
-            }, 500);
+        if (valorPremio > 0) {
+            mostrarToast(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)! 💰 Premiação: R$ ${valorPremio.toFixed(2)}`);
         } else {
-            mostrarToast(`🏆 PARABÉNS! Temporada concluída até a 13ª etapa!`);
+            mostrarToast(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)!`);
         }
-    }
-    
-    processandoFinalizacao = false;
+        
+        popupCampeao.remove();
+        
+        // Finaliza a etapa e avança
+        setTimeout(() => {
+            finalizarETAPARegistrarProxima(true, true, true);
+        }, 1000);
+    };
 }
 
 function finalizarTorneio() { 
