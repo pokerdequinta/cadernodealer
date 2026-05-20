@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -753,13 +754,10 @@ let audioContext = null;
 let fotosJogadores = {};
 let totalJogadoresIniciais = 0;
 let filaPosicoesBloqueada = false;
+let processandoFinalizacao = false;
 
 // Referência para o controle de posições no Firebase
 const posicoesRef = db.ref('controlePosicoes');
-
-// Voz masculina voraz - será configurada após carregar
-let vozMasculinaVoraz = null;
-let vozesCarregadas = false;
 
 // Buffer de áudio para sons de caixa registradora
 let rebuySoundBuffer = null;
@@ -842,16 +840,12 @@ function gerarSomCaixaSimples() {
     const buffer = audioContext.createBuffer(1, frameCount, sampleRate);
     const data = buffer.getChannelData(0);
     
-    // Som de "ding" com ruído
     for (let i = 0; i < frameCount; i++) {
         const t = i / sampleRate;
-        // Frequência decaindo
         const freq1 = 880 * Math.exp(-t * 8);
         const freq2 = 1100 * Math.exp(-t * 8);
-        // Som principal
         let sample = Math.sin(2 * Math.PI * freq1 * t) * Math.exp(-t * 15);
         sample += Math.sin(2 * Math.PI * freq2 * t) * Math.exp(-t * 15) * 0.6;
-        // Ruído de impacto
         sample += (Math.random() - 0.5) * 0.3 * Math.exp(-t * 20);
         data[i] = sample * 0.5;
     }
@@ -872,7 +866,6 @@ function gerarSomCaixaDupla() {
         const t = i / sampleRate;
         let sample = 0;
         
-        // Primeira batida (0s - 0.25s)
         if (t < 0.25) {
             const t1 = t;
             const freq1 = 880 * Math.exp(-t1 * 12);
@@ -882,7 +875,6 @@ function gerarSomCaixaDupla() {
             sample += (Math.random() - 0.5) * 0.3 * Math.exp(-t1 * 25);
         }
         
-        // Segunda batida (0.3s - 0.55s)
         if (t >= 0.3 && t < 0.55) {
             const t2 = t - 0.3;
             const freq1 = 880 * Math.exp(-t2 * 12);
@@ -941,53 +933,7 @@ function tocarSomRebuyDuplo() {
     source.start();
 }
 
-// Função para selecionar voz masculina voraz em português do Brasil
-async function inicializarVozMasculinaVoraz() {
-    return new Promise((resolve) => {
-        if (!window.speechSynthesis) {
-            resolve(null);
-            return;
-        }
-        
-        const carregarVozes = () => {
-            const voices = window.speechSynthesis.getVoices();
-            
-            // Prioridade de vozes masculinas brasileiras
-            const vozesPreferidas = [
-                'Google português do Brasil masculino',
-                'Microsoft Daniel - Brazilian Portuguese',
-                'Daniel (pt-BR)',
-                'Microsoft Daniel',
-                'Google português do Brasil'
-            ];
-            
-            let vozSelecionada = null;
-            
-            for (const preferencia of vozesPreferidas) {
-                vozSelecionada = voices.find(voice => 
-                    voice.lang === 'pt-BR' && 
-                    voice.name.toLowerCase().includes(preferencia.toLowerCase())
-                );
-                if (vozSelecionada) break;
-            }
-            
-            // Se não encontrou, pega qualquer voz em português do Brasil
-            if (!vozSelecionada) {
-                vozSelecionada = voices.find(voice => voice.lang === 'pt-BR');
-            }
-            
-            resolve(vozSelecionada);
-        };
-        
-        if (window.speechSynthesis.getVoices().length > 0) {
-            carregarVozes();
-        } else {
-            window.speechSynthesis.onvoiceschanged = carregarVozes;
-        }
-    });
-}
-
-// Função para falar com voz masculina voraz
+// Função para falar com voz masculina (forçando português do Brasil)
 async function falar(texto) {
     return new Promise((resolve) => {
         if (!window.speechSynthesis) {
@@ -995,17 +941,38 @@ async function falar(texto) {
             return;
         }
         
-        // Cancela qualquer fala em andamento
         window.speechSynthesis.cancel();
         
         const utterance = new SpeechSynthesisUtterance(texto);
         utterance.lang = 'pt-BR';
         utterance.rate = 0.85;
-        utterance.pitch = 0.7;      // Tom grave e másculo
+        utterance.pitch = 0.6;
         utterance.volume = 1;
         
-        if (vozMasculinaVoraz) {
-            utterance.voice = vozMasculinaVoraz;
+        // Força a seleção da melhor voz masculina disponível
+        const voices = window.speechSynthesis.getVoices();
+        
+        // Lista de possíveis nomes de vozes masculinas em português
+        const vozesMasculinas = [
+            'Google português do Brasil masculino',
+            'Microsoft Daniel - Brazilian Portuguese',
+            'Daniel (pt-BR)',
+            'Microsoft Daniel',
+            'Google português do Brasil',
+            'pt-BR'
+        ];
+        
+        let vozEncontrada = null;
+        for (const nomeVoz of vozesMasculinas) {
+            vozEncontrada = voices.find(v => 
+                v.lang === 'pt-BR' && 
+                v.name.toLowerCase().includes(nomeVoz.toLowerCase())
+            );
+            if (vozEncontrada) break;
+        }
+        
+        if (vozEncontrada) {
+            utterance.voice = vozEncontrada;
         }
         
         utterance.onend = () => resolve();
@@ -1017,7 +984,6 @@ async function falar(texto) {
 
 // Som de eliminação - voz masculina
 async function tocarSomEliminacaoVoz(nomeJogador, posicao) {
-    // Pequeno delay para efeito dramático
     setTimeout(async () => {
         await falar(`${nomeJogador} foi eliminado na ${posicao}ª posição!`);
     }, 150);
@@ -1163,6 +1129,9 @@ function salvarEtapaNoHistorico() {
 }
 
 function finalizarETAPARegistrarProxima(mostrarMensagem = true, voltarParaSelecao = true, avancarEtapa = true) {
+    if (processandoFinalizacao) return false;
+    processandoFinalizacao = true;
+    
     const salvou = salvarEtapaNoHistorico();
     if (salvou) {
         if (mostrarMensagem) mostrarToast(`✅ ${config.etapa}ª ETAPA finalizada e salva no histórico!`);
@@ -1204,14 +1173,18 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true, voltarParaSeleca
         if (mostrarMensagem && avancarEtapa) {
             const proxima = config.etapa + 1;
             if (proxima <= 13) {
-                mostrarToast(`🎯 PRÓXIMA ETAPA DISPONÍVEL: ${proxima}ª ETAPA!\n\nClique em "INICIAR ETAPA SELECIONADA" no painel administrativo para começar.`);
+                setTimeout(() => {
+                    mostrarToast(`🎯 PRÓXIMA ETAPA DISPONÍVEL: ${proxima}ª ETAPA!\n\nClique em "INICIAR ETAPA SELECIONADA" no painel administrativo para começar.`);
+                }, 500);
             } else {
                 mostrarToast(`🏆 PARABÉNS! Temporada concluída até a 13ª etapa!`);
             }
         }
+        processandoFinalizacao = false;
         return true;
     } else {
         if (mostrarMensagem) mostrarToast('Nenhum dado para salvar! É necessário ter eliminações registradas.');
+        processandoFinalizacao = false;
         return false;
     }
 }
@@ -1367,11 +1340,12 @@ function mostrarPopupEliminacaoMF(nomeJogador, fotoUrl, onConfirm) {
 document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('statusIndicator').textContent = '✅ Conectado';
     
-    // Inicializa contexto de áudio
     await inicializarSons();
     
-    // Inicializa voz masculina
-    vozMasculinaVoraz = await inicializarVozMasculinaVoraz();
+    // Carrega as vozes disponíveis
+    if (window.speechSynthesis) {
+        window.speechSynthesis.getVoices();
+    }
     
     db.ref('config').on('value', (snapshot) => {
         if (snapshot.exists()) config = snapshot.val();
@@ -1584,7 +1558,7 @@ function atualizarClassificacaoAtual() {
     const ordenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
     const top20 = ordenada.slice(0, 20);
     if (top20.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7">Nenhum jogador eliminado ainda<\/tr>';
+        tbody.innerHTML = '<td><td colspan="7">Nenhum jogador eliminado ainda<\/tr>';
         return;
     }
     tbody.innerHTML = top20.map(j => {
@@ -1714,10 +1688,11 @@ function confirmarEliminacaoMFPopup(nome) {
     });
 }
 
-function finalizarComCampeao(campeao) {
-    if (torneioFinalizado) return;
+async function finalizarComCampeao(campeao) {
+    if (torneioFinalizado || processandoFinalizacao) return;
     torneioFinalizado = true;
-    db.ref('torneioFinalizado').set(true);
+    processandoFinalizacao = true;
+    await db.ref('torneioFinalizado').set(true);
     
     const popupCampeao = document.createElement('div');
     popupCampeao.className = 'popup-confirmacao';
@@ -1752,7 +1727,6 @@ function finalizarComCampeao(campeao) {
         const kos = parseInt(document.getElementById('popupKosCampeao').value) || 0;
         const valorPremio = parseFloat(document.getElementById('popupPremioCampeao').value) || 0;
         
-        // Adiciona o campeão à classificação
         const item = { 
             nome: campeao.nome, 
             mesa: mesasData.preta?.find(j => j.nome === campeao.nome) ? 'Preta' : 'Amarela', 
@@ -1768,7 +1742,6 @@ function finalizarComCampeao(campeao) {
         classificacaoData.push(item);
         await db.ref('classificacao').set(classificacaoData);
         
-        // Marca todos os jogadores restantes como eliminados
         const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
         todosJogadores.forEach(j => { 
             if (!j.eliminado) { 
@@ -1777,30 +1750,36 @@ function finalizarComCampeao(campeao) {
             } 
         });
         await db.ref('mesas').set(mesasData);
-        db.ref('mesaFinalAtiva').set(false);
+        await db.ref('mesaFinalAtiva').set(false);
         mesaFinalAtiva = false;
         
         if (valorPremio > 0) {
+            await falar(`🏆 ${campeao.nome} é o CAMPEÃO com ${kos} KO(s)! Premiação de R$ ${valorPremio.toFixed(2)}! 🏆`);
             mostrarToast(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)! 💰 Premiação: R$ ${valorPremio.toFixed(2)}`);
         } else {
+            await falar(`🏆 ${campeao.nome} é o CAMPEÃO com ${kos} KO(s)! 🏆`);
             mostrarToast(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)!`);
         }
         
-        // Finaliza a etapa e avança
-        finalizarETAPARegistrarProxima(true, true, true);
-        
         popupCampeao.remove();
+        
+        setTimeout(() => {
+            finalizarETAPARegistrarProxima(true, true, true);
+        }, 500);
     };
 }
 
 function finalizarTorneio() { 
-    if (torneioFinalizado) return;
+    if (torneioFinalizado || processandoFinalizacao) return;
     torneioFinalizado = true;
+    processandoFinalizacao = true;
     db.ref('torneioFinalizado').set(true);
     db.ref('mesaFinalAtiva').set(false);
     mesaFinalAtiva = false;
-    finalizarETAPARegistrarProxima(true, true, true);
-    mostrarToast('🃏 TORNEIO FINALIZADO! 🃏'); 
+    
+    setTimeout(() => {
+        finalizarETAPARegistrarProxima(true, true, true);
+    }, 500);
 }
 
 function irParaMesaFinal() { 
