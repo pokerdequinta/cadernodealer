@@ -59,6 +59,50 @@
             font-weight: bold !important;
         }
         
+        /* Seletor de voz */
+        .voice-selector {
+            background: #1a3d1a;
+            border: 1px solid #d4a121;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .voice-selector label {
+            color: #d4a121;
+            font-weight: bold;
+            font-family: 'Anton', sans-serif;
+        }
+        
+        .voice-selector select {
+            flex: 1;
+            padding: 8px;
+            background: #102810;
+            color: #fff;
+            border: 1px solid #d4a121;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+        
+        .voice-selector button {
+            padding: 8px 15px;
+            background: #d4a121;
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Anton', sans-serif;
+        }
+        
+        .voice-selector button:hover {
+            transform: scale(1.02);
+        }
+        
         @media (min-width: 600px) and (max-width: 1024px) {
             .selecao-logo img { max-width: 100px !important; }
             .selecao-titulo { font-size: 1.8em !important; margin-bottom: 20px !important; }
@@ -210,6 +254,41 @@
         .melhor-mao-section h3 { color: #d4a121; font-family: 'Anton', sans-serif; margin-bottom: 15px; }
         .melhor-mao-select { width: 100%; padding: 12px; background: #1a3d1a; color: #fff; border: 1px solid #d4a121; border-radius: 8px; font-size: 1em; margin-bottom: 15px; }
         .melhor-mao-info { background: rgba(212, 161, 33, 0.2); padding: 10px; border-radius: 8px; text-align: center; font-family: 'Anton', sans-serif; }
+        .voice-selector {
+            background: #1a3d1a;
+            border: 1px solid #d4a121;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .voice-selector label {
+            color: #d4a121;
+            font-weight: bold;
+            font-family: 'Anton', sans-serif;
+        }
+        .voice-selector select {
+            flex: 1;
+            padding: 8px;
+            background: #102810;
+            color: #fff;
+            border: 1px solid #d4a121;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+        .voice-selector button {
+            padding: 8px 15px;
+            background: #d4a121;
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Anton', sans-serif;
+        }
         .resumo-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85em; }
         .resumo-table th { background: #1a3d1a; color: #d4a121; padding: 8px; text-align: left; font-family: 'Anton', sans-serif; }
         .resumo-table td { padding: 6px 8px; border-bottom: 1px solid #2d5016; }
@@ -503,6 +582,15 @@
                 <button class="btn btn-danger" id="btnApagarDados" style="margin-right: 10px;">🗑️ APAGAR TODOS OS DADOS</button>
                 <button class="voltar-btn" id="btnVoltarAdmin">← VOLTAR</button>
             </div>
+        </div>
+        
+        <!-- Seletor de Voz -->
+        <div class="voice-selector">
+            <label>🎤 SELECIONE A VOZ:</label>
+            <select id="voiceSelect">
+                <option value="default">Voz Padrão do Sistema</option>
+            </select>
+            <button id="btnTestarVoz">🔊 TESTAR VOZ</button>
         </div>
         
         <div class="melhor-mao-section">
@@ -807,8 +895,9 @@ const posicoesRef = db.ref('controlePosicoes');
 let rebuySoundBuffer = null;
 let rebuyDuploSoundBuffer = null;
 
-// Voz masculina para Android
-let vozMasculinaAndroid = null;
+// Voz selecionada pelo usuário
+let vozSelecionada = null;
+let vozesDisponiveis = [];
 
 // Chaves PIX
 const chavesPix = {
@@ -889,19 +978,14 @@ function gerarSomRebuyEscandaloso() {
     
     for (let i = 0; i < frameCount; i++) {
         const t = i / sampleRate;
-        // Som principal estridente
         let sample = 0;
         
-        // Nota principal (ding estridente)
         const freq1 = 1100 * Math.exp(-t * 6);
         const freq2 = 1320 * Math.exp(-t * 6);
         sample += Math.sin(2 * Math.PI * freq1 * t) * Math.exp(-t * 12) * 0.7;
         sample += Math.sin(2 * Math.PI * freq2 * t) * Math.exp(-t * 12) * 0.5;
-        
-        // Ruído de impacto
         sample += (Math.random() - 0.5) * 0.4 * Math.exp(-t * 15);
         
-        // Eco no final
         if (t > 0.2 && t < 0.35) {
             const eco = Math.sin(2 * Math.PI * 880 * (t - 0.2)) * Math.exp(-(t - 0.2) * 20) * 0.3;
             sample += eco;
@@ -926,7 +1010,6 @@ function gerarSomRebuyDuploEscandaloso() {
         const t = i / sampleRate;
         let sample = 0;
         
-        // Primeira batida (0s - 0.25s)
         if (t < 0.25) {
             const t1 = t;
             const freq1 = 1100 * Math.exp(-t1 * 8);
@@ -935,14 +1018,12 @@ function gerarSomRebuyDuploEscandaloso() {
             sample += Math.sin(2 * Math.PI * freq2 * t1) * Math.exp(-t1 * 15) * 0.5;
             sample += (Math.random() - 0.5) * 0.4 * Math.exp(-t1 * 18);
             
-            // Eco
             if (t1 > 0.1 && t1 < 0.2) {
                 const eco = Math.sin(2 * Math.PI * 880 * (t1 - 0.1)) * Math.exp(-(t1 - 0.1) * 25) * 0.3;
                 sample += eco;
             }
         }
         
-        // Segunda batida (0.35s - 0.6s)
         if (t >= 0.35 && t < 0.6) {
             const t2 = t - 0.35;
             const freq1 = 1100 * Math.exp(-t2 * 8);
@@ -951,7 +1032,6 @@ function gerarSomRebuyDuploEscandaloso() {
             sample += Math.sin(2 * Math.PI * freq2 * t2) * Math.exp(-t2 * 15) * 0.5;
             sample += (Math.random() - 0.5) * 0.4 * Math.exp(-t2 * 18);
             
-            // Eco
             if (t2 > 0.1 && t2 < 0.2) {
                 const eco = Math.sin(2 * Math.PI * 880 * (t2 - 0.1)) * Math.exp(-(t2 - 0.1) * 25) * 0.3;
                 sample += eco;
@@ -1007,51 +1087,57 @@ function tocarSomRebuyDuplo() {
     source.start();
 }
 
-// Função para inicializar e selecionar voz masculina
-async function inicializarVozMasculina() {
-    return new Promise((resolve) => {
-        if (!window.speechSynthesis) {
-            resolve(null);
-            return;
-        }
-        
-        const carregarVozes = () => {
-            const voices = window.speechSynthesis.getVoices();
-            
-            const vozesMasculinas = [
-                'Google português do Brasil masculino',
-                'Microsoft Daniel - Brazilian Portuguese',
-                'Daniel (pt-BR)',
-                'Microsoft Daniel',
-                'Google português do Brasil',
-                'pt-BR'
-            ];
-            
-            let vozEncontrada = null;
-            for (const nomeVoz of vozesMasculinas) {
-                vozEncontrada = voices.find(v => 
-                    v.lang === 'pt-BR' && 
-                    v.name.toLowerCase().includes(nomeVoz.toLowerCase())
-                );
-                if (vozEncontrada) break;
-            }
-            
-            if (!vozEncontrada) {
-                vozEncontrada = voices.find(v => v.lang === 'pt-BR');
-            }
-            
-            resolve(vozEncontrada);
-        };
-        
-        if (window.speechSynthesis.getVoices().length > 0) {
-            carregarVozes();
-        } else {
-            window.speechSynthesis.onvoiceschanged = carregarVozes;
-        }
-    });
+// Carregar vozes disponíveis e popular o select
+function carregarVozes() {
+    if (!window.speechSynthesis) return;
+    
+    const select = document.getElementById('voiceSelect');
+    if (!select) return;
+    
+    // Limpa opções existentes (mantém a primeira)
+    while (select.options.length > 1) {
+        select.remove(1);
+    }
+    
+    vozesDisponiveis = window.speechSynthesis.getVoices();
+    
+    // Filtra apenas vozes em português do Brasil
+    const vozesPtBr = vozesDisponiveis.filter(v => v.lang.includes('pt-BR'));
+    
+    if (vozesPtBr.length === 0) {
+        // Se não tem vozes PT-BR, mostra todas
+        vozesDisponiveis.forEach(voice => {
+            const option = document.createElement('option');
+            option.value = voice.name;
+            option.textContent = `${voice.name} (${voice.lang}) ${voice.localService ? '[Local]' : '[Rede]'}`;
+            select.appendChild(option);
+        });
+    } else {
+        vozesPtBr.forEach(voice => {
+            const option = document.createElement('option');
+            option.value = voice.name;
+            option.textContent = `${voice.name} (${voice.lang}) ${voice.localService ? '[Local]' : '[Rede]'}`;
+            select.appendChild(option);
+        });
+    }
+    
+    // Tenta selecionar uma voz masculina por padrão
+    const vozMasculina = vozesPtBr.find(v => 
+        v.name.toLowerCase().includes('daniel') || 
+        v.name.toLowerCase().includes('google') ||
+        (v.name.toLowerCase().includes('português') && !v.name.toLowerCase().includes('feminina'))
+    );
+    
+    if (vozMasculina) {
+        select.value = vozMasculina.name;
+        vozSelecionada = vozMasculina;
+    } else if (vozesPtBr.length > 0) {
+        select.value = vozesPtBr[0].name;
+        vozSelecionada = vozesPtBr[0];
+    }
 }
 
-// Função para falar com voz masculina
+// Função para falar com a voz selecionada
 async function falar(texto) {
     return new Promise((resolve) => {
         if (!window.speechSynthesis) {
@@ -1063,12 +1149,12 @@ async function falar(texto) {
         
         const utterance = new SpeechSynthesisUtterance(texto);
         utterance.lang = 'pt-BR';
-        utterance.rate = 0.9;
-        utterance.pitch = 0.7;
+        utterance.rate = 0.85;
+        utterance.pitch = 0.65; // Tom grave para voz masculina
         utterance.volume = 1;
         
-        if (vozMasculinaAndroid) {
-            utterance.voice = vozMasculinaAndroid;
+        if (vozSelecionada && vozSelecionada.name !== 'default') {
+            utterance.voice = vozSelecionada;
         }
         
         utterance.onend = () => resolve();
@@ -1076,6 +1162,24 @@ async function falar(texto) {
         
         window.speechSynthesis.speak(utterance);
     });
+}
+
+// Função para testar a voz selecionada
+function testarVoz() {
+    const select = document.getElementById('voiceSelect');
+    const vozNome = select.value;
+    
+    if (vozNome === 'default') {
+        vozSelecionada = null;
+        falar("Teste de voz padrão do sistema. Esta é a voz atual.");
+    } else {
+        const voz = vozesDisponiveis.find(v => v.name === vozNome);
+        if (voz) {
+            vozSelecionada = voz;
+            falar(`Teste de voz: ${voz.name}. Esta é a voz selecionada para as eliminações.`);
+            mostrarToast(`✅ Voz alterada para: ${voz.name}`);
+        }
+    }
 }
 
 // Som de eliminação - voz masculina
@@ -1437,7 +1541,14 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('statusIndicator').textContent = '✅ Conectado';
     
     await inicializarSons();
-    vozMasculinaAndroid = await inicializarVozMasculina();
+    
+    // Carrega vozes disponíveis
+    if (window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = function() {
+            carregarVozes();
+        };
+        carregarVozes();
+    }
     
     db.ref('config').on('value', (snapshot) => {
         if (snapshot.exists()) config = snapshot.val();
@@ -1850,7 +1961,7 @@ async function finalizarComCampeao(campeao) {
         mesaFinalAtiva = false;
         
         // Voz de comemoração do campeão
-        await falar(`🏆 ${campeao.nome} é o CAMPEÃO com ${kos} KO(s)! Premiação de R$ ${valorPremio.toFixed(2)}! 🏆`);
+        await falar(`${campeao.nome} é o CAMPEÃO com ${kos} KO(s)! Premiação de R$ ${valorPremio.toFixed(2)}!`);
         
         if (valorPremio > 0) {
             mostrarToast(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)! 💰 Premiação: R$ ${valorPremio.toFixed(2)}`);
@@ -1861,9 +1972,7 @@ async function finalizarComCampeao(campeao) {
         popupCampeao.remove();
         
         // Finaliza a etapa e avança
-        setTimeout(() => {
-            finalizarETAPARegistrarProxima(true, true, true);
-        }, 1000);
+        await finalizarETAPARegistrarProxima(true, true, true);
     };
 }
 
@@ -1915,7 +2024,7 @@ function iniciarApp() {
         return;
     }
     if (torneioFinalizado) {
-        mostrarToast('O torneio já foi finalizado! Inicie uma nova etapa para começar outro torneio.');
+        mostrarToast('O torneio foi finalizado! Inicie uma nova etapa para começar outro torneio.');
         return;
     }
     document.getElementById('telaSelecao').classList.add('hidden');
@@ -1986,6 +2095,8 @@ function confirmarSenhaAdmin() {
         atualizarAdminEstatisticas();
         atualizarHistoricoEtapas();
         atualizarSelectMelhorMao();
+        // Recarrega as vozes quando entra no admin
+        carregarVozes();
         document.getElementById('senhaAdminInput').value = '';
     } else {
         alert('❌ Senha incorreta!');
@@ -2496,6 +2607,7 @@ function inicializarEventos() {
     const btnEscolherArquivo = document.getElementById('btnEscolherArquivo');
     const btnProcessarLayout = document.getElementById('btnProcessarLayout');
     const btnCopiarCSV = document.getElementById('btnCopiarCSV');
+    const btnTestarVoz = document.getElementById('btnTestarVoz');
     const fileInput = document.getElementById('fileInput');
     
     if (logoAdmin) logoAdmin.onclick = abrirModalAdmin;
@@ -2533,6 +2645,7 @@ function inicializarEventos() {
     if (fileInput) fileInput.onchange = (e) => { if (e.target.files[0]) { arquivoSelecionado = e.target.files[0]; if (btnProcessarLayout) btnProcessarLayout.style.display = 'inline-block'; } };
     if (btnProcessarLayout) btnProcessarLayout.onclick = processarLayout;
     if (btnCopiarCSV) btnCopiarCSV.onclick = copiarCSV;
+    if (btnTestarVoz) btnTestarVoz.onclick = testarVoz;
     
     if (btnVoltarAdmin) btnVoltarAdmin.onclick = voltarDaAdmin;
     
