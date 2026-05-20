@@ -571,7 +571,7 @@
             <h3>🏆 RANKING ATUAL (Top 20)</h3>
             <table class="classificacao-table" id="classificacaoTableAtual">
                 <thead>
-                    <tr><th>Posição</th><th>Jogador</th><th>Pontos Posição</th><th>KO's</th><th>PONTOS TOTAIS</th><th>Prêmio (R$)</th><th>PIX</th></tr>
+                    <tr><th>Posição</th><th>Jogador</th><th>Pontos Posição</th><th>KO's</th><th>PONTOS TOTAIS</th><th>Prêmio (R$)</th><th>PIX</th></td>
                 </thead>
                 <tbody id="classificacaoBodyAtual"></tbody>
             </table>
@@ -757,8 +757,8 @@ let filaPosicoesBloqueada = false;
 // Referência para o controle de posições no Firebase
 const posicoesRef = db.ref('controlePosicoes');
 
-// Voz padrão masculina humanizada
-let vozMasculinaPadrao = null;
+// Voz masculina voraz - será configurada após carregar
+let vozMasculinaVoraz = null;
 
 // Chaves PIX
 const chavesPix = {
@@ -827,56 +827,8 @@ async function resetarPosicoes() {
 
 // ==================== FUNÇÕES DE ÁUDIO ====================
 
-// Som de caixa registradora para rebuy simples
-async function tocarSomCaixaRegistradora() {
-    if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioContext.state === 'suspended') {
-        await audioContext.resume();
-    }
-    
-    const now = audioContext.currentTime;
-    const masterGain = audioContext.createGain();
-    masterGain.gain.value = 0.6;
-    masterGain.connect(audioContext.destination);
-    
-    const dingFreq = [880, 1046.5];
-    dingFreq.forEach((freq, i) => {
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        osc.connect(gain);
-        gain.connect(masterGain);
-        osc.frequency.value = freq;
-        osc.type = 'sine';
-        gain.gain.value = 0.4;
-        osc.start(now + i * 0.1);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.1 + 0.3);
-        osc.stop(now + i * 0.1 + 0.3);
-    });
-    
-    const noise = audioContext.createBufferSource();
-    const bufferSize = audioContext.sampleRate * 0.25;
-    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-        data[i] = Math.sin(i * 0.02) * (Math.random() * 0.5);
-    }
-    noise.buffer = buffer;
-    const noiseGain = audioContext.createGain();
-    noise.connect(noiseGain);
-    noiseGain.connect(masterGain);
-    noiseGain.gain.value = 0.2;
-    noise.start(now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
-    
-    setTimeout(() => {
-        masterGain.disconnect();
-    }, 800);
-}
-
-// Som de caixa registradora mais intensa para rebuy duplo
-async function tocarSomCaixaRegistradoraDupla() {
+// Som de caixa registradora antiga - rebuy simples (1 batida estridente)
+async function tocarSomCaixaRegistradoraSimples() {
     if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
@@ -889,7 +841,8 @@ async function tocarSomCaixaRegistradoraDupla() {
     masterGain.gain.value = 0.7;
     masterGain.connect(audioContext.destination);
     
-    const dingFreq = [660, 880, 1046.5, 1318.51];
+    // Som estridente da caixa registradora - uma batida
+    const dingFreq = [880, 1100];
     dingFreq.forEach((freq, i) => {
         const osc = audioContext.createOscillator();
         const gain = audioContext.createGain();
@@ -897,47 +850,100 @@ async function tocarSomCaixaRegistradoraDupla() {
         gain.connect(masterGain);
         osc.frequency.value = freq;
         osc.type = 'sine';
-        gain.gain.value = 0.45;
-        osc.start(now + i * 0.12);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.12 + 0.25);
-        osc.stop(now + i * 0.12 + 0.25);
+        gain.gain.value = 0.5;
+        osc.start(now + i * 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.05 + 0.2);
+        osc.stop(now + i * 0.05 + 0.2);
     });
     
+    // Ruído de impacto da caixa
     const noise = audioContext.createBufferSource();
-    const bufferSize = audioContext.sampleRate * 0.35;
+    const bufferSize = audioContext.sampleRate * 0.15;
     const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) {
-        data[i] = Math.sin(i * 0.015) * (Math.random() * 0.6);
+        data[i] = Math.sin(i * 0.03) * (Math.random() * 0.7);
     }
     noise.buffer = buffer;
     const noiseGain = audioContext.createGain();
     noise.connect(noiseGain);
     noiseGain.connect(masterGain);
-    noiseGain.gain.value = 0.25;
-    noise.start(now + 0.2);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+    noiseGain.gain.value = 0.3;
+    noise.start(now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
     
-    for (let i = 0; i < 6; i++) {
+    setTimeout(() => {
+        masterGain.disconnect();
+    }, 500);
+}
+
+// Som de caixa registradora antiga - rebuy duplo (2 batidas estridentes)
+async function tocarSomCaixaRegistradoraDupla() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+    }
+    
+    const now = audioContext.currentTime;
+    const masterGain = audioContext.createGain();
+    masterGain.gain.value = 0.75;
+    masterGain.connect(audioContext.destination);
+    
+    // Primeira batida
+    const dingFreq1 = [880, 1100, 1320];
+    dingFreq1.forEach((freq, i) => {
         const osc = audioContext.createOscillator();
         const gain = audioContext.createGain();
         osc.connect(gain);
         gain.connect(masterGain);
-        osc.frequency.value = 800 + i * 50;
-        osc.type = 'triangle';
-        gain.gain.value = 0.15;
-        osc.start(now + 0.35 + i * 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45 + i * 0.05 + 0.1);
-        osc.stop(now + 0.45 + i * 0.05 + 0.1);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        gain.gain.value = 0.45;
+        osc.start(now + i * 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.05 + 0.15);
+        osc.stop(now + i * 0.05 + 0.15);
+    });
+    
+    // Segunda batida (após um pequeno intervalo)
+    const dingFreq2 = [880, 1100, 1320];
+    dingFreq2.forEach((freq, i) => {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        gain.gain.value = 0.45;
+        osc.start(now + 0.25 + i * 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25 + i * 0.05 + 0.15);
+        osc.stop(now + 0.25 + i * 0.05 + 0.15);
+    });
+    
+    // Ruído da gaveta abrindo
+    const noise = audioContext.createBufferSource();
+    const bufferSize = audioContext.sampleRate * 0.4;
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.sin(i * 0.025) * (Math.random() * 0.6);
     }
+    noise.buffer = buffer;
+    const noiseGain = audioContext.createGain();
+    noise.connect(noiseGain);
+    noiseGain.connect(masterGain);
+    noiseGain.gain.value = 0.3;
+    noise.start(now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
     
     setTimeout(() => {
         masterGain.disconnect();
-    }, 1000);
+    }, 700);
 }
 
-// Função para selecionar voz masculina natural e humanizada
-async function inicializarVozMasculina() {
+// Função para selecionar voz masculina voraz (tom grave e imponente)
+async function inicializarVozMasculinaVoraz() {
     return new Promise((resolve) => {
         if (!window.speechSynthesis) {
             resolve(null);
@@ -947,6 +953,7 @@ async function inicializarVozMasculina() {
         const carregarVozes = () => {
             const voices = window.speechSynthesis.getVoices();
             
+            // Prioridade de vozes masculinas brasileiras com tom grave
             const vozesPreferidas = [
                 'Google português do Brasil masculino',
                 'Microsoft Daniel - Brazilian Portuguese',
@@ -982,7 +989,7 @@ async function inicializarVozMasculina() {
     });
 }
 
-// Função para falar com voz natural humanizada
+// Função para falar com voz masculina voraz e empoderada
 async function falar(texto) {
     return new Promise((resolve) => {
         if (!window.speechSynthesis) {
@@ -994,12 +1001,12 @@ async function falar(texto) {
         
         const utterance = new SpeechSynthesisUtterance(texto);
         utterance.lang = 'pt-BR';
-        utterance.rate = 0.9;
-        utterance.pitch = 1.0;
-        utterance.volume = 1;
+        utterance.rate = 0.85;
+        utterance.pitch = 0.7;      // Tom grave para soar mais másculo
+        utterance.volume = 1.2;     // Volume um pouco mais alto
         
-        if (vozMasculinaPadrao) {
-            utterance.voice = vozMasculinaPadrao;
+        if (vozMasculinaVoraz) {
+            utterance.voice = vozMasculinaVoraz;
         }
         
         utterance.onend = () => resolve();
@@ -1009,10 +1016,10 @@ async function falar(texto) {
     });
 }
 
-// Som de eliminação - apenas voz natural
+// Som de eliminação - voz masculina voraz
 async function tocarSomEliminacaoVoz(nomeJogador, posicao) {
     setTimeout(async () => {
-        await falar(`${nomeJogador} foi eliminado na ${posicao}ª posição.`);
+        await falar(`${nomeJogador} foi eliminado na ${posicao}ª posição!`);
     }, 100);
 }
 
@@ -1066,7 +1073,7 @@ async function tocarSomAddon() {
 
 function tocarSomCashout(tipo, nomeJogador = null, posicao = null) {
     if (tipo === 'rebuy') {
-        tocarSomCaixaRegistradora();
+        tocarSomCaixaRegistradoraSimples();
     } else if (tipo === 'rebuyDuplo') {
         tocarSomCaixaRegistradoraDupla();
     } else if (tipo === 'addon') {
@@ -1170,11 +1177,14 @@ function prepararProximaEtapa() {
     }
 }
 
-function finalizarETAPARegistrarProxima(mostrarMensagem = true, voltarParaSelecao = true) {
+function finalizarETAPARegistrarProxima(mostrarMensagem = true, voltarParaSelecao = true, avancarEtapa = true) {
     const salvou = salvarEtapaNoHistorico();
     if (salvou) {
         if (mostrarMensagem) mostrarToast(`✅ ${config.etapa}ª ETAPA finalizada e salva no histórico!`);
-        prepararProximaEtapa();
+        
+        if (avancarEtapa) {
+            prepararProximaEtapa();
+        }
         
         mesasData = { preta: [], amarela: [] };
         classificacaoData = [];
@@ -1206,7 +1216,7 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true, voltarParaSeleca
             document.getElementById('telaAdmin').classList.add('hidden');
         }
         
-        if (mostrarMensagem) {
+        if (mostrarMensagem && avancarEtapa) {
             const proxima = config.etapa + 1;
             if (proxima <= 13) {
                 mostrarToast(`🎯 PRÓXIMA ETAPA DISPONÍVEL: ${proxima}ª ETAPA!\n\nClique em "INICIAR ETAPA SELECIONADA" no painel administrativo para começar.`);
@@ -1356,7 +1366,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('statusIndicator').textContent = '✅ Conectado';
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
-    vozMasculinaPadrao = await inicializarVozMasculina();
+    vozMasculinaVoraz = await inicializarVozMasculinaVoraz();
     
     db.ref('config').on('value', (snapshot) => {
         if (snapshot.exists()) config = snapshot.val();
@@ -1588,7 +1598,7 @@ function atualizarClassificacaoAtual() {
                     <td><strong style="color:#d4a121;">${pontosTotais}</strong></td>
                     <td>${premioDisplay}</td>
                     <td>${temPix ? `<button class="btn-copiar-pix-classif" onclick="copiarPix('${j.nome.replace(/'/g, "\\'")}')">📋 COPIAR PIX</button>` : '❌ Sem Pix'}</td>
-                </table>`;
+                </tr>`;
     }).join('');
 }
 
@@ -1755,12 +1765,17 @@ function finalizarComCampeao(campeao) {
         db.ref('mesas').set(mesasData);
         db.ref('mesaFinalAtiva').set(false);
         mesaFinalAtiva = false;
+        
+        // Finaliza a etapa e avança para a próxima automaticamente
         if (valorPremio > 0) {
             mostrarToast(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)! 💰 Premiação: R$ ${valorPremio.toFixed(2)}`);
         } else {
             mostrarToast(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)!`);
         }
-        finalizarETAPARegistrarProxima(true, true);
+        
+        // Salva a etapa e avança para a próxima
+        finalizarETAPARegistrarProxima(true, true, true);
+        
         popupCampeao.remove();
     };
 }
@@ -1771,7 +1786,9 @@ function finalizarTorneio() {
     db.ref('torneioFinalizado').set(true);
     db.ref('mesaFinalAtiva').set(false);
     mesaFinalAtiva = false;
-    finalizarETAPARegistrarProxima(true, true);
+    
+    // Ao finalizar o torneio, também salva a etapa e avança
+    finalizarETAPARegistrarProxima(true, true, true);
     mostrarToast('🃏 TORNEIO FINALIZADO! 🃏'); 
 }
 
