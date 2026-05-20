@@ -574,7 +574,6 @@
         <div class="verificar-header">
             <h1>📊 CLASSIFICAÇÃO GERAL DA 4ª ETAPA</h1>
             <div>
-                <button class="btn btn-info" id="btnEnviarWhatsApp" style="margin-right: 10px;">📱 ENVIAR PARA WHATSAPP</button>
                 <button class="voltar-inicio-btn" id="btnVoltarVerificarInicio" style="padding: 12px 25px; background: #c72c48; color: #fff; border: none; border-radius: 8px; cursor: pointer;">← VOLTAR</button>
             </div>
         </div>
@@ -766,6 +765,9 @@ let melhorMaoAtual = null;
 let audioContext = null;
 let fotosJogadores = {};
 
+// Controle de posições por dispositivo
+let ultimaPosicaoUtilizada = 0;
+
 // Chaves PIX
 const chavesPix = {
     'Amarildo': { chave: '41987779470', tipo: 'Telefone' },
@@ -813,7 +815,6 @@ async function tocarSomCaixaRegistradora() {
     masterGain.gain.value = 0.6;
     masterGain.connect(audioContext.destination);
     
-    // Som de "ding" da caixa registradora
     const dingFreq = [880, 1046.5];
     dingFreq.forEach((freq, i) => {
         const osc = audioContext.createOscillator();
@@ -828,7 +829,6 @@ async function tocarSomCaixaRegistradora() {
         osc.stop(now + i * 0.1 + 0.3);
     });
     
-    // Barulho de engrenagem da caixa
     const noise = audioContext.createBufferSource();
     const bufferSize = audioContext.sampleRate * 0.25;
     const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
@@ -863,7 +863,6 @@ async function tocarSomCaixaRegistradoraDupla() {
     masterGain.gain.value = 0.7;
     masterGain.connect(audioContext.destination);
     
-    // Som duplo "ding-ding-ding"
     const dingFreq = [660, 880, 1046.5, 1318.51];
     dingFreq.forEach((freq, i) => {
         const osc = audioContext.createOscillator();
@@ -878,7 +877,6 @@ async function tocarSomCaixaRegistradoraDupla() {
         osc.stop(now + i * 0.12 + 0.25);
     });
     
-    // Barulho de gaveta abrindo
     const noise = audioContext.createBufferSource();
     const bufferSize = audioContext.sampleRate * 0.35;
     const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
@@ -894,7 +892,6 @@ async function tocarSomCaixaRegistradoraDupla() {
     noise.start(now + 0.2);
     noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
     
-    // Som de moedas caindo
     for (let i = 0; i < 6; i++) {
         const osc = audioContext.createOscillator();
         const gain = audioContext.createGain();
@@ -913,8 +910,31 @@ async function tocarSomCaixaRegistradoraDupla() {
     }, 1000);
 }
 
-// Som de eliminação com voz masculina incisiva
-async function tocarSomEliminacao(nomeJogador) {
+// Função para sintetizar voz falando em português
+async function sintetizarVoz(texto) {
+    return new Promise((resolve) => {
+        if (!window.speechSynthesis) {
+            console.log('Speech synthesis not supported');
+            resolve();
+            return;
+        }
+        
+        const utterance = new SpeechSynthesisUtterance(texto);
+        utterance.lang = 'pt-BR';
+        utterance.rate = 0.9;
+        utterance.pitch = 0.8;
+        utterance.volume = 1;
+        
+        utterance.onend = () => resolve();
+        utterance.onerror = () => resolve();
+        
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+    });
+}
+
+// Som de eliminação com voz falada em português
+async function tocarSomEliminacaoComVoz(nomeJogador, posicao) {
     if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
@@ -924,7 +944,7 @@ async function tocarSomEliminacao(nomeJogador) {
     
     const now = audioContext.currentTime;
     const masterGain = audioContext.createGain();
-    masterGain.gain.value = 0.8;
+    masterGain.gain.value = 0.7;
     masterGain.connect(audioContext.destination);
     
     // Sons graves para dar peso à eliminação
@@ -932,15 +952,14 @@ async function tocarSomEliminacao(nomeJogador) {
     const gain1 = audioContext.createGain();
     osc1.connect(gain1);
     gain1.connect(masterGain);
-    osc1.frequency.value = 82.41; // Mi grave
+    osc1.frequency.value = 82.41;
     osc1.type = 'sawtooth';
     gain1.gain.value = 0.5;
     osc1.start(now);
-    osc1.frequency.exponentialRampToValueAtTime(55, now + 0.6);
-    gain1.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
-    osc1.stop(now + 1.2);
+    osc1.frequency.exponentialRampToValueAtTime(55, now + 0.5);
+    gain1.gain.exponentialRampToValueAtTime(0.0001, now + 1.0);
+    osc1.stop(now + 1.0);
     
-    // Impacto de "gong"
     const osc2 = audioContext.createOscillator();
     const gain2 = audioContext.createGain();
     osc2.connect(gain2);
@@ -949,48 +968,35 @@ async function tocarSomEliminacao(nomeJogador) {
     osc2.type = 'sine';
     gain2.gain.value = 0.35;
     osc2.start(now + 0.15);
-    gain2.gain.exponentialRampToValueAtTime(0.0001, now + 1.0);
-    osc2.stop(now + 1.0);
+    gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+    osc2.stop(now + 0.9);
     
-    // Sintetizador de voz usando filter sweep + ruído
     const noise = audioContext.createBufferSource();
-    const bufferSize = audioContext.sampleRate * 0.8;
+    const bufferSize = audioContext.sampleRate * 0.6;
     const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) {
         data[i] = Math.random() * 2 - 1;
     }
     noise.buffer = buffer;
-    
     const filter = audioContext.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.value = 500;
-    filter.Q.value = 5;
-    
+    filter.type = 'lowpass';
+    filter.frequency.value = 800;
     noise.connect(filter);
     filter.connect(masterGain);
     const noiseGain = audioContext.createGain();
-    noiseGain.gain.value = 0.4;
+    noiseGain.gain.value = 0.3;
     noise.start(now + 0.1);
-    filter.frequency.exponentialRampToValueAtTime(200, now + 0.5);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.0);
-    
-    // Timbre adicional para dar dramaticidade
-    const osc3 = audioContext.createOscillator();
-    const gain3 = audioContext.createGain();
-    osc3.connect(gain3);
-    gain3.connect(masterGain);
-    osc3.frequency.value = 440;
-    osc3.type = 'triangle';
-    gain3.gain.value = 0.2;
-    osc3.start(now + 0.3);
-    osc3.frequency.exponentialRampToValueAtTime(220, now + 0.7);
-    gain3.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
-    osc3.stop(now + 0.9);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
     
     setTimeout(() => {
         masterGain.disconnect();
-    }, 1500);
+    }, 1000);
+    
+    // Aguarda um pouco e então fala o nome do jogador
+    setTimeout(() => {
+        sintetizarVoz(`${nomeJogador} foi eliminado na ${posicao}ª posição!`);
+    }, 500);
 }
 
 // Som de addon
@@ -1041,7 +1047,7 @@ async function tocarSomAddon() {
     }, 900);
 }
 
-function tocarSomCashout(tipo, nomeJogador = null) {
+function tocarSomCashout(tipo, nomeJogador = null, posicao = null) {
     if (tipo === 'rebuy') {
         tocarSomCaixaRegistradora();
     } else if (tipo === 'rebuyDuplo') {
@@ -1049,7 +1055,7 @@ function tocarSomCashout(tipo, nomeJogador = null) {
     } else if (tipo === 'addon') {
         tocarSomAddon();
     } else if (tipo === 'eliminacao') {
-        tocarSomEliminacao(nomeJogador);
+        tocarSomEliminacaoComVoz(nomeJogador, posicao);
     }
 }
 // ====================================================================
@@ -1156,6 +1162,7 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true, voltarParaSeleca
         mesasData = { preta: [], amarela: [] };
         classificacaoData = [];
         contadorEliminados = 0;
+        ultimaPosicaoUtilizada = 0;
         mesaFinalAtiva = false;
         totalJogadoresIniciais = 0;
         melhorMaoAtual = null;
@@ -1302,7 +1309,7 @@ function mostrarPopupEliminacaoMF(nomeJogador, fotoUrl, onConfirm) {
                 </div>
                 <div class="popup-input-group">
                     <label>💰 Premiação (R$)</label>
-                    <input type="number" id="popupPremioMF" min="0" step="0.01" value="0" placeholder="Valor em reais">
+                    <input type="number" id="popupPremioMF" min="0" step="0.01" value="" placeholder="Valor em reais (opcional)">
                 </div>
             </div>
             <div class="popup-buttons">
@@ -1322,7 +1329,7 @@ function mostrarPopupEliminacaoMF(nomeJogador, fotoUrl, onConfirm) {
     cancelarBtn.addEventListener('click', fecharPopup);
     confirmarBtn.addEventListener('click', () => {
         const kos = parseInt(kosInput.value) || 0;
-        const premio = parseFloat(premioInput.value) || 0;
+        const premio = premioInput.value === '' ? 0 : parseFloat(premioInput.value) || 0;
         fecharPopup();
         if (onConfirm) onConfirm(kos, premio);
     });
@@ -1398,6 +1405,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         
         if (totalJogadoresIniciais === 0 && todosJogadores.length > 0 && !torneioFinalizado) {
             totalJogadoresIniciais = todosJogadores.length;
+            ultimaPosicaoUtilizada = totalJogadoresIniciais;
         }
         
         atualizarGridJogadores();
@@ -1548,14 +1556,14 @@ function atualizarClassificacaoAtual() {
     const ordenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
     const top20 = ordenada.slice(0, 20);
     if (top20.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7">Nenhum jogador eliminado ainda<\/tr>';
+        tbody.innerHTML = '</table><td colspan="7">Nenhum jogador eliminado ainda<\/tr>';
         return;
     }
     tbody.innerHTML = top20.map(j => {
         const pontosTotais = (j.pontosPosicao || 0) + (j.kos || 0);
         const fotoUrl = getFotoJogador(j.nome);
         const temPix = chavesPix[j.nome] && chavesPix[j.nome].chave;
-        let premioDisplay = j.premio ? `R$ ${j.premio.toFixed(2)}` : '-';
+        let premioDisplay = j.premio && j.premio > 0 ? `R$ ${j.premio.toFixed(2)}` : '-';
         return `<tr class="${j.posicao === 1 ? 'top-1' : j.posicao === 2 ? 'top-2' : j.posicao === 3 ? 'top-3' : ''}">
                     <td><strong>${j.posicao}º</strong></td>
                     <td class="classificacao-nome">
@@ -1567,7 +1575,7 @@ function atualizarClassificacaoAtual() {
                     <td><strong style="color:#d4a121;">${pontosTotais}</strong></td>
                     <td>${premioDisplay}</td>
                     <td>${temPix ? `<button class="btn-copiar-pix-classif" onclick="copiarPix('${j.nome.replace(/'/g, "\\'")}')">📋 COPIAR PIX</button>` : '❌ Sem Pix'}</td>
-                </tr>`;
+                </table>`;
     }).join('');
 }
 
@@ -1637,7 +1645,7 @@ function confirmarEliminacaoMFPopup(nome) {
         const jogador = vivos.find(j => j.nome === nome);
         if (jogador && !torneioFinalizado) {
             const posicao = vivos.length;
-            jogador.premio = premio;
+            jogador.premio = premio > 0 ? premio : 0;
             const pontosPosicaoCalculado = getPontosPosicao(posicao);
             const item = { 
                 nome: jogador.nome, 
@@ -1649,7 +1657,7 @@ function confirmarEliminacaoMFPopup(nome) {
                 pontosTotal: pontosPosicaoCalculado + kos, 
                 dataEliminacao: new Date().toISOString(), 
                 etapa: config.etapa,
-                premio: premio
+                premio: premio > 0 ? premio : 0
             };
             classificacaoData.push(item);
             db.ref('classificacao').set(classificacaoData);
@@ -1658,10 +1666,10 @@ function confirmarEliminacaoMFPopup(nome) {
                 original.eliminado = true; 
                 original.posicaoFinal = posicao; 
                 original.kos = kos;
-                original.premio = premio;
+                original.premio = premio > 0 ? premio : 0;
                 db.ref('mesas').set(mesasData); 
             }
-            tocarSomCashout('eliminacao', jogador.nome);
+            tocarSomCashout('eliminacao', jogador.nome, posicao);
             let msg = `✅ ${jogador.nome} eliminado na ${posicao}ª posição com ${kos} KO(s)!`;
             if (premio > 0) msg += `\n💰 Premiação: R$ ${premio.toFixed(2)}`;
             mostrarToast(msg);
@@ -1701,7 +1709,7 @@ function finalizarComCampeao(campeao) {
                 </div>
                 <div class="popup-input-group">
                     <label>💰 Premiação (R$)</label>
-                    <input type="number" id="popupPremioCampeao" min="0" step="0.01" value="0" style="text-align: center;">
+                    <input type="number" id="popupPremioCampeao" min="0" step="0.01" value="" style="text-align: center;" placeholder="Opcional">
                 </div>
             </div>
             <div class="popup-buttons">
@@ -1906,8 +1914,11 @@ function confirmarEliminacaoPopup(nome) {
     mostrarPopupEliminacao(nome, fotoUrl, (kos) => {
         const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
         if (jogador && !jogador.eliminado) {
+            // Calcula a posição de forma sequencial e sincronizada
             contadorEliminados++;
-            const posicao = totalJogadoresIniciais - (contadorEliminados - 1);
+            const posicao = ultimaPosicaoUtilizada;
+            ultimaPosicaoUtilizada--;
+            
             const pontosPosicaoCalculado = getPontosPosicao(posicao);
             const item = { 
                 nome: jogador.nome, 
@@ -1926,7 +1937,7 @@ function confirmarEliminacaoPopup(nome) {
             jogador.posicaoFinal = posicao; 
             jogador.kos = kos;
             db.ref('mesas').set(mesasData);
-            tocarSomCashout('eliminacao', jogador.nome);
+            tocarSomCashout('eliminacao', jogador.nome, posicao);
             mostrarToast(`✅ ${jogador.nome} eliminado na ${posicao}ª posição com ${kos} KO(s)!`);
             atualizarGridJogadores();
             atualizarStatsCards();
@@ -1989,30 +2000,8 @@ function mostrarTelaVerificarClassificacao() {
     atualizarHistoricoEtapas();
 }
 
-function finalizarEtapaDaTelaVerificacao() {
-    const fotoUrl = 'https://ui-avatars.com/api/?name=FINAL&background=d4a121&color=000&size=60';
-    mostrarPopupConfirmacao('⚠️ FINALIZAR ETAPA', 'CONFIRMAR FINALIZAÇÃO', fotoUrl, () => {
-        finalizarETAPARegistrarProxima(true, true);
-    });
-}
-
 function enviarClassificacaoWhatsApp() {
-    const ordenada = [...classificacaoData].sort((a,b) => a.posicao - b.posicao);
-    if (ordenada.length === 0) {
-        alert('Nenhum jogador eliminado para enviar!');
-        return;
-    }
-    let mensagem = `🃏 *CLASSIFICAÇÃO ${config.etapa}ª ETAPA - POKER DE QUINTA* 🃏\n\n`;
-    ordenada.slice(0, 20).forEach(j => {
-        const pontosTotais = (j.pontosPosicao || 0) + (j.kos || 0);
-        mensagem += `${j.posicao}º - ${j.nome} - ${j.pontosPosicao || 0} pts + ${j.kos || 0} KO = *${pontosTotais} pts*`;
-        if (j.premio) mensagem += ` 💰 R$ ${j.premio}`;
-        mensagem += `\n`;
-    });
-    mensagem += `\n📅 ${new Date().toLocaleString('pt-BR')}`;
-    const numero = '41987210685';
-    const url = `https://wa.me/55${numero}?text=${encodeURIComponent(mensagem)}`;
-    window.open(url, '_blank');
+    // Função removida - não será mais utilizada
 }
 
 function iniciarEtapaAdmin() {
@@ -2028,6 +2017,7 @@ function iniciarEtapaAdmin() {
         mesasData = { preta: [], amarela: [] };
         classificacaoData = [];
         contadorEliminados = 0;
+        ultimaPosicaoUtilizada = 0;
         mesaFinalAtiva = false;
         totalJogadoresIniciais = 0;
         melhorMaoAtual = null;
@@ -2061,7 +2051,8 @@ function finalizarEtapaMostrarClassificacao() {
             const jogadoresOrdenados = [...vivos].sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
             for (let i = 0; i < jogadoresOrdenados.length; i++) {
                 const jogador = jogadoresOrdenados[i];
-                const posicaoAtual = totalJogadoresIniciais - (contadorEliminados);
+                const posicaoAtual = ultimaPosicaoUtilizada;
+                ultimaPosicaoUtilizada--;
                 const item = { 
                     nome: jogador.nome, 
                     mesa: mesasData.preta?.includes(jogador) ? 'Preta' : 'Amarela', 
@@ -2279,6 +2270,7 @@ function aplicarLayout() {
     mesasData.preta = layoutImportado.preta.map(p => ({ nome: p.nome, posicao: p.posicao, rebuys: 0, addon: false, addonGratis: isAddonGratis(p.nome) || isAddonSemValor(p.nome), eliminado: false, timestamp: Date.now() })); 
     mesasData.amarela = layoutImportado.amarela.map(p => ({ nome: p.nome, posicao: p.posicao, rebuys: 0, addon: false, addonGratis: isAddonGratis(p.nome) || isAddonSemValor(p.nome), eliminado: false, timestamp: Date.now() })); 
     totalJogadoresIniciais = mesasData.preta.length + mesasData.amarela.length; 
+    ultimaPosicaoUtilizada = totalJogadoresIniciais;
     contadorEliminados = 0; 
     mesaFinalAtiva = false; 
     torneioFinalizado = false;
@@ -2324,6 +2316,7 @@ function confirmarApagarTodos() {
         classificacaoData = []; 
         historicoEtapas = []; 
         contadorEliminados = 0; 
+        ultimaPosicaoUtilizada = 0;
         mesaFinalAtiva = false; 
         totalJogadoresIniciais = 0; 
         melhorMaoAtual = null; 
@@ -2362,8 +2355,6 @@ function inicializarEventos() {
     const btnVerificarClassificacao = document.getElementById('btnVerificarClassificacao');
     const btnVerificarClassificacaoMF = document.getElementById('btnVerificarClassificacaoMF');
     const btnApagarHistoricoVerificar = document.getElementById('btnApagarHistoricoVerificar');
-    const btnFinalizarEtapaVerificar = document.getElementById('btnFinalizarEtapaVerificar');
-    const btnEnviarWhatsApp = document.getElementById('btnEnviarWhatsApp');
     const btnIniciarEtapa = document.getElementById('btnIniciarEtapaAdmin');
     const btnApagarHist = document.getElementById('btnApagarHistorico');
     const btnCancelApagarHist = document.getElementById('btnCancelarApagarHistorico');
@@ -2392,11 +2383,6 @@ function inicializarEventos() {
     if (btnVerificarClassificacao) btnVerificarClassificacao.onclick = mostrarTelaVerificarClassificacao;
     if (btnVerificarClassificacaoMF) btnVerificarClassificacaoMF.onclick = mostrarTelaVerificarClassificacao;
     if (btnApagarHistoricoVerificar) btnApagarHistoricoVerificar.onclick = apagarHistorico;
-    if (btnFinalizarEtapaVerificar) btnFinalizarEtapaVerificar.onclick = finalizarEtapaDaTelaVerificacao;
-    if (btnEnviarWhatsApp) btnEnviarWhatsApp.onclick = enviarClassificacaoWhatsApp;
-    if (btnCancelSenha) btnCancelSenha.onclick = () => { document.getElementById('modalSenhaAdmin').classList.remove('active'); document.getElementById('senhaAdmin').value = ''; };
-    if (btnConfirmSenha) btnConfirmSenha.onclick = () => { if (document.getElementById('senhaAdmin').value === 'poker2026') { document.getElementById('modalSenhaAdmin').classList.remove('active'); document.getElementById('telaSelecao').classList.add('hidden'); document.getElementById('telaAdmin').classList.remove('hidden'); atualizarAdminResumo(); atualizarAdminEstatisticas(); atualizarHistoricoEtapas(); atualizarSelectMelhorMao(); } else alert('❌ Senha incorreta!'); document.getElementById('senhaAdmin').value = ''; };
-    if (btnVoltarAdmin) btnVoltarAdmin.onclick = () => { document.getElementById('telaAdmin').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); };
     if (btnIniciarEtapa) btnIniciarEtapa.onclick = iniciarEtapaAdmin;
     if (btnApagarHist) btnApagarHist.onclick = () => document.getElementById('modalApagarHistorico').classList.add('active');
     if (btnCancelApagarHist) btnCancelApagarHist.onclick = () => document.getElementById('modalApagarHistorico').classList.remove('active');
