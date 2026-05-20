@@ -85,17 +85,6 @@
             100% { transform: translateX(-100%); }
         }
         
-        .scrolling-text {
-            white-space: nowrap;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .scrolling-text span {
-            display: inline-block;
-            animation: scrollText 15s linear infinite;
-        }
-        
         .tela-selecao { display: flex; flex-direction: column; min-height: 100vh; padding: 20px; background: #0d1b0d; position: relative; }
         .tela-selecao.hidden { display: none; }
         .selecao-container { text-align: center; max-width: 600px; width: 100%; margin: 0 auto; }
@@ -442,7 +431,7 @@
         <p>Digite a senha para acessar a área administrativa:</p>
         <div class="form-group">
             <label>Senha</label>
-            <input type="password" id="senhaAdmin" placeholder="Digite a senha">
+            <input type="password" id="senhaAdminInput" placeholder="Digite a senha">
         </div>
         <div class="modal-buttons">
             <button class="btn btn-danger" id="btnCancelarSenhaAdmin">Cancelar</button>
@@ -694,7 +683,7 @@
         <div class="form-group"><label>Quantidade de KO's que o jogador fez</label><input type="number" id="quantidadeKOsMF" min="0" value="0"></div>
         <div class="form-group" id="premioMFGroup">
             <label>💰 Premiação (R$)</label>
-            <input type="number" id="premioMF" min="0" step="0.01" value="0" placeholder="Valor em reais">
+            <input type="number" id="premioMF" min="0" step="0.01" value="" placeholder="Valor em reais (opcional)">
         </div>
         <div class="modal-buttons"><button class="btn btn-danger" id="btnCancelarEliminarMF">Cancelar</button><button class="btn btn-warning" id="btnConfirmarEliminarMF">Confirmar Eliminação</button></div>
     </div>
@@ -704,7 +693,7 @@
     <div class="modal-content">
         <h3>🔐 SENHA NECESSÁRIA</h3>
         <p>Digite a senha para apagar todos os dados:</p>
-        <div class="form-group"><label>Senha</label><input type="password" id="senhaApagar" placeholder="Digite a senha"></div>
+        <div class="form-group"><label>Senha</label><input type="password" id="senhaApagarInput" placeholder="Digite a senha"></div>
         <div class="modal-buttons"><button class="btn btn-danger" id="btnCancelarSenhaApagar">Cancelar</button><button class="btn btn-success" id="btnConfirmarSenhaApagar">Confirmar</button></div>
     </div>
 </div>
@@ -1556,7 +1545,7 @@ function atualizarClassificacaoAtual() {
     const ordenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
     const top20 = ordenada.slice(0, 20);
     if (top20.length === 0) {
-        tbody.innerHTML = '</table><td colspan="7">Nenhum jogador eliminado ainda<\/tr>';
+        tbody.innerHTML = '<tr><td colspan="7">Nenhum jogador eliminado ainda<\/tr>';
         return;
     }
     tbody.innerHTML = top20.map(j => {
@@ -1575,7 +1564,7 @@ function atualizarClassificacaoAtual() {
                     <td><strong style="color:#d4a121;">${pontosTotais}</strong></td>
                     <td>${premioDisplay}</td>
                     <td>${temPix ? `<button class="btn-copiar-pix-classif" onclick="copiarPix('${j.nome.replace(/'/g, "\\'")}')">📋 COPIAR PIX</button>` : '❌ Sem Pix'}</td>
-                </table>`;
+                 </tr>`;
     }).join('');
 }
 
@@ -1819,7 +1808,7 @@ function atualizarGridJogadores() {
             <div class="empty-state">
                 <h3>📋 NENHUM JOGADOR CADASTRADO</h3>
                 <p>Você precisa importar o layout das mesas primeiro.</p>
-                <button class="btn-ir-admin" onclick="fecharAppEIrAdmin()">🔐 IR PARA ADMINISTRAÇÃO</button>
+                <button class="btn-ir-admin" onclick="abrirModalAdmin()">🔐 IR PARA ADMINISTRAÇÃO</button>
             </div>`;
         return;
     }
@@ -1851,6 +1840,28 @@ function atualizarGridJogadores() {
                     </div>
                 </div>`;
     }).join('');
+}
+
+function abrirModalAdmin() {
+    document.getElementById('modalSenhaAdmin').classList.add('active');
+    document.getElementById('senhaAdminInput').value = '';
+}
+
+function confirmarSenhaAdmin() {
+    const senha = document.getElementById('senhaAdminInput').value;
+    if (senha === 'poker2026') {
+        document.getElementById('modalSenhaAdmin').classList.remove('active');
+        document.getElementById('telaSelecao').classList.add('hidden');
+        document.getElementById('telaAdmin').classList.remove('hidden');
+        atualizarAdminResumo();
+        atualizarAdminEstatisticas();
+        atualizarHistoricoEtapas();
+        atualizarSelectMelhorMao();
+        document.getElementById('senhaAdminInput').value = '';
+    } else {
+        alert('❌ Senha incorreta!');
+        document.getElementById('senhaAdminInput').value = '';
+    }
 }
 
 function confirmarRebuy(nome, tipo) {
@@ -1914,7 +1925,6 @@ function confirmarEliminacaoPopup(nome) {
     mostrarPopupEliminacao(nome, fotoUrl, (kos) => {
         const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
         if (jogador && !jogador.eliminado) {
-            // Calcula a posição de forma sequencial e sincronizada
             contadorEliminados++;
             const posicao = ultimaPosicaoUtilizada;
             ultimaPosicaoUtilizada--;
@@ -1956,7 +1966,7 @@ function confirmarEliminacaoPopup(nome) {
 function fecharAppEIrAdmin() {
     document.getElementById('appContainer').classList.add('hidden');
     document.getElementById('telaSelecao').classList.remove('hidden');
-    document.getElementById('modalSenhaAdmin').classList.add('active');
+    abrirModalAdmin();
 }
 
 function abrirCorrecao(nome) { 
@@ -2000,10 +2010,6 @@ function mostrarTelaVerificarClassificacao() {
     atualizarHistoricoEtapas();
 }
 
-function enviarClassificacaoWhatsApp() {
-    // Função removida - não será mais utilizada
-}
-
 function iniciarEtapaAdmin() {
     const novaEtapa = parseInt(document.getElementById('adminSelectEtapa').value);
     const fotoUrl = 'https://ui-avatars.com/api/?name=Etapa&background=d4a121&color=000&size=60';
@@ -2040,43 +2046,6 @@ function iniciarEtapaAdmin() {
         const tituloClassificacao = document.querySelector('#telaVerificarClassificacao .verificar-header h1');
         if (tituloClassificacao) tituloClassificacao.innerHTML = `📊 CLASSIFICAÇÃO GERAL DA ${config.etapa}ª ETAPA`;
     });
-}
-
-function finalizarEtapaMostrarClassificacao() {
-    const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
-    const vivos = todosJogadores.filter(j => !j.eliminado);
-    if (vivos.length > 0) {
-        const fotoUrl = 'https://ui-avatars.com/api/?name=FINAL&background=d4a121&color=000&size=60';
-        mostrarPopupConfirmacao('⚠️ FINALIZAR ETAPA', 'ATENÇÃO!', fotoUrl, () => {
-            const jogadoresOrdenados = [...vivos].sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
-            for (let i = 0; i < jogadoresOrdenados.length; i++) {
-                const jogador = jogadoresOrdenados[i];
-                const posicaoAtual = ultimaPosicaoUtilizada;
-                ultimaPosicaoUtilizada--;
-                const item = { 
-                    nome: jogador.nome, 
-                    mesa: mesasData.preta?.includes(jogador) ? 'Preta' : 'Amarela', 
-                    posicao: posicaoAtual, 
-                    pontosPosicao: getPontosPosicao(posicaoAtual), 
-                    kos: jogador.kos || 0, 
-                    pontosKOs: jogador.kos || 0, 
-                    pontosTotal: getPontosPosicao(posicaoAtual) + (jogador.kos || 0), 
-                    dataEliminacao: new Date().toISOString(), 
-                    etapa: config.etapa,
-                    premio: jogador.premio || 0
-                };
-                classificacaoData.push(item);
-                jogador.eliminado = true;
-                jogador.posicaoFinal = posicaoAtual;
-                contadorEliminados++;
-            }
-            db.ref('classificacao').set(classificacaoData);
-            db.ref('mesas').set(mesasData);
-            finalizarETAPARegistrarProxima(true, true);
-        });
-    } else {
-        finalizarETAPARegistrarProxima(true, true);
-    }
 }
 
 function atualizarAdminResumo() {
@@ -2311,7 +2280,8 @@ function apagarTodosDados() {
 }
 
 function confirmarApagarTodos() {
-    if (document.getElementById('senhaApagar').value === 'poker2026excluir') {
+    const senhaApagar = document.getElementById('senhaApagarInput').value;
+    if (senhaApagar === 'poker2026excluir') {
         mesasData = { preta: [], amarela: [] }; 
         classificacaoData = []; 
         historicoEtapas = []; 
@@ -2333,10 +2303,10 @@ function confirmarApagarTodos() {
         atualizarBotoesMesaFinal(); 
         mostrarToast('✅ Todos os dados foram apagados!'); 
         document.getElementById('modalSenhaApagar').classList.remove('active');
-        document.getElementById('senhaApagar').value = '';
+        document.getElementById('senhaApagarInput').value = '';
     } else { 
         alert('❌ Senha incorreta!'); 
-        document.getElementById('senhaApagar').value = '';
+        document.getElementById('senhaApagarInput').value = '';
     } 
 }
 
@@ -2372,7 +2342,7 @@ function inicializarEventos() {
     const btnCopiarCSV = document.getElementById('btnCopiarCSV');
     const fileInput = document.getElementById('fileInput');
     
-    if (logoAdmin) logoAdmin.onclick = () => document.getElementById('modalSenhaAdmin').classList.add('active');
+    if (logoAdmin) logoAdmin.onclick = abrirModalAdmin;
     if (btnPreta) btnPreta.onclick = () => { if (!mesaFinalAtiva && !torneioFinalizado) { mesaAtual = 'preta'; iniciarApp(); } else if (torneioFinalizado) { mostrarToast('O torneio foi finalizado! Inicie uma nova etapa.'); } };
     if (btnAmarela) btnAmarela.onclick = () => { if (!mesaFinalAtiva && !torneioFinalizado) { mesaAtual = 'amarela'; iniciarApp(); } else if (torneioFinalizado) { mostrarToast('O torneio foi finalizado! Inicie uma nova etapa.'); } };
     if (btnVoltar) btnVoltar.onclick = () => { if (!mesaFinalAtiva && !torneioFinalizado) { document.getElementById('appContainer').classList.add('hidden'); document.getElementById('telaSelecao').classList.remove('hidden'); } };
@@ -2388,7 +2358,7 @@ function inicializarEventos() {
     if (btnCancelApagarHist) btnCancelApagarHist.onclick = () => document.getElementById('modalApagarHistorico').classList.remove('active');
     if (btnConfirmApagarHist) btnConfirmApagarHist.onclick = apagarHistorico;
     if (btnApagarDados) btnApagarDados.onclick = apagarTodosDados;
-    if (btnCancelApagar) btnCancelApagar.onclick = () => { document.getElementById('modalSenhaApagar').classList.remove('active'); document.getElementById('senhaApagar').value = ''; };
+    if (btnCancelApagar) btnCancelApagar.onclick = () => { document.getElementById('modalSenhaApagar').classList.remove('active'); document.getElementById('senhaApagarInput').value = ''; };
     if (btnConfirmApagar) btnConfirmApagar.onclick = confirmarApagarTodos;
     if (btnMelhorMao) btnMelhorMao.onclick = aplicarMelhorMao;
     if (btnCancelCorrigir) btnCancelCorrigir.onclick = () => document.getElementById('modalCorrigir').classList.remove('active');
@@ -2407,6 +2377,20 @@ function inicializarEventos() {
     if (fileInput) fileInput.onchange = (e) => { if (e.target.files[0]) { arquivoSelecionado = e.target.files[0]; if (btnProcessarLayout) btnProcessarLayout.style.display = 'inline-block'; } };
     if (btnProcessarLayout) btnProcessarLayout.onclick = processarLayout;
     if (btnCopiarCSV) btnCopiarCSV.onclick = copiarCSV;
+    
+    // Eventos do modal de senha admin
+    if (btnCancelSenha) btnCancelSenha.onclick = () => { document.getElementById('modalSenhaAdmin').classList.remove('active'); document.getElementById('senhaAdminInput').value = ''; };
+    if (btnConfirmSenha) btnConfirmSenha.onclick = confirmarSenhaAdmin;
+    
+    // Evento de tecla Enter no campo de senha admin
+    const senhaInput = document.getElementById('senhaAdminInput');
+    if (senhaInput) {
+        senhaInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                confirmarSenhaAdmin();
+            }
+        });
+    }
     
     const navTabs = document.querySelectorAll('.nav-tab-admin');
     navTabs.forEach(tab => {
@@ -2431,6 +2415,7 @@ window.toggleEtapaVerificar = toggleEtapaVerificar;
 window.removerEtapaHistorico = removerEtapaHistorico;
 window.fecharAppEIrAdmin = fecharAppEIrAdmin;
 window.copiarPix = copiarPix;
+window.abrirModalAdmin = abrirModalAdmin;
 </script>
 </body>
 </html>
