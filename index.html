@@ -80,7 +80,6 @@
             .jogador-nome { font-size: 0.7em !important; }
         }
         
-        /* Animação de scroll para o nome da mesa */
         @keyframes scrollText {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
@@ -531,6 +530,7 @@
                     </table>
                 </div>
                 <div class="total-geral" id="adminTotalGeral">TOTAL GERAL: R$ 0,00</div>
+                <button class="btn btn-secondary" id="btnCopiarCSV" style="margin-top: 15px; width: 100%;">📋 COPIAR (Nome,Rebuys,Addon)</button>
             </div>
             
             <div id="admin-estatisticas" class="admin-tab-content hidden">
@@ -540,14 +540,12 @@
                         <div>Jogadores: <span id="adminStatPretaJogadores">0</span></div>
                         <div>Rebuys: <span class="stats-value" id="adminStatPretaRebuys">0</span></div>
                         <div>Addons: <span class="stats-value" id="adminStatPretaAddons">0</span></div>
-                        <div>Total: <span id="adminStatPretaTotal">R$ 0</span></div>
                     </div>
                     <div class="stats-mesa-card amarela">
                         <h4>♦️ MESA AMARELA</h4>
                         <div>Jogadores: <span id="adminStatAmarelaJogadores">0</span></div>
                         <div>Rebuys: <span class="stats-value" id="adminStatAmarelaRebuys">0</span></div>
                         <div>Addons: <span class="stats-value" id="adminStatAmarelaAddons">0</span></div>
-                        <div>Total: <span id="adminStatAmarelaTotal">R$ 0</span></div>
                     </div>
                 </div>
                 <div class="stats-mesas" style="grid-template-columns: 1fr 1fr;">
@@ -594,7 +592,6 @@
         <div style="margin-bottom: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                 <h3>📜 HISTÓRICO DE ETAPAS</h3>
-                <button class="btn btn-danger" id="btnApagarHistoricoVerificar">🗑️ APAGAR HISTÓRICO</button>
             </div>
             <div id="etapasListVerificar" class="etapas-list"></div>
         </div>
@@ -800,8 +797,60 @@ const chavesPix = {
     'Van Van': { chave: '41999677977', tipo: 'Telefone' }
 };
 
-// ==================== FUNÇÕES DE ÁUDIO (SOM EXTREMAMENTE CHAMATIVO) ====================
-async function tocarSomCashout(tipo) {
+// ==================== FUNÇÕES DE ÁUDIO ====================
+
+// Som de caixa registradora para rebuy simples
+async function tocarSomCaixaRegistradora() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+    }
+    
+    const now = audioContext.currentTime;
+    const masterGain = audioContext.createGain();
+    masterGain.gain.value = 0.6;
+    masterGain.connect(audioContext.destination);
+    
+    // Som de "ding" da caixa registradora
+    const dingFreq = [880, 1046.5];
+    dingFreq.forEach((freq, i) => {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        gain.gain.value = 0.4;
+        osc.start(now + i * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.1 + 0.3);
+        osc.stop(now + i * 0.1 + 0.3);
+    });
+    
+    // Barulho de engrenagem da caixa
+    const noise = audioContext.createBufferSource();
+    const bufferSize = audioContext.sampleRate * 0.25;
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.sin(i * 0.02) * (Math.random() * 0.5);
+    }
+    noise.buffer = buffer;
+    const noiseGain = audioContext.createGain();
+    noise.connect(noiseGain);
+    noiseGain.connect(masterGain);
+    noiseGain.gain.value = 0.2;
+    noise.start(now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
+    
+    setTimeout(() => {
+        masterGain.disconnect();
+    }, 800);
+}
+
+// Som de caixa registradora mais intensa para rebuy duplo
+async function tocarSomCaixaRegistradoraDupla() {
     if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
@@ -814,143 +863,194 @@ async function tocarSomCashout(tipo) {
     masterGain.gain.value = 0.7;
     masterGain.connect(audioContext.destination);
     
-    if (tipo === 'rebuy') {
-        // Som extremamente chamativo para rebuy simples
-        const notas = [440, 523.25, 659.25, 880, 1046.5];
-        notas.forEach((freq, i) => {
-            const osc = audioContext.createOscillator();
-            const gain = audioContext.createGain();
-            osc.connect(gain);
-            gain.connect(masterGain);
-            osc.frequency.value = freq;
-            osc.type = 'square';
-            gain.gain.value = 0.4;
-            osc.start(now + i * 0.08);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 0.2);
-            osc.stop(now + i * 0.08 + 0.2);
-        });
-        
-        // Efeito de sirene
-        const sirenOsc = audioContext.createOscillator();
-        const sirenGain = audioContext.createGain();
-        sirenOsc.connect(sirenGain);
-        sirenGain.connect(masterGain);
-        sirenOsc.frequency.value = 440;
-        sirenOsc.type = 'sawtooth';
-        sirenGain.gain.value = 0.35;
-        sirenOsc.start(now);
-        sirenOsc.frequency.exponentialRampToValueAtTime(880, now + 0.3);
-        sirenGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
-        sirenOsc.stop(now + 0.6);
-        
-        const noise = audioContext.createBufferSource();
-        const bufferSize = audioContext.sampleRate * 0.3;
-        const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
-        }
-        noise.buffer = buffer;
-        const noiseGain = audioContext.createGain();
-        noise.connect(noiseGain);
-        noiseGain.connect(masterGain);
-        noiseGain.gain.value = 0.3;
-        noise.start(now + 0.15);
-        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
-    } 
-    else if (tipo === 'rebuyDuplo') {
-        // Som extremamente chamativo para rebuy duplo (mais intenso)
-        const notas = [440, 523.25, 659.25, 880, 1046.5, 1318.51];
-        notas.forEach((freq, i) => {
-            const osc = audioContext.createOscillator();
-            const gain = audioContext.createGain();
-            osc.connect(gain);
-            gain.connect(masterGain);
-            osc.frequency.value = freq;
-            osc.type = 'triangle';
-            gain.gain.value = 0.45;
-            osc.start(now + i * 0.06);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.06 + 0.18);
-            osc.stop(now + i * 0.06 + 0.18);
-        });
-        
-        // Sirene dupla
-        const siren1 = audioContext.createOscillator();
-        const sirenGain1 = audioContext.createGain();
-        siren1.connect(sirenGain1);
-        sirenGain1.connect(masterGain);
-        siren1.frequency.value = 330;
-        siren1.type = 'sawtooth';
-        sirenGain1.gain.value = 0.4;
-        siren1.start(now);
-        siren1.frequency.exponentialRampToValueAtTime(660, now + 0.4);
-        sirenGain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
-        siren1.stop(now + 0.7);
-        
-        const siren2 = audioContext.createOscillator();
-        const sirenGain2 = audioContext.createGain();
-        siren2.connect(sirenGain2);
-        sirenGain2.connect(masterGain);
-        siren2.frequency.value = 660;
-        siren2.type = 'sawtooth';
-        sirenGain2.gain.value = 0.4;
-        siren2.start(now + 0.1);
-        siren2.frequency.exponentialRampToValueAtTime(330, now + 0.5);
-        sirenGain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
-        siren2.stop(now + 0.8);
-        
-        const noise = audioContext.createBufferSource();
-        const bufferSize = audioContext.sampleRate * 0.4;
-        const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
-        }
-        noise.buffer = buffer;
-        const noiseGain = audioContext.createGain();
-        noise.connect(noiseGain);
-        noiseGain.connect(masterGain);
-        noiseGain.gain.value = 0.35;
-        noise.start(now + 0.2);
-        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
-    } 
-    else if (tipo === 'addon') {
-        // Som extremamente chamativo para addon
-        const notas = [523.25, 659.25, 783.99, 1046.5];
-        notas.forEach((freq, i) => {
-            const osc = audioContext.createOscillator();
-            const gain = audioContext.createGain();
-            osc.connect(gain);
-            gain.connect(masterGain);
-            osc.frequency.value = freq;
-            osc.type = 'sine';
-            gain.gain.value = 0.4;
-            osc.start(now + i * 0.1);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.1 + 0.25);
-            osc.stop(now + i * 0.1 + 0.25);
-        });
-        
-        // Som de "power up"
-        const powerOsc = audioContext.createOscillator();
-        const powerGain = audioContext.createGain();
-        powerOsc.connect(powerGain);
-        powerGain.connect(masterGain);
-        powerOsc.frequency.value = 220;
-        powerOsc.type = 'sawtooth';
-        powerGain.gain.value = 0.35;
-        powerOsc.start(now + 0.3);
-        powerOsc.frequency.exponentialRampToValueAtTime(440, now + 0.55);
-        powerGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
-        powerOsc.stop(now + 0.8);
+    // Som duplo "ding-ding-ding"
+    const dingFreq = [660, 880, 1046.5, 1318.51];
+    dingFreq.forEach((freq, i) => {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        gain.gain.value = 0.45;
+        osc.start(now + i * 0.12);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.12 + 0.25);
+        osc.stop(now + i * 0.12 + 0.25);
+    });
+    
+    // Barulho de gaveta abrindo
+    const noise = audioContext.createBufferSource();
+    const bufferSize = audioContext.sampleRate * 0.35;
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.sin(i * 0.015) * (Math.random() * 0.6);
     }
+    noise.buffer = buffer;
+    const noiseGain = audioContext.createGain();
+    noise.connect(noiseGain);
+    noiseGain.connect(masterGain);
+    noiseGain.gain.value = 0.25;
+    noise.start(now + 0.2);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+    
+    // Som de moedas caindo
+    for (let i = 0; i < 6; i++) {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.frequency.value = 800 + i * 50;
+        osc.type = 'triangle';
+        gain.gain.value = 0.15;
+        osc.start(now + 0.35 + i * 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45 + i * 0.05 + 0.1);
+        osc.stop(now + 0.45 + i * 0.05 + 0.1);
+    }
+    
+    setTimeout(() => {
+        masterGain.disconnect();
+    }, 1000);
+}
+
+// Som de eliminação com voz masculina incisiva
+async function tocarSomEliminacao(nomeJogador) {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+    }
+    
+    const now = audioContext.currentTime;
+    const masterGain = audioContext.createGain();
+    masterGain.gain.value = 0.8;
+    masterGain.connect(audioContext.destination);
+    
+    // Sons graves para dar peso à eliminação
+    const osc1 = audioContext.createOscillator();
+    const gain1 = audioContext.createGain();
+    osc1.connect(gain1);
+    gain1.connect(masterGain);
+    osc1.frequency.value = 82.41; // Mi grave
+    osc1.type = 'sawtooth';
+    gain1.gain.value = 0.5;
+    osc1.start(now);
+    osc1.frequency.exponentialRampToValueAtTime(55, now + 0.6);
+    gain1.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
+    osc1.stop(now + 1.2);
+    
+    // Impacto de "gong"
+    const osc2 = audioContext.createOscillator();
+    const gain2 = audioContext.createGain();
+    osc2.connect(gain2);
+    gain2.connect(masterGain);
+    osc2.frequency.value = 110;
+    osc2.type = 'sine';
+    gain2.gain.value = 0.35;
+    osc2.start(now + 0.15);
+    gain2.gain.exponentialRampToValueAtTime(0.0001, now + 1.0);
+    osc2.stop(now + 1.0);
+    
+    // Sintetizador de voz usando filter sweep + ruído
+    const noise = audioContext.createBufferSource();
+    const bufferSize = audioContext.sampleRate * 0.8;
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+    }
+    noise.buffer = buffer;
+    
+    const filter = audioContext.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 500;
+    filter.Q.value = 5;
+    
+    noise.connect(filter);
+    filter.connect(masterGain);
+    const noiseGain = audioContext.createGain();
+    noiseGain.gain.value = 0.4;
+    noise.start(now + 0.1);
+    filter.frequency.exponentialRampToValueAtTime(200, now + 0.5);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.0);
+    
+    // Timbre adicional para dar dramaticidade
+    const osc3 = audioContext.createOscillator();
+    const gain3 = audioContext.createGain();
+    osc3.connect(gain3);
+    gain3.connect(masterGain);
+    osc3.frequency.value = 440;
+    osc3.type = 'triangle';
+    gain3.gain.value = 0.2;
+    osc3.start(now + 0.3);
+    osc3.frequency.exponentialRampToValueAtTime(220, now + 0.7);
+    gain3.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+    osc3.stop(now + 0.9);
     
     setTimeout(() => {
         masterGain.disconnect();
     }, 1500);
 }
 
-function tocarSomSlot(tipo) {
-    tocarSomCashout(tipo);
+// Som de addon
+async function tocarSomAddon() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+    }
+    
+    const now = audioContext.currentTime;
+    const masterGain = audioContext.createGain();
+    masterGain.gain.value = 0.6;
+    masterGain.connect(audioContext.destination);
+    
+    const notas = [523.25, 659.25, 783.99, 1046.5];
+    notas.forEach((freq, i) => {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        gain.gain.value = 0.4;
+        osc.start(now + i * 0.12);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.12 + 0.3);
+        osc.stop(now + i * 0.12 + 0.3);
+    });
+    
+    const noise = audioContext.createBufferSource();
+    const bufferSize = audioContext.sampleRate * 0.3;
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.sin(i * 0.03) * (Math.random() * 0.4);
+    }
+    noise.buffer = buffer;
+    const noiseGain = audioContext.createGain();
+    noise.connect(noiseGain);
+    noiseGain.connect(masterGain);
+    noiseGain.gain.value = 0.2;
+    noise.start(now + 0.25);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+    
+    setTimeout(() => {
+        masterGain.disconnect();
+    }, 900);
+}
+
+function tocarSomCashout(tipo, nomeJogador = null) {
+    if (tipo === 'rebuy') {
+        tocarSomCaixaRegistradora();
+    } else if (tipo === 'rebuyDuplo') {
+        tocarSomCaixaRegistradoraDupla();
+    } else if (tipo === 'addon') {
+        tocarSomAddon();
+    } else if (tipo === 'eliminacao') {
+        tocarSomEliminacao(nomeJogador);
+    }
 }
 // ====================================================================
 
@@ -1561,7 +1661,7 @@ function confirmarEliminacaoMFPopup(nome) {
                 original.premio = premio;
                 db.ref('mesas').set(mesasData); 
             }
-            tocarSomCashout('eliminacao');
+            tocarSomCashout('eliminacao', jogador.nome);
             let msg = `✅ ${jogador.nome} eliminado na ${posicao}ª posição com ${kos} KO(s)!`;
             if (premio > 0) msg += `\n💰 Premiação: R$ ${premio.toFixed(2)}`;
             mostrarToast(msg);
@@ -1826,7 +1926,7 @@ function confirmarEliminacaoPopup(nome) {
             jogador.posicaoFinal = posicao; 
             jogador.kos = kos;
             db.ref('mesas').set(mesasData);
-            tocarSomCashout('eliminacao');
+            tocarSomCashout('eliminacao', jogador.nome);
             mostrarToast(`✅ ${jogador.nome} eliminado na ${posicao}ª posição com ${kos} KO(s)!`);
             atualizarGridJogadores();
             atualizarStatsCards();
@@ -2026,11 +2126,9 @@ function atualizarAdminEstatisticas() {
         adminStatPretaJogadores: preta.length,
         adminStatPretaRebuys: preta.reduce((s,j) => s + (j.rebuys||0), 0),
         adminStatPretaAddons: preta.filter(j => j.addon).length,
-        adminStatPretaTotal: `R$ ${preta.reduce((s,j) => { const valorAddon = getAddonValor(j.nome, j.addon); return s + VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + valorAddon; }, 0)}`,
         adminStatAmarelaJogadores: amarela.length,
         adminStatAmarelaRebuys: amarela.reduce((s,j) => s + (j.rebuys||0), 0),
         adminStatAmarelaAddons: amarela.filter(j => j.addon).length,
-        adminStatAmarelaTotal: `R$ ${amarela.reduce((s,j) => { const valorAddon = getAddonValor(j.nome, j.addon); return s + VALOR_BUYIN + (j.rebuys||0)*VALOR_REBUY + valorAddon; }, 0)}`,
         adminStatTotalRebuys: todos.reduce((s,j) => s + (j.rebuys||0), 0),
         adminStatTotalAddons: todos.filter(j => j.addon).length
     };
@@ -2195,6 +2293,24 @@ function aplicarLayout() {
     atualizarClassificacaoAtual();
 }
 
+function copiarCSV() {
+    const todos = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+    if (todos.length === 0) {
+        alert('Nenhum jogador!');
+        return;
+    }
+    let csv = '';
+    todos.sort((a,b) => a.nome.localeCompare(b.nome)).forEach(j => {
+        const addonValor = j.addon ? '1' : '0';
+        csv += `${j.nome},${j.rebuys || 0},${addonValor}\n`;
+    });
+    navigator.clipboard.writeText(csv).then(() => {
+        mostrarToast('✅ Dados copiados! (Nome,Rebuys,Addon)');
+    }).catch(() => {
+        mostrarToast('❌ Erro ao copiar');
+    });
+}
+
 function apagarTodosDados() { 
     const fotoUrl = 'https://ui-avatars.com/api/?name=APAGAR&background=d4a121&color=000&size=60';
     mostrarPopupConfirmacao('⚠️ APAGAR TODOS OS DADOS', 'TODOS OS DADOS', fotoUrl, () => {
@@ -2262,6 +2378,7 @@ function inicializarEventos() {
     const btnConfirmEliminarMF = document.getElementById('btnConfirmarEliminarMF');
     const btnEscolherArquivo = document.getElementById('btnEscolherArquivo');
     const btnProcessarLayout = document.getElementById('btnProcessarLayout');
+    const btnCopiarCSV = document.getElementById('btnCopiarCSV');
     const fileInput = document.getElementById('fileInput');
     
     if (logoAdmin) logoAdmin.onclick = () => document.getElementById('modalSenhaAdmin').classList.add('active');
@@ -2303,8 +2420,8 @@ function inicializarEventos() {
     if (btnEscolherArquivo && fileInput) btnEscolherArquivo.onclick = () => fileInput.click();
     if (fileInput) fileInput.onchange = (e) => { if (e.target.files[0]) { arquivoSelecionado = e.target.files[0]; if (btnProcessarLayout) btnProcessarLayout.style.display = 'inline-block'; } };
     if (btnProcessarLayout) btnProcessarLayout.onclick = processarLayout;
+    if (btnCopiarCSV) btnCopiarCSV.onclick = copiarCSV;
     
-    // CORREÇÃO DO BOTÃO ESTATÍSTICAS
     const navTabs = document.querySelectorAll('.nav-tab-admin');
     navTabs.forEach(tab => {
         tab.onclick = () => {
