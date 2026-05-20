@@ -571,7 +571,7 @@
             <h3>🏆 RANKING ATUAL (Top 20)</h3>
             <table class="classificacao-table" id="classificacaoTableAtual">
                 <thead>
-                    <tr><th>Posição</th><th>Jogador</th><th>Pontos Posição</th><th>KO's</th><th>PONTOS TOTAIS</th><th>Prêmio (R$)</th><th>PIX</th></td>
+                    <tr><th>Posição</th><th>Jogador</th><th>Pontos Posição</th><th>KO's</th><th>PONTOS TOTAIS</th><th>Prêmio (R$)</th><th>PIX</th></tr>
                 </thead>
                 <tbody id="classificacaoBodyAtual"></tbody>
             </table>
@@ -759,6 +759,11 @@ const posicoesRef = db.ref('controlePosicoes');
 
 // Voz masculina voraz - será configurada após carregar
 let vozMasculinaVoraz = null;
+let vozesCarregadas = false;
+
+// Buffer de áudio para sons de caixa registradora
+let rebuySoundBuffer = null;
+let rebuyDuploSoundBuffer = null;
 
 // Chaves PIX
 const chavesPix = {
@@ -827,122 +832,116 @@ async function resetarPosicoes() {
 
 // ==================== FUNÇÕES DE ÁUDIO ====================
 
-// Som de caixa registradora antiga - rebuy simples (1 batida estridente)
-async function tocarSomCaixaRegistradoraSimples() {
+// Gerar som de caixa registradora antiga (rebuy simples - 1 batida)
+function gerarSomCaixaSimples() {
+    if (!audioContext) return null;
+    
+    const duration = 0.3;
+    const sampleRate = audioContext.sampleRate;
+    const frameCount = duration * sampleRate;
+    const buffer = audioContext.createBuffer(1, frameCount, sampleRate);
+    const data = buffer.getChannelData(0);
+    
+    // Som de "ding" com ruído
+    for (let i = 0; i < frameCount; i++) {
+        const t = i / sampleRate;
+        // Frequência decaindo
+        const freq1 = 880 * Math.exp(-t * 8);
+        const freq2 = 1100 * Math.exp(-t * 8);
+        // Som principal
+        let sample = Math.sin(2 * Math.PI * freq1 * t) * Math.exp(-t * 15);
+        sample += Math.sin(2 * Math.PI * freq2 * t) * Math.exp(-t * 15) * 0.6;
+        // Ruído de impacto
+        sample += (Math.random() - 0.5) * 0.3 * Math.exp(-t * 20);
+        data[i] = sample * 0.5;
+    }
+    return buffer;
+}
+
+// Gerar som de caixa registradora antiga (rebuy duplo - 2 batidas)
+function gerarSomCaixaDupla() {
+    if (!audioContext) return null;
+    
+    const duration = 0.6;
+    const sampleRate = audioContext.sampleRate;
+    const frameCount = duration * sampleRate;
+    const buffer = audioContext.createBuffer(1, frameCount, sampleRate);
+    const data = buffer.getChannelData(0);
+    
+    for (let i = 0; i < frameCount; i++) {
+        const t = i / sampleRate;
+        let sample = 0;
+        
+        // Primeira batida (0s - 0.25s)
+        if (t < 0.25) {
+            const t1 = t;
+            const freq1 = 880 * Math.exp(-t1 * 12);
+            const freq2 = 1100 * Math.exp(-t1 * 12);
+            sample += Math.sin(2 * Math.PI * freq1 * t1) * Math.exp(-t1 * 20);
+            sample += Math.sin(2 * Math.PI * freq2 * t1) * Math.exp(-t1 * 20) * 0.6;
+            sample += (Math.random() - 0.5) * 0.3 * Math.exp(-t1 * 25);
+        }
+        
+        // Segunda batida (0.3s - 0.55s)
+        if (t >= 0.3 && t < 0.55) {
+            const t2 = t - 0.3;
+            const freq1 = 880 * Math.exp(-t2 * 12);
+            const freq2 = 1100 * Math.exp(-t2 * 12);
+            sample += Math.sin(2 * Math.PI * freq1 * t2) * Math.exp(-t2 * 20);
+            sample += Math.sin(2 * Math.PI * freq2 * t2) * Math.exp(-t2 * 20) * 0.6;
+            sample += (Math.random() - 0.5) * 0.3 * Math.exp(-t2 * 25);
+        }
+        
+        data[i] = sample * 0.5;
+    }
+    return buffer;
+}
+
+// Inicializar sons
+async function inicializarSons() {
     if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
-    if (audioContext.state === 'suspended') {
-        await audioContext.resume();
-    }
     
-    const now = audioContext.currentTime;
-    const masterGain = audioContext.createGain();
-    masterGain.gain.value = 0.7;
-    masterGain.connect(audioContext.destination);
-    
-    // Som estridente da caixa registradora - uma batida
-    const dingFreq = [880, 1100];
-    dingFreq.forEach((freq, i) => {
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        osc.connect(gain);
-        gain.connect(masterGain);
-        osc.frequency.value = freq;
-        osc.type = 'sine';
-        gain.gain.value = 0.5;
-        osc.start(now + i * 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.05 + 0.2);
-        osc.stop(now + i * 0.05 + 0.2);
-    });
-    
-    // Ruído de impacto da caixa
-    const noise = audioContext.createBufferSource();
-    const bufferSize = audioContext.sampleRate * 0.15;
-    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-        data[i] = Math.sin(i * 0.03) * (Math.random() * 0.7);
-    }
-    noise.buffer = buffer;
-    const noiseGain = audioContext.createGain();
-    noise.connect(noiseGain);
-    noiseGain.connect(masterGain);
-    noiseGain.gain.value = 0.3;
-    noise.start(now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
-    
-    setTimeout(() => {
-        masterGain.disconnect();
-    }, 500);
+    rebuySoundBuffer = gerarSomCaixaSimples();
+    rebuyDuploSoundBuffer = gerarSomCaixaDupla();
 }
 
-// Som de caixa registradora antiga - rebuy duplo (2 batidas estridentes)
-async function tocarSomCaixaRegistradoraDupla() {
-    if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    }
+// Tocar som de caixa registradora (rebuy simples)
+function tocarSomRebuy() {
+    if (!audioContext || !rebuySoundBuffer) return;
+    
     if (audioContext.state === 'suspended') {
-        await audioContext.resume();
+        audioContext.resume();
     }
     
-    const now = audioContext.currentTime;
-    const masterGain = audioContext.createGain();
-    masterGain.gain.value = 0.75;
-    masterGain.connect(audioContext.destination);
-    
-    // Primeira batida
-    const dingFreq1 = [880, 1100, 1320];
-    dingFreq1.forEach((freq, i) => {
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        osc.connect(gain);
-        gain.connect(masterGain);
-        osc.frequency.value = freq;
-        osc.type = 'sine';
-        gain.gain.value = 0.45;
-        osc.start(now + i * 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.05 + 0.15);
-        osc.stop(now + i * 0.05 + 0.15);
-    });
-    
-    // Segunda batida (após um pequeno intervalo)
-    const dingFreq2 = [880, 1100, 1320];
-    dingFreq2.forEach((freq, i) => {
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        osc.connect(gain);
-        gain.connect(masterGain);
-        osc.frequency.value = freq;
-        osc.type = 'sine';
-        gain.gain.value = 0.45;
-        osc.start(now + 0.25 + i * 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25 + i * 0.05 + 0.15);
-        osc.stop(now + 0.25 + i * 0.05 + 0.15);
-    });
-    
-    // Ruído da gaveta abrindo
-    const noise = audioContext.createBufferSource();
-    const bufferSize = audioContext.sampleRate * 0.4;
-    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-        data[i] = Math.sin(i * 0.025) * (Math.random() * 0.6);
-    }
-    noise.buffer = buffer;
-    const noiseGain = audioContext.createGain();
-    noise.connect(noiseGain);
-    noiseGain.connect(masterGain);
-    noiseGain.gain.value = 0.3;
-    noise.start(now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
-    
-    setTimeout(() => {
-        masterGain.disconnect();
-    }, 700);
+    const source = audioContext.createBufferSource();
+    source.buffer = rebuySoundBuffer;
+    const gain = audioContext.createGain();
+    gain.gain.value = 0.7;
+    source.connect(gain);
+    gain.connect(audioContext.destination);
+    source.start();
 }
 
-// Função para selecionar voz masculina voraz (tom grave e imponente)
+// Tocar som de caixa registradora (rebuy duplo)
+function tocarSomRebuyDuplo() {
+    if (!audioContext || !rebuyDuploSoundBuffer) return;
+    
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+    
+    const source = audioContext.createBufferSource();
+    source.buffer = rebuyDuploSoundBuffer;
+    const gain = audioContext.createGain();
+    gain.gain.value = 0.7;
+    source.connect(gain);
+    gain.connect(audioContext.destination);
+    source.start();
+}
+
+// Função para selecionar voz masculina voraz em português do Brasil
 async function inicializarVozMasculinaVoraz() {
     return new Promise((resolve) => {
         if (!window.speechSynthesis) {
@@ -953,29 +952,28 @@ async function inicializarVozMasculinaVoraz() {
         const carregarVozes = () => {
             const voices = window.speechSynthesis.getVoices();
             
-            // Prioridade de vozes masculinas brasileiras com tom grave
+            // Prioridade de vozes masculinas brasileiras
             const vozesPreferidas = [
                 'Google português do Brasil masculino',
                 'Microsoft Daniel - Brazilian Portuguese',
                 'Daniel (pt-BR)',
                 'Microsoft Daniel',
-                'Google português do Brasil',
-                'pt-BR',
-                'brazil'
+                'Google português do Brasil'
             ];
             
             let vozSelecionada = null;
             
             for (const preferencia of vozesPreferidas) {
                 vozSelecionada = voices.find(voice => 
-                    voice.lang.includes('pt-BR') && 
+                    voice.lang === 'pt-BR' && 
                     voice.name.toLowerCase().includes(preferencia.toLowerCase())
                 );
                 if (vozSelecionada) break;
             }
             
+            // Se não encontrou, pega qualquer voz em português do Brasil
             if (!vozSelecionada) {
-                vozSelecionada = voices.find(voice => voice.lang.includes('pt-BR'));
+                vozSelecionada = voices.find(voice => voice.lang === 'pt-BR');
             }
             
             resolve(vozSelecionada);
@@ -989,7 +987,7 @@ async function inicializarVozMasculinaVoraz() {
     });
 }
 
-// Função para falar com voz masculina voraz e empoderada
+// Função para falar com voz masculina voraz
 async function falar(texto) {
     return new Promise((resolve) => {
         if (!window.speechSynthesis) {
@@ -997,13 +995,14 @@ async function falar(texto) {
             return;
         }
         
+        // Cancela qualquer fala em andamento
         window.speechSynthesis.cancel();
         
         const utterance = new SpeechSynthesisUtterance(texto);
         utterance.lang = 'pt-BR';
         utterance.rate = 0.85;
-        utterance.pitch = 0.7;      // Tom grave para soar mais másculo
-        utterance.volume = 1.2;     // Volume um pouco mais alto
+        utterance.pitch = 0.7;      // Tom grave e másculo
+        utterance.volume = 1;
         
         if (vozMasculinaVoraz) {
             utterance.voice = vozMasculinaVoraz;
@@ -1016,20 +1015,21 @@ async function falar(texto) {
     });
 }
 
-// Som de eliminação - voz masculina voraz
+// Som de eliminação - voz masculina
 async function tocarSomEliminacaoVoz(nomeJogador, posicao) {
+    // Pequeno delay para efeito dramático
     setTimeout(async () => {
         await falar(`${nomeJogador} foi eliminado na ${posicao}ª posição!`);
-    }, 100);
+    }, 150);
 }
 
 // Som de addon
-async function tocarSomAddon() {
+function tocarSomAddon() {
     if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
     if (audioContext.state === 'suspended') {
-        await audioContext.resume();
+        audioContext.resume();
     }
     
     const now = audioContext.currentTime;
@@ -1073,9 +1073,9 @@ async function tocarSomAddon() {
 
 function tocarSomCashout(tipo, nomeJogador = null, posicao = null) {
     if (tipo === 'rebuy') {
-        tocarSomCaixaRegistradoraSimples();
+        tocarSomRebuy();
     } else if (tipo === 'rebuyDuplo') {
-        tocarSomCaixaRegistradoraDupla();
+        tocarSomRebuyDuplo();
     } else if (tipo === 'addon') {
         tocarSomAddon();
     } else if (tipo === 'eliminacao') {
@@ -1136,45 +1136,30 @@ function getAddonTexto(nome, addonAtivado) {
 function salvarEtapaNoHistorico() {
     if (classificacaoData.length > 0 && totalJogadoresIniciais > 0) {
         const etapaAtual = config.etapa;
-        historicoEtapas.unshift({ 
-            data: new Date().toISOString(), 
+        const etapaCompleta = {
+            data: new Date().toISOString(),
             classificacao: classificacaoData.map(j => ({ 
-                nome: j.nome, 
-                mesa: j.mesa, 
-                posicao: j.posicao, 
-                pontosPosicao: j.pontosPosicao, 
-                kos: j.kos || 0, 
-                pontosKOs: j.pontosKOs || 0, 
-                pontosTotal: j.pontosTotal || (j.pontosPosicao + (j.kos || 0)), 
-                dataEliminacao: j.dataEliminacao, 
+                nome: j.nome,
+                mesa: j.mesa,
+                posicao: j.posicao,
+                pontosPosicao: j.pontosPosicao,
+                kos: j.kos || 0,
+                pontosKOs: j.pontosKOs || 0,
+                pontosTotal: j.pontosTotal || (j.pontosPosicao + (j.kos || 0)),
+                dataEliminacao: j.dataEliminacao,
                 etapa: j.etapa || etapaAtual,
                 premio: j.premio || 0
-            })), 
-            totalJogadores: totalJogadoresIniciais, 
-            totalClassificados: classificacaoData.length, 
-            etapaNumero: etapaAtual 
-        });
+            })),
+            totalJogadores: totalJogadoresIniciais,
+            totalClassificados: classificacaoData.length,
+            etapaNumero: etapaAtual
+        };
+        
+        historicoEtapas.unshift(etapaCompleta);
         db.ref('historicoEtapas').set(historicoEtapas);
         return true;
     }
     return false;
-}
-
-function prepararProximaEtapa() {
-    const proximaEtapa = config.etapa + 1;
-    if (proximaEtapa <= 13) {
-        const infoDiv = document.getElementById('proximaEtapaInfo');
-        const spanProxima = document.getElementById('proximaEtapaNumero');
-        if (infoDiv && spanProxima) {
-            spanProxima.textContent = `${proximaEtapa}ª ETAPA`;
-            infoDiv.style.display = 'block';
-        }
-        const selectEtapa = document.getElementById('adminSelectEtapa');
-        if (selectEtapa) selectEtapa.value = proximaEtapa;
-    } else {
-        const infoDiv = document.getElementById('proximaEtapaInfo');
-        if (infoDiv) infoDiv.style.display = 'none';
-    }
 }
 
 function finalizarETAPARegistrarProxima(mostrarMensagem = true, voltarParaSelecao = true, avancarEtapa = true) {
@@ -1228,6 +1213,23 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true, voltarParaSeleca
     } else {
         if (mostrarMensagem) mostrarToast('Nenhum dado para salvar! É necessário ter eliminações registradas.');
         return false;
+    }
+}
+
+function prepararProximaEtapa() {
+    const proximaEtapa = config.etapa + 1;
+    if (proximaEtapa <= 13) {
+        const infoDiv = document.getElementById('proximaEtapaInfo');
+        const spanProxima = document.getElementById('proximaEtapaNumero');
+        if (infoDiv && spanProxima) {
+            spanProxima.textContent = `${proximaEtapa}ª ETAPA`;
+            infoDiv.style.display = 'block';
+        }
+        const selectEtapa = document.getElementById('adminSelectEtapa');
+        if (selectEtapa) selectEtapa.value = proximaEtapa;
+    } else {
+        const infoDiv = document.getElementById('proximaEtapaInfo');
+        if (infoDiv) infoDiv.style.display = 'none';
     }
 }
 
@@ -1364,8 +1366,11 @@ function mostrarPopupEliminacaoMF(nomeJogador, fotoUrl, onConfirm) {
 
 document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('statusIndicator').textContent = '✅ Conectado';
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
+    // Inicializa contexto de áudio
+    await inicializarSons();
+    
+    // Inicializa voz masculina
     vozMasculinaVoraz = await inicializarVozMasculinaVoraz();
     
     db.ref('config').on('value', (snapshot) => {
@@ -1683,14 +1688,14 @@ function confirmarEliminacaoMFPopup(nome) {
                 premio: premio > 0 ? premio : 0
             };
             classificacaoData.push(item);
-            db.ref('classificacao').set(classificacaoData);
+            await db.ref('classificacao').set(classificacaoData);
             const original = todosJogadores.find(j => j.nome === jogador.nome);
             if (original) { 
                 original.eliminado = true; 
                 original.posicaoFinal = posicao; 
                 original.kos = kos;
                 original.premio = premio > 0 ? premio : 0;
-                db.ref('mesas').set(mesasData); 
+                await db.ref('mesas').set(mesasData); 
             }
             tocarSomCashout('eliminacao', jogador.nome, posicao);
             let msg = `✅ ${jogador.nome} eliminado na ${posicao}ª posição com ${kos} KO(s)!`;
@@ -1743,9 +1748,11 @@ function finalizarComCampeao(campeao) {
     document.body.appendChild(popupCampeao);
     
     const confirmarBtn = document.getElementById('popupConfirmarCampeao');
-    confirmarBtn.onclick = () => {
+    confirmarBtn.onclick = async () => {
         const kos = parseInt(document.getElementById('popupKosCampeao').value) || 0;
         const valorPremio = parseFloat(document.getElementById('popupPremioCampeao').value) || 0;
+        
+        // Adiciona o campeão à classificação
         const item = { 
             nome: campeao.nome, 
             mesa: mesasData.preta?.find(j => j.nome === campeao.nome) ? 'Preta' : 'Amarela', 
@@ -1759,21 +1766,27 @@ function finalizarComCampeao(campeao) {
             premio: valorPremio
         };
         classificacaoData.push(item);
-        db.ref('classificacao').set(classificacaoData);
+        await db.ref('classificacao').set(classificacaoData);
+        
+        // Marca todos os jogadores restantes como eliminados
         const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
-        todosJogadores.forEach(j => { if (!j.eliminado) { j.eliminado = true; j.posicaoFinal = 1; } });
-        db.ref('mesas').set(mesasData);
+        todosJogadores.forEach(j => { 
+            if (!j.eliminado) { 
+                j.eliminado = true; 
+                j.posicaoFinal = 1; 
+            } 
+        });
+        await db.ref('mesas').set(mesasData);
         db.ref('mesaFinalAtiva').set(false);
         mesaFinalAtiva = false;
         
-        // Finaliza a etapa e avança para a próxima automaticamente
         if (valorPremio > 0) {
             mostrarToast(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)! 💰 Premiação: R$ ${valorPremio.toFixed(2)}`);
         } else {
             mostrarToast(`🏆 CAMPEÃO: ${campeao.nome} com ${kos} KO(s)!`);
         }
         
-        // Salva a etapa e avança para a próxima
+        // Finaliza a etapa e avança
         finalizarETAPARegistrarProxima(true, true, true);
         
         popupCampeao.remove();
@@ -1786,8 +1799,6 @@ function finalizarTorneio() {
     db.ref('torneioFinalizado').set(true);
     db.ref('mesaFinalAtiva').set(false);
     mesaFinalAtiva = false;
-    
-    // Ao finalizar o torneio, também salva a etapa e avança
     finalizarETAPARegistrarProxima(true, true, true);
     mostrarToast('🃏 TORNEIO FINALIZADO! 🃏'); 
 }
@@ -2017,7 +2028,9 @@ async function confirmarEliminacaoPopup(nome) {
                 atualizarClassificacaoAtual();
                 const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
                 const vivos = todosJogadores.filter(j => !j.eliminado);
-                if (vivos.length === 0) finalizarTorneio();
+                if (vivos.length === 0) {
+                    finalizarTorneio();
+                }
             } catch (error) {
                 console.error('Erro ao obter posição:', error);
                 mostrarToast('❌ Erro ao processar eliminação! Tente novamente.');
