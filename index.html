@@ -745,8 +745,6 @@ let layoutImportado = { preta: [], amarela: [] };
 let arquivoSelecionado = null;
 let jogadorCorrigindo = null;
 let jogadorEliminando = null;
-let contadorEliminados = 0;
-let totalJogadoresIniciais = 0;
 let mesaFinalAtiva = false;
 let torneioFinalizado = false;
 let jogadorEliminandoMF = null;
@@ -754,8 +752,16 @@ let melhorMaoAtual = null;
 let audioContext = null;
 let fotosJogadores = {};
 
-// Controle de posições por dispositivo
+// Controle de posições centralizado no Firebase
+let contadorEliminados = 0;
+let totalJogadoresIniciais = 0;
 let ultimaPosicaoUtilizada = 0;
+
+// Referência para o controle de posições no Firebase
+const posicoesRef = db.ref('controlePosicoes');
+
+// Voz padrão masculina voraz
+let vozMasculinaPadrao = null;
 
 // Chaves PIX
 const chavesPix = {
@@ -787,6 +793,38 @@ const chavesPix = {
     'Tigre': null,
     'Van Van': { chave: '41999677977', tipo: 'Telefone' }
 };
+
+// Função para carregar a próxima posição disponível do Firebase de forma atômica
+async function getProximaPosicao() {
+    return new Promise((resolve, reject) => {
+        posicoesRef.transaction((currentData) => {
+            if (currentData === null) {
+                return { ultimaPosicao: totalJogadoresIniciais };
+            }
+            return { ultimaPosicao: currentData.ultimaPosicao - 1 };
+        }, (error, committed, snapshot) => {
+            if (error) {
+                console.error('Erro ao obter posição:', error);
+                reject(error);
+            } else if (committed) {
+                const novaPosicao = snapshot.val().ultimaPosicao;
+                resolve(novaPosicao);
+            } else {
+                reject(new Error('Transação não foi committed'));
+            }
+        });
+    });
+}
+
+// Função para resetar as posições ao iniciar nova etapa
+function resetarPosicoes() {
+    return new Promise((resolve) => {
+        posicoesRef.set({ ultimaPosicao: totalJogadoresIniciais }).then(() => {
+            ultimaPosicaoUtilizada = totalJogadoresIniciais;
+            resolve();
+        });
+    });
+}
 
 // ==================== FUNÇÕES DE ÁUDIO ====================
 
@@ -899,7 +937,54 @@ async function tocarSomCaixaRegistradoraDupla() {
     }, 1000);
 }
 
-// Função para sintetizar voz falando em português do Brasil com voz masculina natural
+// Função para selecionar voz masculina voraz e consistente
+async function inicializarVozMasculina() {
+    return new Promise((resolve) => {
+        if (!window.speechSynthesis) {
+            resolve(null);
+            return;
+        }
+        
+        // Força o carregamento das vozes
+        window.speechSynthesis.getVoices();
+        
+        // Aguarda um pouco para as vozes carregarem
+        setTimeout(() => {
+            const voices = window.speechSynthesis.getVoices();
+            
+            // Prioridade de vozes masculinas brasileiras (mais voraz/empoderada)
+            const vozesPreferidas = [
+                'Google português do Brasil masculino',
+                'Microsoft Daniel',
+                'Google português do Brasil',
+                'pt-BR',
+                'brazil',
+                'microsoft',
+                'daniel'
+            ];
+            
+            let vozSelecionada = null;
+            
+            // Tenta encontrar uma voz masculina brasileira
+            for (const preferencia of vozesPreferidas) {
+                vozSelecionada = voices.find(voice => 
+                    voice.lang.includes('pt-BR') && 
+                    voice.name.toLowerCase().includes(preferencia.toLowerCase())
+                );
+                if (vozSelecionada) break;
+            }
+            
+            // Se não encontrou nenhuma específica, pega qualquer voz brasileira
+            if (!vozSelecionada) {
+                vozSelecionada = voices.find(voice => voice.lang.includes('pt-BR'));
+            }
+            
+            resolve(vozSelecionada);
+        }, 200);
+    });
+}
+
+// Função para sintetizar voz masculina voraz e empoderada
 async function falar(texto) {
     return new Promise((resolve) => {
         if (!window.speechSynthesis) {
@@ -913,22 +998,13 @@ async function falar(texto) {
         
         const utterance = new SpeechSynthesisUtterance(texto);
         utterance.lang = 'pt-BR';
-        utterance.rate = 0.85;
-        utterance.pitch = 0.9;
-        utterance.volume = 1;
+        utterance.rate = 0.85;      // Velocidade natural
+        utterance.pitch = 0.75;     // Tom mais grave para voz voraz
+        utterance.volume = 1;       // Volume máximo
         
-        // Tenta selecionar uma voz masculina brasileira
-        const voices = window.speechSynthesis.getVoices();
-        const vozBrasileira = voices.find(voice => 
-            voice.lang === 'pt-BR' && voice.name.includes('Google') && voice.name.includes('masculino')
-        ) || voices.find(voice => 
-            voice.lang === 'pt-BR' && voice.name.includes('masculino')
-        ) || voices.find(voice => 
-            voice.lang === 'pt-BR'
-        );
-        
-        if (vozBrasileira) {
-            utterance.voice = vozBrasileira;
+        // Usa a voz masculina padrão se disponível
+        if (vozMasculinaPadrao) {
+            utterance.voice = vozMasculinaPadrao;
         }
         
         utterance.onend = () => resolve();
@@ -938,12 +1014,13 @@ async function falar(texto) {
     });
 }
 
-// Som de eliminação - apenas voz falada
+// Som de eliminação - apenas voz falada com entonação empoderada
 async function tocarSomEliminacaoVoz(nomeJogador, posicao) {
     // Aguarda um pequeno delay para dar efeito dramático
-    setTimeout(() => {
-        falar(`${nomeJogador} foi eliminado na ${posicao}ª posição!`);
-    }, 200);
+    setTimeout(async () => {
+        // Fala de forma mais impactante
+        await falar(`⚠️ ATENÇÃO! ⚠️ ${nomeJogador} foi ELIMINADO na ${posicao}ª posição!`);
+    }, 100);
 }
 
 // Som de addon
@@ -1109,7 +1186,6 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true, voltarParaSeleca
         mesasData = { preta: [], amarela: [] };
         classificacaoData = [];
         contadorEliminados = 0;
-        ultimaPosicaoUtilizada = 0;
         mesaFinalAtiva = false;
         totalJogadoresIniciais = 0;
         melhorMaoAtual = null;
@@ -1120,6 +1196,7 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true, voltarParaSeleca
         db.ref('melhorMao').set(null);
         db.ref('mesaFinalAtiva').set(false);
         db.ref('torneioFinalizado').set(false);
+        posicoesRef.set({ ultimaPosicao: 0 });
         
         atualizarAdminResumo();
         atualizarAdminEstatisticas();
@@ -1287,10 +1364,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('statusIndicator').textContent = '✅ Conectado';
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
-    // Carrega as vozes disponíveis
-    if (window.speechSynthesis) {
-        window.speechSynthesis.getVoices();
-    }
+    // Inicializa voz masculina padrão
+    vozMasculinaPadrao = await inicializarVozMasculina();
     
     db.ref('config').on('value', (snapshot) => {
         if (snapshot.exists()) config = snapshot.val();
@@ -1354,11 +1429,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (amarelaVivosSpan) amarelaVivosSpan.textContent = amarelaVivos;
         if (amarelaEliminadosSpan) amarelaEliminadosSpan.textContent = amarelaEliminados;
         if (amarelaTotalSpan) amarelaTotalSpan.textContent = amarelaTotal;
-        
-        if (totalJogadoresIniciais === 0 && todosJogadores.length > 0 && !torneioFinalizado) {
-            totalJogadoresIniciais = todosJogadores.length;
-            ultimaPosicaoUtilizada = totalJogadoresIniciais;
-        }
         
         atualizarGridJogadores();
         atualizarAdminResumo();
@@ -1508,7 +1578,7 @@ function atualizarClassificacaoAtual() {
     const ordenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
     const top20 = ordenada.slice(0, 20);
     if (top20.length === 0) {
-        tbody.innerHTML = '</tr><td colspan="7">Nenhum jogador eliminado ainda<\/tr>';
+        tbody.innerHTML = '<td><td colspan="7">Nenhum jogador eliminado ainda<\/tr>';
         return;
     }
     tbody.innerHTML = top20.map(j => {
@@ -1527,7 +1597,7 @@ function atualizarClassificacaoAtual() {
                     <td><strong style="color:#d4a121;">${pontosTotais}</strong></td>
                     <td>${premioDisplay}</td>
                     <td>${temPix ? `<button class="btn-copiar-pix-classif" onclick="copiarPix('${j.nome.replace(/'/g, "\\'")}')">📋 COPIAR PIX</button>` : '❌ Sem Pix'}</td>
-                 </tr>`;
+                </tr>`;
     }).join('');
 }
 
@@ -1591,7 +1661,7 @@ function renderizarMesaFinal() {
 
 function confirmarEliminacaoMFPopup(nome) {
     const fotoUrl = getFotoJogador(nome);
-    mostrarPopupEliminacaoMF(nome, fotoUrl, (kos, premio) => {
+    mostrarPopupEliminacaoMF(nome, fotoUrl, async (kos, premio) => {
         const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
         const vivos = todosJogadores.filter(j => !j.eliminado);
         const jogador = vivos.find(j => j.nome === nome);
@@ -1832,7 +1902,7 @@ function voltarDaAdmin() {
     document.getElementById('telaSelecao').classList.remove('hidden');
 }
 
-function confirmarRebuy(nome, tipo) {
+async function confirmarRebuy(nome, tipo) {
     if (torneioFinalizado) {
         mostrarToast('O torneio já foi finalizado!');
         return;
@@ -1884,49 +1954,54 @@ function confirmarAddon(nome) {
     }
 }
 
-function confirmarEliminacaoPopup(nome) {
+async function confirmarEliminacaoPopup(nome) {
     if (torneioFinalizado) {
         mostrarToast('O torneio já foi finalizado!');
         return;
     }
     const fotoUrl = getFotoJogador(nome);
-    mostrarPopupEliminacao(nome, fotoUrl, (kos) => {
+    mostrarPopupEliminacao(nome, fotoUrl, async (kos) => {
         const jogador = mesasData[mesaAtual].find(j => j.nome === nome);
         if (jogador && !jogador.eliminado) {
-            contadorEliminados++;
-            const posicao = ultimaPosicaoUtilizada;
-            ultimaPosicaoUtilizada--;
-            
-            const pontosPosicaoCalculado = getPontosPosicao(posicao);
-            const item = { 
-                nome: jogador.nome, 
-                mesa: mesaAtual === 'preta' ? 'Preta' : 'Amarela', 
-                posicao: posicao, 
-                pontosPosicao: pontosPosicaoCalculado, 
-                kos: kos, 
-                pontosKOs: kos, 
-                pontosTotal: pontosPosicaoCalculado + kos, 
-                dataEliminacao: new Date().toISOString(), 
-                etapa: config.etapa 
-            };
-            classificacaoData.push(item);
-            db.ref('classificacao').set(classificacaoData);
-            jogador.eliminado = true; 
-            jogador.posicaoFinal = posicao; 
-            jogador.kos = kos;
-            db.ref('mesas').set(mesasData);
-            tocarSomCashout('eliminacao', jogador.nome, posicao);
-            mostrarToast(`✅ ${jogador.nome} eliminado na ${posicao}ª posição com ${kos} KO(s)!`);
-            atualizarGridJogadores();
-            atualizarStatsCards();
-            atualizarAdminResumo();
-            atualizarAdminEstatisticas();
-            verificarMesaFinal();
-            atualizarSelectMelhorMao();
-            atualizarClassificacaoAtual();
-            const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
-            const vivos = todosJogadores.filter(j => !j.eliminado);
-            if (vivos.length === 0) finalizarTorneio();
+            try {
+                // Pega a próxima posição disponível do Firebase (atômico entre dispositivos)
+                const posicao = await getProximaPosicao();
+                
+                contadorEliminados++;
+                const pontosPosicaoCalculado = getPontosPosicao(posicao);
+                const item = { 
+                    nome: jogador.nome, 
+                    mesa: mesaAtual === 'preta' ? 'Preta' : 'Amarela', 
+                    posicao: posicao, 
+                    pontosPosicao: pontosPosicaoCalculado, 
+                    kos: kos, 
+                    pontosKOs: kos, 
+                    pontosTotal: pontosPosicaoCalculado + kos, 
+                    dataEliminacao: new Date().toISOString(), 
+                    etapa: config.etapa 
+                };
+                classificacaoData.push(item);
+                await db.ref('classificacao').set(classificacaoData);
+                jogador.eliminado = true; 
+                jogador.posicaoFinal = posicao; 
+                jogador.kos = kos;
+                await db.ref('mesas').set(mesasData);
+                tocarSomCashout('eliminacao', jogador.nome, posicao);
+                mostrarToast(`✅ ${jogador.nome} eliminado na ${posicao}ª posição com ${kos} KO(s)!`);
+                atualizarGridJogadores();
+                atualizarStatsCards();
+                atualizarAdminResumo();
+                atualizarAdminEstatisticas();
+                verificarMesaFinal();
+                atualizarSelectMelhorMao();
+                atualizarClassificacaoAtual();
+                const todosJogadores = [...(mesasData.preta || []), ...(mesasData.amarela || [])];
+                const vivos = todosJogadores.filter(j => !j.eliminado);
+                if (vivos.length === 0) finalizarTorneio();
+            } catch (error) {
+                console.error('Erro ao obter posição:', error);
+                mostrarToast('❌ Erro ao processar eliminação! Tente novamente.');
+            }
         }
     });
 }
@@ -1981,7 +2056,7 @@ function mostrarTelaVerificarClassificacao() {
 function iniciarEtapaAdmin() {
     const novaEtapa = parseInt(document.getElementById('adminSelectEtapa').value);
     const fotoUrl = 'https://ui-avatars.com/api/?name=Etapa&background=d4a121&color=000&size=60';
-    mostrarPopupConfirmacao('🔄 INICIAR ETAPA', `${novaEtapa}ª ETAPA`, fotoUrl, () => {
+    mostrarPopupConfirmacao('🔄 INICIAR ETAPA', `${novaEtapa}ª ETAPA`, fotoUrl, async () => {
         if (classificacaoData.length > 0 || totalJogadoresIniciais > 0) {
             salvarEtapaNoHistorico();
             mostrarToast(`✅ ${config.etapa}ª ETAPA salva no histórico!`);
@@ -1991,11 +2066,14 @@ function iniciarEtapaAdmin() {
         mesasData = { preta: [], amarela: [] };
         classificacaoData = [];
         contadorEliminados = 0;
-        ultimaPosicaoUtilizada = 0;
         mesaFinalAtiva = false;
         totalJogadoresIniciais = 0;
         melhorMaoAtual = null;
         torneioFinalizado = false;
+        
+        // Reseta o contador de posições no Firebase
+        await posicoesRef.set({ ultimaPosicao: 0 });
+        
         db.ref('mesas').set(mesasData);
         db.ref('classificacao').set(classificacaoData);
         db.ref('melhorMao').set(null);
@@ -2207,10 +2285,13 @@ function aplicarLayout() {
     mesasData.preta = layoutImportado.preta.map(p => ({ nome: p.nome, posicao: p.posicao, rebuys: 0, addon: false, addonGratis: isAddonGratis(p.nome) || isAddonSemValor(p.nome), eliminado: false, timestamp: Date.now() })); 
     mesasData.amarela = layoutImportado.amarela.map(p => ({ nome: p.nome, posicao: p.posicao, rebuys: 0, addon: false, addonGratis: isAddonGratis(p.nome) || isAddonSemValor(p.nome), eliminado: false, timestamp: Date.now() })); 
     totalJogadoresIniciais = mesasData.preta.length + mesasData.amarela.length; 
-    ultimaPosicaoUtilizada = totalJogadoresIniciais;
     contadorEliminados = 0; 
     mesaFinalAtiva = false; 
     torneioFinalizado = false;
+    
+    // Inicializa o contador de posições no Firebase com o total de jogadores
+    posicoesRef.set({ ultimaPosicao: totalJogadoresIniciais });
+    
     db.ref('mesas').set(mesasData); 
     db.ref('mesaFinalAtiva').set(false);
     db.ref('torneioFinalizado').set(false);
@@ -2254,11 +2335,11 @@ function confirmarApagarTodos() {
         classificacaoData = []; 
         historicoEtapas = []; 
         contadorEliminados = 0; 
-        ultimaPosicaoUtilizada = 0;
         mesaFinalAtiva = false; 
         totalJogadoresIniciais = 0; 
         melhorMaoAtual = null; 
         torneioFinalizado = false;
+        posicoesRef.set({ ultimaPosicao: 0 });
         db.ref('mesas').set(mesasData); 
         db.ref('classificacao').set(classificacaoData); 
         db.ref('historicoEtapas').set([]); 
