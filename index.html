@@ -876,8 +876,8 @@ async function falar(texto) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(texto);
         utterance.lang = 'pt-BR';
-        utterance.rate = 0.85;
-        utterance.pitch = 0.3;
+        utterance.rate = 0.92;
+        utterance.pitch = 0.75;
         utterance.volume = 1;
         if (vozMasculinaPadrao) utterance.voice = vozMasculinaPadrao;
         utterance.onend = () => resolve();
@@ -888,7 +888,7 @@ async function falar(texto) {
 
 async function tocarSomEliminacaoVoz(nomeJogador, posicao) {
     setTimeout(async () => {
-        await falar(`${nomeJogador} foi eliminado na ${posicao}ª posição.`);
+        await falar(`${nomeJogador} foi eliminado! Posição ${posicao}.`);
     }, 100);
 }
 
@@ -1248,7 +1248,7 @@ function mostrarPopupCampeao(campeao) {
         mostrarToast(msgCampeao);
 
         // Voz de anúncio
-        falar(`${campeao.nome} é o campeão da ${config.etapa}ª etapa com ${kos} KO's!`);
+        falar(`Temos um campeão! ${campeao.nome} vence a ${config.etapa}ª etapa com ${kos} kê-ós!`);
 
         // Salva etapa no histórico e navega para classificação
         finalizarETAPARegistrarProxima(false, true);
