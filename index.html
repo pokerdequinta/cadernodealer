@@ -403,6 +403,39 @@
         .icone-luva {
             font-size: 1.2rem;
         }
+        
+        /* NOVA SEÇÃO: Reverter Eliminação */
+        .reverter-section {
+            background: rgba(33, 150, 243, 0.1);
+            border: 2px solid #2196F3;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .reverter-section h3 {
+            color: #2196F3;
+            font-family: 'Anton', sans-serif;
+            margin-bottom: 15px;
+        }
+        .reverter-select {
+            width: 100%;
+            padding: 12px;
+            background: #1a3d1a;
+            color: #fff;
+            border: 1px solid #2196F3;
+            border-radius: 8px;
+            font-size: 1em;
+            margin-bottom: 15px;
+            font-family: 'Anton', sans-serif;
+        }
+        .btn-reverter {
+            background: #2196F3;
+            color: #fff;
+            width: 100%;
+        }
+        .btn-reverter:hover {
+            background: #0b7dda;
+        }
     </style>
 </head>
 <body>
@@ -452,6 +485,17 @@
                 <button class="btn btn-danger" id="btnApagarDados" style="margin-right: 10px;">🗑️ APAGAR TODOS OS DADOS</button>
                 <button class="voltar-btn" id="btnVoltarAdmin">← VOLTAR</button>
             </div>
+        </div>
+        
+        <!-- NOVA SEÇÃO: REVERTER ELIMINAÇÃO DO DEALER -->
+        <div class="reverter-section">
+            <h3>🔄 REVERTER ELIMINAÇÃO INCORRETA (DEALER)</h3>
+            <p style="margin-bottom: 10px; font-size: 0.9em;">Se um jogador foi eliminado por engano, selecione-o abaixo para restaurá-lo e remover sua classificação.</p>
+            <select id="selectReverterEliminado" class="reverter-select">
+                <option value="">-- Selecione um jogador eliminado --</option>
+            </select>
+            <button class="btn btn-reverter" id="btnReverterEliminacao">↩️ REVERTER ELIMINAÇÃO</button>
+            <div id="reverterInfo" class="melhor-mao-info" style="margin-top: 15px; display: none; background: rgba(33,150,243,0.2);"></div>
         </div>
         
         <div class="melhor-mao-section">
@@ -564,7 +608,7 @@
 <div class="tela-verificar-classificacao hidden" id="telaVerificarClassificacao">
     <div class="verificar-container">
         <div class="verificar-header">
-            <h1>📊 CLASSIFICAÇÃO GERAL DA 4ª ETAPA</h1>
+            <h1 id="classificacaoTituloEtapa">📊 CLASSIFICAÇÃO GERAL DA 4ª ETAPA</h1>
             <div>
                 <button class="voltar-inicio-btn" id="btnVoltarVerificarInicio" style="padding: 12px 25px; background: #c72c48; color: #fff; border: none; border-radius: 8px; cursor: pointer;">← VOLTAR</button>
             </div>
@@ -811,6 +855,151 @@ async function getProximaPosicao() {
     });
 }
 
+// ==================== FUNÇÃO PARA REVERTER ELIMINAÇÃO (NOVO) ====================
+async function reverterEliminacao(nomeJogador) {
+    if (torneioFinalizado) { 
+        mostrarToast('❌ Torneio finalizado! Não é possível reverter eliminações.'); 
+        return; 
+    }
+    
+    // Encontrar o jogador eliminado
+    let jogador = null;
+    let mesaOrigem = null;
+    let posicaoOriginal = null;
+    
+    if (mesasData.preta.some(j => j.nome === nomeJogador && j.eliminado)) {
+        jogador = mesasData.preta.find(j => j.nome === nomeJogador);
+        mesaOrigem = 'preta';
+    } else if (mesasData.amarela.some(j => j.nome === nomeJogador && j.eliminado)) {
+        jogador = mesasData.amarela.find(j => j.nome === nomeJogador);
+        mesaOrigem = 'amarela';
+    }
+    
+    if (!jogador) {
+        mostrarToast(`❌ Jogador ${nomeJogador} não encontrado ou já está ativo!`);
+        return;
+    }
+    
+    // Guardar posição original para ajustar o contador
+    posicaoOriginal = jogador.posicaoFinal;
+    
+    // Remover da classificação
+    const indexClassif = classificacaoData.findIndex(c => c.nome === nomeJogador);
+    if (indexClassif !== -1) {
+        classificacaoData.splice(indexClassif, 1);
+        await db.ref('classificacao').set(classificacaoData);
+        mostrarToast(`✅ ${nomeJogador} removido da classificação (${posicaoOriginal}º lugar)`);
+    }
+    
+    // Reativar o jogador
+    jogador.eliminado = false;
+    delete jogador.posicaoFinal;
+    delete jogador.kos;
+    
+    // Ajustar o contador de posições (aumentar pois um jogador voltou)
+    const snapshot = await posicoesRef.get();
+    let ultimaPos = snapshot.exists() ? snapshot.val().ultimaPosicao : totalJogadoresIniciais;
+    await posicoesRef.set({ ultimaPosicao: ultimaPos + 1 });
+    
+    // Salvar alterações
+    await db.ref('mesas').set(mesasData);
+    
+    // Atualizar todas as interfaces
+    atualizarGridJogadores();
+    atualizarStatsCards();
+    atualizarAdminResumo();
+    atualizarAdminEstatisticas();
+    atualizarSelectMelhorMao();
+    atualizarClassificacaoAtual();
+    atualizarSelectReverter(); // Atualiza a lista de eliminados
+    
+    // Se a mesa final estava ativa mas agora tem mais de 9 jogadores, desativar
+    const vivos = [...(mesasData.preta || []), ...(mesasData.amarela || [])].filter(j => !j.eliminado);
+    if (vivos.length > 9 && mesaFinalAtiva) {
+        mesaFinalAtiva = false;
+        await db.ref('mesaFinalAtiva').set(false);
+        atualizarBotoesMesaFinal();
+        mostrarToast('🔄 Mesa final desativada após reversão da eliminação.');
+    }
+    
+    // Anúncio de voz
+    falar(`${nomeJogador} foi reintegrado ao torneio!`);
+    mostrarToast(`🎉 ${nomeJogador} foi reintegrado ao torneio!`);
+}
+
+// Função para popular o select de jogadores eliminados
+function atualizarSelectReverter() {
+    const select = document.getElementById('selectReverterEliminado');
+    if (!select) return;
+    
+    const todosEliminados = [...(mesasData.preta || []), ...(mesasData.amarela || [])].filter(j => j.eliminado);
+    
+    if (todosEliminados.length === 0) {
+        select.innerHTML = '<option value="">-- Nenhum jogador eliminado --</option>';
+        const infoDiv = document.getElementById('reverterInfo');
+        if (infoDiv) {
+            infoDiv.style.display = 'block';
+            infoDiv.innerHTML = '✅ Nenhum jogador eliminado no momento.';
+            infoDiv.style.background = 'rgba(76, 175, 80, 0.2)';
+        }
+        return;
+    }
+    
+    select.innerHTML = '<option value="">-- Selecione um jogador eliminado --</option>';
+    todosEliminados.sort((a, b) => (a.posicaoFinal || 999) - (b.posicaoFinal || 999)).forEach(j => {
+        const option = document.createElement('option');
+        option.value = j.nome;
+        option.textContent = `${j.nome} - ${j.posicaoFinal ? j.posicaoFinal + 'º lugar' : 'Eliminado'} (${mesasData.preta?.includes(j) ? 'Mesa Preta' : 'Mesa Amarela'})`;
+        select.appendChild(option);
+    });
+    
+    const infoDiv = document.getElementById('reverterInfo');
+    if (infoDiv) {
+        infoDiv.style.display = 'block';
+        infoDiv.innerHTML = `📋 ${todosEliminados.length} jogador(es) eliminado(s) aguardando possível reversão.`;
+        infoDiv.style.background = 'rgba(33, 150, 243, 0.2)';
+    }
+}
+// ====================================================================
+
+// ==================== FUNÇÃO PARA REMOVER ETAPA DO HISTÓRICO (NOVO) ====================
+function removerEtapaHistorico(index) {
+    const etapa = historicoEtapas[index];
+    if (!etapa) return;
+    
+    // Popup de confirmação personalizado
+    const popup = document.createElement('div');
+    popup.className = 'popup-confirmacao';
+    popup.innerHTML = `
+        <div class="popup-card">
+            <div class="popup-header" style="background: linear-gradient(135deg, #c72c48, #8b0000);">
+                <h3>⚠️ ATENÇÃO! ⚠️</h3>
+            </div>
+            <div class="popup-body">
+                <p>Você está prestes a remover permanentemente a</p>
+                <div class="jogador-destaque" style="font-size: 1.8rem;">${etapa.etapaNumero}ª ETAPA</div>
+                <p>do histórico.</p>
+                <p style="color: #ff6666; margin-top: 10px;"><strong>Esta ação NÃO pode ser desfeita!</strong></p>
+            </div>
+            <div class="popup-buttons">
+                <button class="btn-popup-cancelar" id="popupCancelarBtn">CANCELAR</button>
+                <button class="btn-popup-confirmar" id="popupConfirmarBtn" style="background: linear-gradient(90deg, #c72c48, #8b0000);">🗑️ REMOVER ETAPA</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(popup);
+    
+    document.getElementById('popupCancelarBtn').onclick = () => popup.remove();
+    document.getElementById('popupConfirmarBtn').onclick = () => {
+        historicoEtapas.splice(index, 1);
+        db.ref('historicoEtapas').set(historicoEtapas);
+        atualizarHistoricoEtapas();
+        mostrarToast(`🗑️ ${etapa.etapaNumero}ª ETAPA removida do histórico com sucesso!`);
+        popup.remove();
+    };
+}
+// ====================================================================
+
 // ==================== ÁUDIO ====================
 async function tocarSomCaixaRegistradora() {
     if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -1006,7 +1195,6 @@ function prepararProximaEtapa() {
     }
 }
 
-// AJUSTE 2: Finalização correta — salva, limpa e navega para classificação
 function finalizarETAPARegistrarProxima(mostrarMensagem = true, irParaClassificacao = true) {
     if (processandoFinalizacao) return false;
     processandoFinalizacao = true;
@@ -1047,6 +1235,7 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true, irParaClassifica
     atualizarBotoesMesaFinal();
     atualizarSelectMelhorMao();
     atualizarClassificacaoAtual();
+    atualizarSelectReverter();
 
     // Fecha todos os popups abertos
     document.querySelectorAll('.popup-confirmacao').forEach(p => p.remove());
@@ -1060,7 +1249,7 @@ function finalizarETAPARegistrarProxima(mostrarMensagem = true, irParaClassifica
         document.getElementById('telaVerificarClassificacao').classList.remove('hidden');
 
         // Atualiza o título da tela de classificação
-        const tituloClassificacao = document.querySelector('#telaVerificarClassificacao .verificar-header h1');
+        const tituloClassificacao = document.getElementById('classificacaoTituloEtapa');
         if (tituloClassificacao) tituloClassificacao.innerHTML = `📊 CLASSIFICAÇÃO GERAL DA ${etapaFinalizada}ª ETAPA`;
 
         atualizarClassificacaoAtual();
@@ -1175,7 +1364,6 @@ function mostrarPopupEliminacaoMF(nomeJogador, fotoUrl, onConfirm) {
     });
 }
 
-// AJUSTE 2: Popup de campeão corrigido — ao confirmar, fecha, salva e vai para classificação
 function mostrarPopupCampeao(campeao) {
     const existingPopup = document.querySelector('.popup-confirmacao');
     if (existingPopup) existingPopup.remove();
@@ -1266,7 +1454,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         else { config = { etapa: 4 }; db.ref('config').set(config); }
         const selectEtapa = document.getElementById('adminSelectEtapa');
         if (selectEtapa) selectEtapa.value = config.etapa || 4;
-        const tituloClassificacao = document.querySelector('#telaVerificarClassificacao .verificar-header h1');
+        const tituloClassificacao = document.getElementById('classificacaoTituloEtapa');
         if (tituloClassificacao) tituloClassificacao.innerHTML = `📊 CLASSIFICAÇÃO GERAL DA ${config.etapa}ª ETAPA`;
     });
 
@@ -1285,6 +1473,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         renderizarMesaFinal();
         atualizarSelectMelhorMao();
         atualizarClassificacaoAtual();
+        atualizarSelectReverter();
     });
 
     db.ref('mesas').on('value', (snapshot) => {
@@ -1320,6 +1509,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         verificarMesaFinal();
         atualizarSelectMelhorMao();
         atualizarClassificacaoAtual();
+        atualizarSelectReverter();
     });
 
     db.ref('classificacao').on('value', (snapshot) => {
@@ -1435,15 +1625,31 @@ function aplicarMelhorMao() {
     });
 }
 
+// CORREÇÃO: Função atualizarClassificacaoAtual - remove duplicatas de posição
 function atualizarClassificacaoAtual() {
     const tbody = document.getElementById('classificacaoBodyAtual');
     if (!tbody) return;
-    const ordenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao).slice(0, 20);
-    if (ordenada.length === 0) {
+    
+    // CORREÇÃO: Remover duplicatas de posição (ex: dois jogadores no 8º lugar)
+    const ordenada = [...classificacaoData].sort((a, b) => a.posicao - b.posicao);
+    const unicos = [];
+    const posicoesVistas = new Set();
+    
+    for (const item of ordenada) {
+        if (!posicoesVistas.has(item.posicao)) {
+            posicoesVistas.add(item.posicao);
+            unicos.push(item);
+        }
+    }
+    
+    const top20 = unicos.slice(0, 20);
+    
+    if (top20.length === 0) {
         tbody.innerHTML = '<tr><td colspan="7">Nenhum jogador eliminado ainda</td></tr>';
         return;
     }
-    tbody.innerHTML = ordenada.map(j => {
+    
+    tbody.innerHTML = top20.map(j => {
         const pontosTotais = (j.pontosPosicao || 0) + (j.kos || 0);
         const temPix = chavesPix[j.nome] && chavesPix[j.nome].chave;
         const premioDisplay = j.premio && j.premio > 0 ? `R$ ${Number(j.premio).toFixed(2)}` : '-';
@@ -1556,6 +1762,7 @@ function confirmarEliminacaoMFPopup(nome) {
             renderizarMesaFinal();
             atualizarStatsCards();
             atualizarClassificacaoAtual();
+            atualizarSelectReverter();
         }
     });
 }
@@ -1663,6 +1870,7 @@ function confirmarSenhaAdmin() {
         atualizarAdminEstatisticas();
         atualizarHistoricoEtapas();
         atualizarSelectMelhorMao();
+        atualizarSelectReverter();
         document.getElementById('senhaAdminInput').value = '';
     } else {
         alert('❌ Senha incorreta!');
@@ -1735,7 +1943,7 @@ async function confirmarEliminacaoPopup(nome) {
                 mostrarToast(`✅ ${jogador.nome} eliminado na ${posicao}ª posição com ${kos} KO(s)!`);
                 atualizarGridJogadores(); atualizarStatsCards();
                 atualizarAdminResumo(); atualizarAdminEstatisticas();
-                verificarMesaFinal(); atualizarSelectMelhorMao(); atualizarClassificacaoAtual();
+                verificarMesaFinal(); atualizarSelectMelhorMao(); atualizarClassificacaoAtual(); atualizarSelectReverter();
             } catch (error) {
                 console.error('Erro ao obter posição:', error);
                 mostrarToast('❌ Erro ao processar eliminação! Tente novamente.');
@@ -1811,11 +2019,11 @@ function iniciarEtapaAdmin() {
         atualizarAdminResumo(); atualizarAdminEstatisticas();
         atualizarHistoricoEtapas(); atualizarStatsCards();
         atualizarBotoesMesaFinal(); atualizarSelectMelhorMao();
-        atualizarClassificacaoAtual();
+        atualizarClassificacaoAtual(); atualizarSelectReverter();
         const infoDiv = document.getElementById('proximaEtapaInfo');
         if (infoDiv) infoDiv.style.display = 'none';
         mostrarToast(`✅ ${novaEtapa}ª ETAPA iniciada!\n\nImporte o layout das mesas para começar.`);
-        const tituloClassificacao = document.querySelector('#telaVerificarClassificacao .verificar-header h1');
+        const tituloClassificacao = document.getElementById('classificacaoTituloEtapa');
         if (tituloClassificacao) tituloClassificacao.innerHTML = `📊 CLASSIFICAÇÃO GERAL DA ${config.etapa}ª ETAPA`;
     });
 }
@@ -1825,7 +2033,7 @@ function atualizarAdminResumo() {
     const tbody = document.getElementById('adminResumoBody');
     if (!tbody) return;
     if (todos.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7">Nenhum dado</td></tr>';
+        tbody.innerHTML = '60行<td colspan="7">Nenhum dado</td></tr>';
         document.getElementById('adminTotalGeral').textContent = 'TOTAL GERAL: R$ 0,00';
         return;
     }
@@ -1865,7 +2073,7 @@ function atualizarAdminEstatisticas() {
     const rankingBody = el('adminRankingBody');
     if (rankingBody) {
         rankingBody.innerHTML = ranking.length === 0
-            ? '<tr><td colspan="4">Nenhum rebuy</td></tr>'
+            ? '60行<td colspan="4">Nenhum rebuy</td></tr>'
             : ranking.map((j,i)=>`<tr><td>${i+1}</td><td>${j.nome}${j.premio?` 💰 R$ ${j.premio}`:''}</td><td>${mesasData.preta?.includes(j)?'Preta':'Amarela'}</td><td>${j.rebuys}</td></tr>`).join('');
     }
 }
@@ -1881,6 +2089,15 @@ function atualizarHistoricoEtapas() {
         const data = new Date(etapa.data).toLocaleString('pt-BR');
         const num = etapa.etapaNumero;
         const classificacaoOrdenada = (etapa.classificacao || []).filter(j=>j&&j.posicao).sort((a,b)=>a.posicao-b.posicao);
+        // Remove duplicatas no histórico também
+        const unicosHist = [];
+        const posVistasHist = new Set();
+        for (const item of classificacaoOrdenada) {
+            if (!posVistasHist.has(item.posicao)) {
+                posVistasHist.add(item.posicao);
+                unicosHist.push(item);
+            }
+        }
         return `<div class="etapa-card">
             <div class="etapa-header" onclick="toggleEtapaVerificar(${idx})">
                 <div>
@@ -1888,15 +2105,15 @@ function atualizarHistoricoEtapas() {
                     <div class="etapa-data">${data}</div>
                 </div>
                 <div style="display:flex;gap:10px;align-items:center;">
-                    <span>🃏 ${etapa.totalJogadores||0} jogadores | ${classificacaoOrdenada.length} classificados</span>
-                    <button class="btn btn-danger" onclick="event.stopPropagation(); removerEtapaHistorico(${idx})" style="padding:4px 8px;font-size:0.7em;">🗑️ REMOVER</button>
+                    <span>🃏 ${etapa.totalJogadores||0} jogadores | ${unicosHist.length} classificados</span>
+                    <button class="btn btn-danger" onclick="event.stopPropagation(); removerEtapaHistorico(${idx})" style="padding:4px 8px;font-size:0.7em;">🗑️ REMOVER ETAPA</button>
                 </div>
             </div>
             <div class="etapa-classificacao" id="etapaVerificar-${idx}">
                 <table class="etapa-table">
                     <thead><tr><th>Pos</th><th>Jogador</th><th>Pontos</th><th>KO's</th><th>Total</th><th>Prêmio</th><th>PIX</th></tr></thead>
                     <tbody>
-                        ${classificacaoOrdenada.slice(0,20).map(j => {
+                        ${unicosHist.slice(0,20).map(j => {
                             const temPix = chavesPix[j.nome] && chavesPix[j.nome].chave;
                             return `<tr>
                                 <td><strong>${j.posicao}º</strong></td>
@@ -1918,26 +2135,6 @@ function atualizarHistoricoEtapas() {
 function toggleEtapaVerificar(idx) {
     const el = document.getElementById(`etapaVerificar-${idx}`);
     if (el) el.classList.toggle('show');
-}
-
-function removerEtapaHistorico(idx) {
-    mostrarPopupConfirmacao('🗑️ REMOVER ETAPA', `${historicoEtapas[idx].etapaNumero}ª ETAPA`,
-        'https://ui-avatars.com/api/?name=REMOVER&background=d4a121&color=000&size=60', () => {
-        historicoEtapas.splice(idx, 1);
-        db.ref('historicoEtapas').set(historicoEtapas);
-        atualizarHistoricoEtapas();
-        mostrarToast('✅ Etapa removida do histórico!');
-    });
-}
-
-function apagarHistorico() {
-    mostrarPopupConfirmacao('⚠️ APAGAR HISTÓRICO', 'HISTÓRICO COMPLETO',
-        'https://ui-avatars.com/api/?name=APAGAR&background=d4a121&color=000&size=60', () => {
-        historicoEtapas = [];
-        db.ref('historicoEtapas').set([]);
-        mostrarToast('✅ Histórico apagado!');
-        atualizarHistoricoEtapas();
-    });
 }
 
 function processarLayout() {
@@ -1997,7 +2194,7 @@ function aplicarLayout() {
     db.ref('torneioFinalizado').set(false);
     mostrarToast(`✅ Layout aplicado!\nPreta: ${mesasData.preta.length}\nAmarela: ${mesasData.amarela.length}\nTotal: ${totalJogadoresIniciais}`);
     atualizarAdminResumo(); atualizarAdminEstatisticas();
-    atualizarStatsCards(); atualizarSelectMelhorMao(); atualizarClassificacaoAtual();
+    atualizarStatsCards(); atualizarSelectMelhorMao(); atualizarClassificacaoAtual(); atualizarSelectReverter();
 }
 
 function copiarCSV() {
@@ -2052,7 +2249,15 @@ function inicializarEventos() {
     on('btnIniciarEtapaAdmin','click', iniciarEtapaAdmin);
     on('btnApagarHistorico','click',()=>document.getElementById('modalApagarHistorico').classList.add('active'));
     on('btnCancelarApagarHistorico','click',()=>document.getElementById('modalApagarHistorico').classList.remove('active'));
-    on('btnConfirmarApagarHistorico','click', apagarHistorico);
+    on('btnConfirmarApagarHistorico','click', () => {
+        if (confirm('⚠️ APAGAR TODO O HISTÓRICO? Esta ação não pode ser desfeita!')) {
+            historicoEtapas = [];
+            db.ref('historicoEtapas').set([]);
+            mostrarToast('✅ Histórico apagado!');
+            atualizarHistoricoEtapas();
+            document.getElementById('modalApagarHistorico').classList.remove('active');
+        }
+    });
     on('btnApagarDados','click', apagarTodosDados);
     on('btnCancelarSenhaApagar','click',()=>{ document.getElementById('modalSenhaApagar').classList.remove('active'); document.getElementById('senhaApagarInput').value=''; });
     on('btnConfirmarSenhaApagar','click', confirmarApagarTodos);
@@ -2068,6 +2273,16 @@ function inicializarEventos() {
     on('btnVoltarAdmin','click', voltarDaAdmin);
     on('btnCancelarSenhaAdmin','click',()=>{ document.getElementById('modalSenhaAdmin').classList.remove('active'); document.getElementById('senhaAdminInput').value=''; });
     on('btnConfirmarSenhaAdmin','click', confirmarSenhaAdmin);
+    // NOVO: Evento para reverter eliminação
+    on('btnReverterEliminacao','click', () => {
+        const select = document.getElementById('selectReverterEliminado');
+        const nome = select.value;
+        if (!nome || nome === '') {
+            mostrarToast('❌ Selecione um jogador eliminado para reverter!');
+            return;
+        }
+        reverterEliminacao(nome);
+    });
 
     const senhaInput = document.getElementById('senhaAdminInput');
     if (senhaInput) senhaInput.addEventListener('keypress', e => { if (e.key==='Enter') confirmarSenhaAdmin(); });
