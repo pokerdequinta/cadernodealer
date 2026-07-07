@@ -504,9 +504,11 @@
             }
         }
         .jogador-card.eliminado {
-            opacity: 0.6;
-            background: rgba(199, 44, 72, 0.2);
+            opacity: 0.5;
+            background: rgba(199, 44, 72, 0.15);
             border-color: #c72c48;
+            order: 999;
+            /* Move para o final da lista */
         }
         .jogador-posicao-numero {
             font-family: 'Anton', sans-serif;
@@ -2067,7 +2069,7 @@
             popup.innerHTML = `
                 <div class="popup-card">
                     <div class="popup-header" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);">
-                        <h3>🔄 TROCAR DE MESA</h3>
+                        <h3>🔄 TRANSFERIR JOGADOR</h3>
                     </div>
                     <div class="popup-body">
                         <p>Confirmar transferência de</p>
@@ -2079,7 +2081,7 @@
                     </div>
                     <div class="popup-buttons">
                         <button class="btn-popup-cancelar" id="popupCancelarBtn">CANCELAR</button>
-                        <button class="btn-popup-confirmar transferir" id="popupConfirmarBtn">🔄 CONFIRMAR TROCA</button>
+                        <button class="btn-popup-confirmar transferir" id="popupConfirmarBtn">🔄 CONFIRMAR TRANSFERÊNCIA</button>
                     </div>
                 </div>`;
             document.body.appendChild(popup);
@@ -2932,7 +2934,7 @@
                             ${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}
                             ${j.addon ? `<span class="badge ${isMelhorMao ? 'badge-addon-melhor-mao' : 'badge-addon'}">💎 Addon ${addonTexto}</span>` : ''}
                             ${j.premio ? `<span class="badge badge-premio">💰 R$ ${j.premio}</span>` : ''}
-                            ${jogadorTransferido[j.nome] ? `<span class="badge badge-transferido">🔄 TROCADO</span>` : ''}
+                            ${jogadorTransferido[j.nome] ? `<span class="badge badge-transferido">🔄 TRANSFERIDO</span>` : ''}
                         </div>
                     </div>
                     <div class="jogador-actions">
@@ -3049,7 +3051,11 @@
                 </div>`;
                 return;
             }
-            const ordenados = [...jogadores].sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
+
+            // Ordenação: primeiro os vivos (por posição), depois os eliminados (por posição final)
+            const vivos = jogadores.filter(j => !j.eliminado).sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
+            const eliminados = jogadores.filter(j => j.eliminado).sort((a, b) => (a.posicaoFinal || 999) - (b.posicaoFinal || 999));
+            const ordenados = [...vivos, ...eliminados];
 
             const temOutraMesaComVivos = mesaAtual === 'preta' ?
                 (mesasData.amarela || []).some(j => !j.eliminado) :
@@ -3064,7 +3070,7 @@
                 const cardClass = `jogador-card ${j.eliminado ? 'eliminado' : ''} ${isMelhorMao ? 'melhor-mao' : ''} ${foiTransferido ? 'transferido' : ''}`;
 
                 return `<div class="${cardClass}">
-                    <div class="jogador-posicao-numero">${j.posicao || '?'}</div>
+                    <div class="jogador-posicao-numero">${j.eliminado ? '💀' : (j.posicao || '?')}</div>
                     <img class="jogador-foto" src="${getFotoJogador(j.nome)}">
                     <div class="jogador-info">
                         <div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🃏' : ''}${foiTransferido ? ' 🔄' : ''}</div>
@@ -3073,7 +3079,7 @@
                             ${j.addon ? `<span class="badge ${isMelhorMao ? 'badge-addon-melhor-mao' : 'badge-addon'}">💎 Addon ${addonTexto}</span>` : ''}
                             ${j.eliminado ? `<span class="badge badge-eliminado">❌ Elim (${j.posicaoFinal}º)</span>` : ''}
                             ${j.premio ? `<span class="badge badge-premio">💰 R$ ${j.premio}</span>` : ''}
-                            ${foiTransferido ? `<span class="badge badge-transferido">🔄 TROCADO</span>` : ''}
+                            ${foiTransferido ? `<span class="badge badge-transferido">🔄 TRANSFERIDO</span>` : ''}
                         </div>
                     </div>
                     <div class="jogador-actions">
@@ -3083,7 +3089,7 @@
                             ${!j.addon ? `<button class="action-btn btn-addon" onclick="confirmarAddon('${j.nome}')">ADDON</button>` : ''}
                             <button class="action-btn btn-corrigir" onclick="abrirCorrecao('${j.nome}')">✏️</button>
                             <button class="action-btn btn-eliminar" onclick="confirmarEliminacaoPopup('${j.nome}')">❌</button>
-                            ${mostrarTransferir ? `<button class="action-btn btn-transferir-mesa" onclick="transferirJogador('${j.nome}')">🔄 TROCAR</button>` : ''}
+                            ${mostrarTransferir ? `<button class="action-btn btn-transferir-mesa" onclick="transferirJogador('${j.nome}')">🔄 TRANSFERIR</button>` : ''}
                         ` : ''}
                     </div>
                 </div>`;
