@@ -290,6 +290,24 @@
             font-family: 'Anton', sans-serif;
             animation: pulse 1s infinite;
         }
+        .btn-diretoria {
+            margin-top: 10px;
+            padding: 12px;
+            background: #9C27B0;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1em;
+            width: 100%;
+            font-family: 'Anton', sans-serif;
+            transition: all 0.3s;
+        }
+        .btn-diretoria:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(156, 39, 176, 0.5);
+        }
         @keyframes pulse {
             0%,
             100% {
@@ -472,6 +490,10 @@
             box-shadow: 0 0 20px rgba(212, 161, 33, 0.5);
             animation: glow 1.5s infinite;
         }
+        .jogador-card.transferido {
+            border-color: #9C27B0;
+            background: rgba(156, 39, 176, 0.15);
+        }
         @keyframes glow {
             0%,
             100% {
@@ -561,6 +583,12 @@
             font-size: 1em;
             padding: 5px 12px;
         }
+        .badge-transferido {
+            background: #9C27B0;
+            color: #fff;
+            font-size: 0.9em;
+            padding: 4px 10px;
+        }
         
         .jogador-actions {
             display: flex;
@@ -605,7 +633,6 @@
             background: #c72c48;
             color: #fff;
         }
-        /* NOVO: Botão de transferência de mesa */
         .btn-transferir-mesa {
             background: #9C27B0;
             color: #fff;
@@ -711,6 +738,10 @@
         }
         .btn-info {
             background: #2196F3;
+            color: #fff;
+        }
+        .btn-diretoria-painel {
+            background: #9C27B0;
             color: #fff;
         }
         .admin-etapa-select {
@@ -1263,6 +1294,16 @@
             transform: scale(1.02);
         }
         
+        .btn-popup-confirmar.transferir {
+            background: linear-gradient(90deg, #9C27B0, #7B1FA2);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.4);
+        }
+        
+        .btn-popup-confirmar.transferir:hover {
+            background: linear-gradient(90deg, #AB47BC, #8E24AA);
+        }
+        
         .popup-input-group {
             margin: 15px 0;
             text-align: left;
@@ -1345,6 +1386,89 @@
             color: #fff;
             font-size: 1rem;
         }
+        
+        /* Painel da Diretoria */
+        .tela-diretoria {
+            min-height: 100vh;
+            padding: 20px;
+            background: #0d1b0d;
+        }
+        .tela-diretoria.hidden {
+            display: none;
+        }
+        .diretoria-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .diretoria-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #9C27B0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .diretoria-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .diretoria-card {
+            background: #102810;
+            border: 2px solid #9C27B0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .diretoria-card .valor {
+            font-family: 'Anton', sans-serif;
+            font-size: 2.5em;
+            color: #d4a121;
+        }
+        .diretoria-card .label {
+            font-family: 'Anton', sans-serif;
+            font-size: 0.9em;
+            color: #aaa;
+            margin-top: 5px;
+        }
+        .diretoria-mesas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .diretoria-mesa-card {
+            background: #102810;
+            border: 2px solid #d4a121;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .diretoria-mesa-card.preta {
+            border-color: #fff;
+        }
+        .diretoria-mesa-card.amarela {
+            border-color: #FFD700;
+        }
+        .diretoria-mesa-card h4 {
+            font-family: 'Anton', sans-serif;
+            color: #d4a121;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.2em;
+        }
+        .diretoria-mesa-card .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #2d5016;
+            font-family: 'Anton', sans-serif;
+        }
+        .diretoria-mesa-card .stat-row:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body>
@@ -1366,6 +1490,63 @@
             
             <button class="btn-mesa-final-topo" id="btnMesaFinalTopo" style="display: none;">🃏 IR PARA MESA FINAL 🃏</button>
             <button class="btn-mesa-final-topo" id="btnVerificarClassificacao" style="margin-top: 10px; background: #2196F3;">📊 VERIFICAR CLASSIFICAÇÃO</button>
+            <button class="btn-diretoria" id="btnAbrirDiretoria">📊 DIRETORIA</button>
+        </div>
+    </div>
+
+    <!-- Tela Diretoria -->
+    <div class="tela-diretoria hidden" id="telaDiretoria">
+        <div class="diretoria-container">
+            <div class="diretoria-header">
+                <h1>📊 PAINEL DA DIRETORIA</h1>
+                <div>
+                    <button class="voltar-btn" id="btnVoltarDiretoria">← VOLTAR</button>
+                </div>
+            </div>
+            
+            <div class="diretoria-stats" id="diretoriaStats">
+                <div class="diretoria-card">
+                    <div class="valor" id="diretoriaTotalJogadores">0</div>
+                    <div class="label">Total de Jogadores</div>
+                </div>
+                <div class="diretoria-card">
+                    <div class="valor" id="diretoriaTotalRebuys">0</div>
+                    <div class="label">Total de Rebuys</div>
+                </div>
+                <div class="diretoria-card">
+                    <div class="valor" id="diretoriaTotalAddons">0</div>
+                    <div class="label">Total de Addons</div>
+                </div>
+                <div class="diretoria-card">
+                    <div class="valor" id="diretoriaTotalFinanceiro">R$ 0</div>
+                    <div class="label">Total Financeiro</div>
+                </div>
+            </div>
+            
+            <div class="diretoria-mesas">
+                <div class="diretoria-mesa-card preta">
+                    <h4>♠️ MESA PRETA</h4>
+                    <div class="stat-row"><span>Jogadores</span><span id="diretoriaPretaJogadores">0</span></div>
+                    <div class="stat-row"><span>Rebuys</span><span id="diretoriaPretaRebuys">0</span></div>
+                    <div class="stat-row"><span>Addons</span><span id="diretoriaPretaAddons">0</span></div>
+                    <div class="stat-row"><span>Financeiro</span><span id="diretoriaPretaFinanceiro">R$ 0</span></div>
+                </div>
+                <div class="diretoria-mesa-card amarela">
+                    <h4>♦️ MESA AMARELA</h4>
+                    <div class="stat-row"><span>Jogadores</span><span id="diretoriaAmarelaJogadores">0</span></div>
+                    <div class="stat-row"><span>Rebuys</span><span id="diretoriaAmarelaRebuys">0</span></div>
+                    <div class="stat-row"><span>Addons</span><span id="diretoriaAmarelaAddons">0</span></div>
+                    <div class="stat-row"><span>Financeiro</span><span id="diretoriaAmarelaFinanceiro">R$ 0</span></div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <h4 style="font-family:'Anton',sans-serif;color:#d4a121;margin-bottom:15px;">🏆 RANKING DE REBUYS</h4>
+                <table class="resumo-table">
+                    <thead><tr><th>#</th><th>Jogador</th><th>Mesa</th><th>Rebuys</th></tr></thead>
+                    <tbody id="diretoriaRankingBody"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -1725,6 +1906,8 @@
         let totalJogadoresIniciais = 0;
         let filaPosicoesBloqueada = false;
         let processandoFinalizacao = false;
+        // Flag para indicar se um jogador foi transferido
+        let jogadorTransferido = {};
 
         const posicoesRef = db.ref('controlePosicoes');
 
@@ -1827,6 +2010,7 @@
             atualizarSelectMelhorMao();
             atualizarClassificacaoAtual();
             atualizarSelectReverter();
+            atualizarDiretoria();
 
             const vivos = [...(mesasData.preta || []), ...(mesasData.amarela || [])].filter(j => !j.eliminado);
             if (vivos.length > 9 && mesaFinalAtiva) {
@@ -1875,13 +2059,41 @@
         }
 
         // ==================== FUNÇÃO PARA TRANSFERIR JOGADOR ENTRE MESAS ====================
+        function mostrarPopupTransferencia(nomeJogador, fotoUrl, onConfirm) {
+            const existingPopup = document.querySelector('.popup-confirmacao');
+            if (existingPopup) existingPopup.remove();
+            const popup = document.createElement('div');
+            popup.className = 'popup-confirmacao';
+            popup.innerHTML = `
+                <div class="popup-card">
+                    <div class="popup-header" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2);">
+                        <h3>🔄 TROCAR DE MESA</h3>
+                    </div>
+                    <div class="popup-body">
+                        <p>Confirmar transferência de</p>
+                        <div class="jogador-info-popup">
+                            <img class="jogador-foto-popup" src="${fotoUrl}" onerror="this.style.display='none'">
+                            <div class="jogador-destaque">${nomeJogador}</div>
+                        </div>
+                        <p style="font-size:0.9rem;color:#aaa;">O jogador será movido para a outra mesa mantendo todos os seus dados (rebuys, addons, etc.)</p>
+                    </div>
+                    <div class="popup-buttons">
+                        <button class="btn-popup-cancelar" id="popupCancelarBtn">CANCELAR</button>
+                        <button class="btn-popup-confirmar transferir" id="popupConfirmarBtn">🔄 CONFIRMAR TROCA</button>
+                    </div>
+                </div>`;
+            document.body.appendChild(popup);
+            document.getElementById('popupCancelarBtn').addEventListener('click', () => popup.remove());
+            document.getElementById('popupConfirmarBtn').addEventListener('click', () => { popup.remove(); if (onConfirm)
+                    onConfirm(); });
+        }
+
         async function transferirJogador(nomeJogador) {
             if (torneioFinalizado) {
                 mostrarToast('❌ Torneio finalizado! Não é possível transferir jogadores.');
                 return;
             }
 
-            // Encontrar o jogador e sua mesa atual
             let jogador = null;
             let mesaOrigem = null;
 
@@ -1898,43 +2110,44 @@
                 return;
             }
 
-            // Determinar a mesa de destino
-            const mesaDestino = mesaOrigem === 'preta' ? 'amarela' : 'preta';
-            const nomeMesaDestino = mesaDestino === 'preta' ? 'Mesa Preta' : 'Mesa Amarela';
+            // Mostrar popup de confirmação
+            mostrarPopupTransferencia(nomeJogador, getFotoJogador(nomeJogador), async () => {
+                const mesaDestino = mesaOrigem === 'preta' ? 'amarela' : 'preta';
+                const nomeMesaDestino = mesaDestino === 'preta' ? 'Mesa Preta' : 'Mesa Amarela';
 
-            // Criar uma cópia do jogador para a mesa de destino (mantendo todos os dados)
-            const jogadorCopy = { ...jogador };
+                const jogadorCopy = { ...jogador };
 
-            // Remover da mesa de origem
-            if (mesaOrigem === 'preta') {
-                mesasData.preta = mesasData.preta.filter(j => j.nome !== nomeJogador);
-            } else {
-                mesasData.amarela = mesasData.amarela.filter(j => j.nome !== nomeJogador);
-            }
+                if (mesaOrigem === 'preta') {
+                    mesasData.preta = mesasData.preta.filter(j => j.nome !== nomeJogador);
+                } else {
+                    mesasData.amarela = mesasData.amarela.filter(j => j.nome !== nomeJogador);
+                }
 
-            // Adicionar à mesa de destino
-            if (mesaDestino === 'preta') {
-                mesasData.preta.push(jogadorCopy);
-            } else {
-                mesasData.amarela.push(jogadorCopy);
-            }
+                if (mesaDestino === 'preta') {
+                    mesasData.preta.push(jogadorCopy);
+                } else {
+                    mesasData.amarela.push(jogadorCopy);
+                }
 
-            // Reordenar as mesas
-            mesasData.preta.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
-            mesasData.amarela.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
+                mesasData.preta.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
+                mesasData.amarela.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
 
-            await db.ref('mesas').set(mesasData);
+                // Marcar jogador como transferido
+                jogadorTransferido[nomeJogador] = true;
 
-            mostrarToast(`🔄 ${nomeJogador} transferido da ${mesaOrigem === 'preta' ? 'Mesa Preta' : 'Mesa Amarela'} para a ${nomeMesaDestino}!`);
+                await db.ref('mesas').set(mesasData);
 
-            // Atualizar todas as interfaces
-            atualizarGridJogadores();
-            atualizarStatsCards();
-            atualizarAdminResumo();
-            atualizarAdminEstatisticas();
-            atualizarSelectMelhorMao();
-            atualizarSelectReverter();
-            renderizarMesaFinal();
+                mostrarToast(`🔄 ${nomeJogador} transferido da ${mesaOrigem === 'preta' ? 'Mesa Preta' : 'Mesa Amarela'} para a ${nomeMesaDestino}!`);
+
+                atualizarGridJogadores();
+                atualizarStatsCards();
+                atualizarAdminResumo();
+                atualizarAdminEstatisticas();
+                atualizarSelectMelhorMao();
+                atualizarSelectReverter();
+                renderizarMesaFinal();
+                atualizarDiretoria();
+            });
         }
 
         // ==================== FUNÇÃO PARA REMOVER ETAPA DO HISTÓRICO (COM SENHA) ====================
@@ -1942,7 +2155,6 @@
             const etapa = historicoEtapas[index];
             if (!etapa) return;
 
-            // Popup de confirmação com campo de senha
             const popup = document.createElement('div');
             popup.className = 'popup-confirmacao';
             popup.innerHTML = `
@@ -1984,7 +2196,6 @@
                 popup.remove();
             };
 
-            // Permitir Enter no campo de senha
             document.getElementById('popupSenhaRemoverEtapa').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     document.getElementById('popupConfirmarBtn').click();
@@ -2223,6 +2434,7 @@
             totalJogadoresIniciais = 0;
             melhorMaoAtual = null;
             torneioFinalizado = false;
+            jogadorTransferido = {};
 
             db.ref('mesas').set(mesasData);
             db.ref('classificacao').set([]);
@@ -2239,6 +2451,7 @@
             atualizarSelectMelhorMao();
             atualizarClassificacaoAtual();
             atualizarSelectReverter();
+            atualizarDiretoria();
 
             document.querySelectorAll('.popup-confirmacao').forEach(p => p.remove());
 
@@ -2251,7 +2464,7 @@
 
                 const tituloClassificacao = document.getElementById('classificacaoTituloEtapa');
                 if (tituloClassificacao) tituloClassificacao.innerHTML =
-                `📊 CLASSIFICAÇÃO GERAL DA ${etapaFinalizada}ª ETAPA`;
+                    `📊 CLASSIFICAÇÃO GERAL DA ${etapaFinalizada}ª ETAPA`;
 
                 atualizarClassificacaoAtual();
                 atualizarHistoricoEtapas();
@@ -2471,6 +2684,7 @@
                 atualizarSelectMelhorMao();
                 atualizarClassificacaoAtual();
                 atualizarSelectReverter();
+                atualizarDiretoria();
             });
 
             db.ref('mesas').on('value', (snapshot) => {
@@ -2498,7 +2712,8 @@
                     pretaTotal: preta.length,
                     amarelaVivos: amarela.filter(j => !j.eliminado).length,
                     amarelaEliminados: amarela.filter(j => j.eliminado).length,
-                    amarelaTotal: amarela.length                };
+                    amarelaTotal: amarela.length
+                };
                 Object.entries(stats).forEach(([id, val]) => { if (el(id)) el(id).textContent = val; });
 
                 atualizarGridJogadores();
@@ -2508,6 +2723,7 @@
                 atualizarSelectMelhorMao();
                 atualizarClassificacaoAtual();
                 atualizarSelectReverter();
+                atualizarDiretoria();
             });
 
             db.ref('classificacao').on('value', (snapshot) => {
@@ -2716,6 +2932,7 @@
                             ${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}
                             ${j.addon ? `<span class="badge ${isMelhorMao ? 'badge-addon-melhor-mao' : 'badge-addon'}">💎 Addon ${addonTexto}</span>` : ''}
                             ${j.premio ? `<span class="badge badge-premio">💰 R$ ${j.premio}</span>` : ''}
+                            ${jogadorTransferido[j.nome] ? `<span class="badge badge-transferido">🔄 TROCADO</span>` : ''}
                         </div>
                     </div>
                     <div class="jogador-actions">
@@ -2769,6 +2986,7 @@
                     atualizarStatsCards();
                     atualizarClassificacaoAtual();
                     atualizarSelectReverter();
+                    atualizarDiretoria();
                 }
             });
         }
@@ -2833,7 +3051,6 @@
             }
             const ordenados = [...jogadores].sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
 
-            // Verificar se há jogadores vivos para mostrar o botão de transferência
             const temOutraMesaComVivos = mesaAtual === 'preta' ?
                 (mesasData.amarela || []).some(j => !j.eliminado) :
                 (mesasData.preta || []).some(j => !j.eliminado);
@@ -2843,17 +3060,20 @@
                 const addonGratis = isAddonGratis(j.nome);
                 const addonTexto = j.addon ? (addonGratis ? 'GRÁTIS' : '') : '';
                 const mostrarTransferir = !j.eliminado && !torneioFinalizado && temOutraMesaComVivos;
+                const foiTransferido = jogadorTransferido[j.nome] || false;
+                const cardClass = `jogador-card ${j.eliminado ? 'eliminado' : ''} ${isMelhorMao ? 'melhor-mao' : ''} ${foiTransferido ? 'transferido' : ''}`;
 
-                return `<div class="jogador-card ${j.eliminado ? 'eliminado' : ''} ${isMelhorMao ? 'melhor-mao' : ''}">
+                return `<div class="${cardClass}">
                     <div class="jogador-posicao-numero">${j.posicao || '?'}</div>
                     <img class="jogador-foto" src="${getFotoJogador(j.nome)}">
                     <div class="jogador-info">
-                        <div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🃏' : ''}</div>
+                        <div class="jogador-nome">${j.nome}${isMelhorMao ? ' 🃏' : ''}${foiTransferido ? ' 🔄' : ''}</div>
                         <div class="jogador-valores">
                             ${j.rebuys > 0 ? `<span class="badge badge-rebuy">🔄 ${j.rebuys}</span>` : ''}
                             ${j.addon ? `<span class="badge ${isMelhorMao ? 'badge-addon-melhor-mao' : 'badge-addon'}">💎 Addon ${addonTexto}</span>` : ''}
                             ${j.eliminado ? `<span class="badge badge-eliminado">❌ Elim (${j.posicaoFinal}º)</span>` : ''}
                             ${j.premio ? `<span class="badge badge-premio">💰 R$ ${j.premio}</span>` : ''}
+                            ${foiTransferido ? `<span class="badge badge-transferido">🔄 TROCADO</span>` : ''}
                         </div>
                     </div>
                     <div class="jogador-actions">
@@ -2870,6 +3090,76 @@
             }).join('');
         }
 
+        // ==================== PAINEL DA DIRETORIA ====================
+        function abrirDiretoria() {
+            document.getElementById('telaSelecao').classList.add('hidden');
+            document.getElementById('telaDiretoria').classList.remove('hidden');
+            atualizarDiretoria();
+        }
+
+        function voltarDiretoria() {
+            document.getElementById('telaDiretoria').classList.add('hidden');
+            document.getElementById('telaSelecao').classList.remove('hidden');
+        }
+
+        function atualizarDiretoria() {
+            const preta = mesasData.preta || [];
+            const amarela = mesasData.amarela || [];
+            const todos = [...preta, ...amarela];
+
+            // Totais gerais
+            const totalJogadores = todos.length;
+            const totalRebuys = todos.reduce((s, j) => s + (j.rebuys || 0), 0);
+            const totalAddons = todos.filter(j => j.addon).length;
+            const totalFinanceiro = todos.reduce((s, j) => {
+                const valorAddon = getAddonValor(j.nome, j.addon);
+                return s + VALOR_BUYIN + (j.rebuys || 0) * VALOR_REBUY + valorAddon;
+            }, 0);
+
+            document.getElementById('diretoriaTotalJogadores').textContent = totalJogadores;
+            document.getElementById('diretoriaTotalRebuys').textContent = totalRebuys;
+            document.getElementById('diretoriaTotalAddons').textContent = totalAddons;
+            document.getElementById('diretoriaTotalFinanceiro').textContent = `R$ ${totalFinanceiro},00`;
+
+            // Por mesa
+            const calcMesa = (mesa, nome) => {
+                const jogadores = mesa.length;
+                const rebuys = mesa.reduce((s, j) => s + (j.rebuys || 0), 0);
+                const addons = mesa.filter(j => j.addon).length;
+                const financeiro = mesa.reduce((s, j) => {
+                    const valorAddon = getAddonValor(j.nome, j.addon);
+                    return s + VALOR_BUYIN + (j.rebuys || 0) * VALOR_REBUY + valorAddon;
+                }, 0);
+                return { jogadores, rebuys, addons, financeiro };
+            };
+
+            const pretaStats = calcMesa(preta, 'preta');
+            const amarelaStats = calcMesa(amarela, 'amarela');
+
+            document.getElementById('diretoriaPretaJogadores').textContent = pretaStats.jogadores;
+            document.getElementById('diretoriaPretaRebuys').textContent = pretaStats.rebuys;
+            document.getElementById('diretoriaPretaAddons').textContent = pretaStats.addons;
+            document.getElementById('diretoriaPretaFinanceiro').textContent = `R$ ${pretaStats.financeiro},00`;
+
+            document.getElementById('diretoriaAmarelaJogadores').textContent = amarelaStats.jogadores;
+            document.getElementById('diretoriaAmarelaRebuys').textContent = amarelaStats.rebuys;
+            document.getElementById('diretoriaAmarelaAddons').textContent = amarelaStats.addons;
+            document.getElementById('diretoriaAmarelaFinanceiro').textContent = `R$ ${amarelaStats.financeiro},00`;
+
+            // Ranking de rebuys
+            const ranking = [...todos].filter(j => (j.rebuys || 0) > 0).sort((a, b) => (b.rebuys || 0) - (a.rebuys || 0))
+                .slice(0, 10);
+            const rankingBody = document.getElementById('diretoriaRankingBody');
+            if (rankingBody) {
+                rankingBody.innerHTML = ranking.length === 0 ?
+                    '<tr><td colspan="4">Nenhum rebuy registrado</td></tr>' :
+                    ranking.map((j, i) =>
+                        `<tr><td>${i+1}</td><td>${j.nome}</td><td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}</td><td><strong>${j.rebuys}</strong></td></tr>`
+                        ).join('');
+            }
+        }
+
+        // ==================== ADMIN ====================
         function abrirModalAdmin() {
             document.getElementById('modalSenhaAdmin').classList.add('active');
             document.getElementById('senhaAdminInput').value = '';
@@ -2910,6 +3200,7 @@
                     atualizarStatsCards();
                     atualizarAdminResumo();
                     atualizarAdminEstatisticas();
+                    atualizarDiretoria();
                     tocarSomCashout(tipo === 'simples' ? 'rebuy' : 'rebuyDuplo');
                     mostrarToast(`✅ REBUY${tipo === 'duplo' ? ' DUPLO' : ''} adicionado para ${nome}`);
                 }
@@ -2930,6 +3221,7 @@
                     atualizarStatsCards();
                     atualizarAdminResumo();
                     atualizarAdminEstatisticas();
+                    atualizarDiretoria();
                 });
             } else if (jogador && jogador.addon) {
                 mostrarToast(`${nome} já possui addon!`);
@@ -2974,6 +3266,7 @@
                         atualizarSelectMelhorMao();
                         atualizarClassificacaoAtual();
                         atualizarSelectReverter();
+                        atualizarDiretoria();
                     } catch (error) {
                         console.error('Erro ao obter posição:', error);
                         mostrarToast('❌ Erro ao processar eliminação! Tente novamente.');
@@ -3014,6 +3307,7 @@
                     atualizarStatsCards();
                     atualizarAdminResumo();
                     atualizarAdminEstatisticas();
+                    atualizarDiretoria();
                 }
             }
             document.getElementById('modalCorrigir').classList.remove('active');
@@ -3047,6 +3341,7 @@
                     totalJogadoresIniciais = 0;
                     melhorMaoAtual = null;
                     torneioFinalizado = false;
+                    jogadorTransferido = {};
                     await posicoesRef.set({ ultimaPosicao: 0 });
                     db.ref('mesas').set(mesasData);
                     db.ref('classificacao').set([]);
@@ -3061,6 +3356,7 @@
                     atualizarSelectMelhorMao();
                     atualizarClassificacaoAtual();
                     atualizarSelectReverter();
+                    atualizarDiretoria();
                     const infoDiv = document.getElementById('proximaEtapaInfo');
                     if (infoDiv) infoDiv.style.display = 'none';
                     mostrarToast(`✅ ${novaEtapa}ª ETAPA iniciada!\n\nImporte o layout das mesas para começar.`);
@@ -3086,7 +3382,7 @@
                 const total = VALOR_BUYIN + (j.rebuys || 0) * VALOR_REBUY + valorAddon;
                 totalGeral += total;
                 return `<tr>
-                    <td>${j.nome}${j.eliminado?' ❌':''}${j.eliminado?` (${j.posicaoFinal}º)`:''}${j.premio?` 💰 R$ ${j.premio}`:''}</td>
+                    <td>${j.nome}${j.eliminado?' ❌':''}${j.eliminado?` (${j.posicaoFinal}º)`:''}${j.premio?` 💰 R$ ${j.premio}`:''}${jogadorTransferido[j.nome]?' 🔄':''}</td>
                     <td>${mesa}</td><td>${j.posicao||'-'}</td>
                     <td>R$ ${VALOR_BUYIN}</td><td>${j.rebuys||0}</td>
                     <td>${getAddonTexto(j.nome, j.addon)}</td>
@@ -3119,7 +3415,7 @@
                 rankingBody.innerHTML = ranking.length === 0 ?
                     '<tr><td colspan="4">Nenhum rebuy</td></tr>' :
                     ranking.map((j, i) =>
-                        `<tr><td>${i+1}</td><td>${j.nome}${j.premio?` 💰 R$ ${j.premio}`:''}</td><td>${mesasData.preta?.includes(j)?'Preta':'Amarela'}</td><td>${j.rebuys}</td></tr>`
+                        `<tr><td>${i+1}</td><td>${j.nome}${j.premio?` 💰 R$ ${j.premio}`:''}${jogadorTransferido[j.nome]?' 🔄':''}</td><td>${mesasData.preta?.includes(j)?'Preta':'Amarela'}</td><td>${j.rebuys}</td></tr>`
                         ).join('');
             }
         }
@@ -3250,6 +3546,7 @@
             totalJogadoresIniciais = mesasData.preta.length + mesasData.amarela.length;
             mesaFinalAtiva = false;
             torneioFinalizado = false;
+            jogadorTransferido = {};
             posicoesRef.set({ ultimaPosicao: totalJogadoresIniciais });
             db.ref('mesas').set(mesasData);
             db.ref('mesaFinalAtiva').set(false);
@@ -3263,6 +3560,7 @@
             atualizarSelectMelhorMao();
             atualizarClassificacaoAtual();
             atualizarSelectReverter();
+            atualizarDiretoria();
         }
 
         function copiarCSV() {
@@ -3290,6 +3588,7 @@
                 totalJogadoresIniciais = 0;
                 melhorMaoAtual = null;
                 torneioFinalizado = false;
+                jogadorTransferido = {};
                 posicoesRef.set({ ultimaPosicao: 0 });
                 db.ref('mesas').set(mesasData);
                 db.ref('classificacao').set([]);
@@ -3301,6 +3600,7 @@
                 document.getElementById('telaSelecao').classList.remove('hidden');
                 atualizarStatsCards();
                 atualizarBotoesMesaFinal();
+                atualizarDiretoria();
                 mostrarToast('✅ Todos os dados foram apagados!');
                 document.getElementById('modalSenhaApagar').classList.remove('active');
                 document.getElementById('senhaApagarInput').value = '';
@@ -3380,6 +3680,9 @@
                 }
                 reverterEliminacao(nome);
             });
+            // Botão da Diretoria
+            on('btnAbrirDiretoria', 'click', abrirDiretoria);
+            on('btnVoltarDiretoria', 'click', voltarDiretoria);
 
             const senhaInput = document.getElementById('senhaAdminInput');
             if (senhaInput) senhaInput.addEventListener('keypress', e => { if (e.key === 'Enter')
@@ -3408,6 +3711,7 @@
         window.copiarPix = copiarPix;
         window.abrirModalAdmin = abrirModalAdmin;
         window.transferirJogador = transferirJogador;
+        window.abrirDiretoria = abrirDiretoria;
     </script>
 </body>
 </html>
