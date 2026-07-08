@@ -242,7 +242,6 @@
             max-width: 180px;
             pointer-events: none;
         }
-        /* Área invisível para clique na logo (acesso à diretoria) */
         .logo-click-area {
             position: absolute;
             top: 0;
@@ -499,7 +498,6 @@
             background: rgba(199, 44, 72, 0.15);
             border-color: #c72c48;
             order: 999;
-            /* Move para o final da lista */
         }
         .jogador-posicao-numero {
             font-family: 'Anton', sans-serif;
@@ -1322,7 +1320,6 @@
             font-size: 1.2rem;
         }
         
-        /* NOVA SEÇÃO: Reverter Eliminação (na aba de verificação) */
         .reverter-section {
             background: rgba(33, 150, 243, 0.1);
             border: 2px solid #2196F3;
@@ -1355,7 +1352,6 @@
             background: #0b7dda;
         }
         
-        /* Estilo para o popup de senha para remover etapa */
         .popup-senha-input {
             margin: 15px 0;
             text-align: left;
@@ -1376,7 +1372,6 @@
             font-size: 1rem;
         }
         
-        /* Painel da Diretoria */
         .tela-diretoria {
             min-height: 100vh;
             padding: 20px;
@@ -1487,7 +1482,7 @@
             background: #1a3d1a;
             color: #fff;
             font-size: 1em;
-            width: 100px;
+            width: 150px;
             text-align: center;
         }
         .diretoria-rake-section .rake-row .btn {
@@ -1513,7 +1508,6 @@
         <div class="selecao-container">
             <div class="selecao-logo" id="logoAdmin">
                 <img src="logo pdq.png" alt="Poker de Quinta" onerror="this.style.display='none'">
-                <!-- Área de clique oculta para acessar a diretoria -->
                 <div class="logo-click-area" id="logoClickArea" title="Clique duas vezes para acessar a diretoria"></div>
             </div>
             <h1 class="selecao-titulo">🃏 SELECIONE A MESA 🃏</h1>
@@ -1542,15 +1536,13 @@
             <div class="diretoria-rake-section">
                 <h4>💰 CONFIGURAÇÃO DO RAKE</h4>
                 <div class="rake-row">
-                    <label>Porcentagem do Rake:</label>
-                    <input type="number" id="rakePorcentagem" min="0" max="100" step="0.5" value="10">
-                    <label>%</label>
+                    <label>Valor do Rake (R$):</label>
+                    <input type="number" id="rakeValorInput" min="0" step="0.01" value="0">
                     <button class="btn btn-primary" id="btnSalvarRake">💾 SALVAR</button>
                 </div>
                 <div class="diretoria-rake-info" id="rakeInfo">
-                    Rake atual: <span class="destaque" id="rakeAtualDisplay">10%</span> | 
+                    Rake atual: <span class="destaque" id="rakeAtualDisplay">R$ 0,00</span> | 
                     Valor arrecadado: <span class="destaque" id="rakeBrutoDisplay">R$ 0,00</span> | 
-                    Rake: <span class="destaque" id="rakeValorDisplay">R$ 0,00</span> | 
                     <strong style="color:#d4a121;">Total Líquido: <span id="rakeLiquidoDisplay">R$ 0,00</span></strong>
                 </div>
             </div>
@@ -1746,7 +1738,6 @@
                 </div>
             </div>
             
-            <!-- NOVA SEÇÃO: Reverter Eliminação Incorreta (agora na aba de verificação) -->
             <div class="reverter-section" id="reverterSection">
                 <h3>🔄 REVERTER ELIMINAÇÃO INCORRETA</h3>
                 <p style="margin-bottom: 10px; font-size: 0.9em;">Se um jogador foi eliminado por engano, selecione-o abaixo para restaurá-lo e remover sua classificação.</p>
@@ -1959,10 +1950,9 @@
         let totalJogadoresIniciais = 0;
         let filaPosicoesBloqueada = false;
         let processandoFinalizacao = false;
-        // Flag para indicar se um jogador foi transferido
         let jogadorTransferido = {};
-        // Rake
-        let rakePorcentagem = 10;
+        // Rake em valor fixo (R$)
+        let rakeValor = 0;
 
         const posicoesRef = db.ref('controlePosicoes');
 
@@ -2165,7 +2155,6 @@
                 return;
             }
 
-            // Mostrar popup de confirmação
             mostrarPopupTransferencia(nomeJogador, getFotoJogador(nomeJogador), async () => {
                 const mesaDestino = mesaOrigem === 'preta' ? 'amarela' : 'preta';
                 const nomeMesaDestino = mesaDestino === 'preta' ? 'Mesa Preta' : 'Mesa Amarela';
@@ -2187,7 +2176,6 @@
                 mesasData.preta.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
                 mesasData.amarela.sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
 
-                // Marcar jogador como transferido
                 jogadorTransferido[nomeJogador] = true;
 
                 await db.ref('mesas').set(mesasData);
@@ -2800,15 +2788,15 @@
                 atualizarAdminEstatisticas();
             });
 
-            // Carregar rake salvo
-            db.ref('rake').on('value', (snapshot) => {
+            // Carregar rake salvo (valor em dinheiro)
+            db.ref('rakeValor').on('value', (snapshot) => {
                 if (snapshot.exists()) {
-                    rakePorcentagem = snapshot.val();
+                    rakeValor = snapshot.val();
                 } else {
-                    rakePorcentagem = 10;
-                    db.ref('rake').set(rakePorcentagem);
+                    rakeValor = 0;
+                    db.ref('rakeValor').set(rakeValor);
                 }
-                document.getElementById('rakePorcentagem').value = rakePorcentagem;
+                document.getElementById('rakeValorInput').value = rakeValor;
                 atualizarDiretoria();
             });
 
@@ -3117,7 +3105,6 @@
                 return;
             }
 
-            // Ordenação: primeiro os vivos (por posição), depois os eliminados (por posição final)
             const vivos = jogadores.filter(j => !j.eliminado).sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
             const eliminados = jogadores.filter(j => j.eliminado).sort((a, b) => (a.posicaoFinal || 999) - (b.posicaoFinal ||
                 999));
@@ -3133,7 +3120,6 @@
                 const addonTexto = j.addon ? (addonGratis ? 'GRÁTIS' : '') : '';
                 const mostrarTransferir = !j.eliminado && !torneioFinalizado && temOutraMesaComVivos;
                 const foiTransferido = jogadorTransferido[j.nome] || false;
-                // Remove a classe transferido para não ter borda roxa, só o badge
                 const cardClass = `jogador-card ${j.eliminado ? 'eliminado' : ''} ${isMelhorMao ? 'melhor-mao' : ''}`;
 
                 return `<div class="${cardClass}">
@@ -3176,7 +3162,8 @@
         }
 
         function calcularFinanceiroComRake(valorBruto) {
-            const rake = (valorBruto * rakePorcentagem) / 100;
+            // Rake é um valor fixo em dinheiro
+            const rake = Math.min(rakeValor, valorBruto);
             return {
                 bruto: valorBruto,
                 rake: rake,
@@ -3189,12 +3176,10 @@
             const amarela = mesasData.amarela || [];
             const todos = [...preta, ...amarela];
 
-            // Totais gerais
             const totalJogadores = todos.length;
             const totalRebuys = todos.reduce((s, j) => s + (j.rebuys || 0), 0);
             const totalAddons = todos.filter(j => j.addon).length;
 
-            // Calcular financeiro bruto
             const calcularBruto = (mesa) => {
                 return mesa.reduce((s, j) => {
                     const valorAddon = getAddonValor(j.nome, j.addon);
@@ -3210,13 +3195,10 @@
             document.getElementById('diretoriaTotalAddons').textContent = totalAddons;
             document.getElementById('diretoriaTotalLiquido').textContent = `R$ ${financeiro.liquido.toFixed(2)}`;
 
-            // Atualizar informações do rake
-            document.getElementById('rakeAtualDisplay').textContent = `${rakePorcentagem}%`;
+            document.getElementById('rakeAtualDisplay').textContent = `R$ ${rakeValor.toFixed(2)}`;
             document.getElementById('rakeBrutoDisplay').textContent = `R$ ${financeiro.bruto.toFixed(2)}`;
-            document.getElementById('rakeValorDisplay').textContent = `R$ ${financeiro.rake.toFixed(2)}`;
             document.getElementById('rakeLiquidoDisplay').textContent = `R$ ${financeiro.liquido.toFixed(2)}`;
 
-            // Por mesa
             const pretaBruto = calcularBruto(preta);
             const amarelaBruto = calcularBruto(amarela);
             const pretaFin = calcularFinanceiroComRake(pretaBruto);
@@ -3234,7 +3216,6 @@
             document.getElementById('diretoriaAmarelaFinanceiro').textContent = `R$ ${amarelaBruto.toFixed(2)}`;
             document.getElementById('diretoriaAmarelaLiquido').textContent = `R$ ${amarelaFin.liquido.toFixed(2)}`;
 
-            // Ranking de rebuys
             const ranking = [...todos].filter(j => (j.rebuys || 0) > 0).sort((a, b) => (b.rebuys || 0) - (a.rebuys || 0))
                 .slice(0, 10);
             const rankingBody = document.getElementById('diretoriaRankingBody');
@@ -3248,14 +3229,14 @@
         }
 
         function salvarRake() {
-            const valor = parseFloat(document.getElementById('rakePorcentagem').value);
+            const valor = parseFloat(document.getElementById('rakeValorInput').value);
             if (isNaN(valor) || valor < 0) {
                 mostrarToast('❌ Digite um valor válido para o rake!');
                 return;
             }
-            rakePorcentagem = valor;
-            db.ref('rake').set(rakePorcentagem);
-            mostrarToast(`✅ Rake definido para ${rakePorcentagem}%`);
+            rakeValor = valor;
+            db.ref('rakeValor').set(rakeValor);
+            mostrarToast(`✅ Rake definido para R$ ${rakeValor.toFixed(2)}`);
             atualizarDiretoria();
         }
 
@@ -3714,13 +3695,6 @@
             const on = (id, ev, fn) => { const el = document.getElementById(id); if (el) el.addEventListener(ev, fn); };
             const logoAdmin = document.getElementById('logoAdmin');
             if (logoAdmin) {
-                // Clique duplo na logo para abrir a diretoria
-                let clickCount = 0;
-                let clickTimer = null;
-                logoAdmin.addEventListener('click', (e) => {
-                    // Não fazer nada no clique simples para não atrapalhar
-                });
-                // Usar a área de clique oculta com duplo clique
                 const clickArea = document.getElementById('logoClickArea');
                 if (clickArea) {
                     clickArea.addEventListener('dblclick', (e) => {
@@ -3795,7 +3769,6 @@
                 }
                 reverterEliminacao(nome);
             });
-            // Botões da Diretoria
             on('btnVoltarDiretoria', 'click', voltarDiretoria);
             on('btnSalvarRake', 'click', salvarRake);
 
