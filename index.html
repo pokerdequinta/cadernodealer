@@ -231,14 +231,27 @@
         }
         .selecao-logo {
             margin-bottom: 30px;
-            cursor: pointer;
+            cursor: default;
             transition: transform 0.3s;
+            position: relative;
         }
         .selecao-logo:hover {
-            transform: scale(1.05);
+            transform: scale(1.02);
         }
         .selecao-logo img {
             max-width: 180px;
+            pointer-events: none;
+        }
+        /* Área invisível para clique na logo (acesso à diretoria) */
+        .logo-click-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 10;
+            opacity: 0;
         }
         .selecao-titulo {
             font-family: 'Anton', sans-serif;
@@ -289,24 +302,6 @@
             width: 100%;
             font-family: 'Anton', sans-serif;
             animation: pulse 1s infinite;
-        }
-        .btn-diretoria {
-            margin-top: 10px;
-            padding: 12px;
-            background: #9C27B0;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 1em;
-            width: 100%;
-            font-family: 'Anton', sans-serif;
-            transition: all 0.3s;
-        }
-        .btn-diretoria:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 20px rgba(156, 39, 176, 0.5);
         }
         @keyframes pulse {
             0%,
@@ -489,10 +484,6 @@
             border: 3px solid #FFD700;
             box-shadow: 0 0 20px rgba(212, 161, 33, 0.5);
             animation: glow 1.5s infinite;
-        }
-        .jogador-card.transferido {
-            border-color: #9C27B0;
-            background: rgba(156, 39, 176, 0.15);
         }
         @keyframes glow {
             0%,
@@ -740,10 +731,6 @@
         }
         .btn-info {
             background: #2196F3;
-            color: #fff;
-        }
-        .btn-diretoria-painel {
-            background: #9C27B0;
             color: #fff;
         }
         .admin-etapa-select {
@@ -1471,6 +1458,50 @@
         .diretoria-mesa-card .stat-row:last-child {
             border-bottom: none;
         }
+        .diretoria-rake-section {
+            background: #102810;
+            border: 2px solid #FFD700;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .diretoria-rake-section h4 {
+            font-family: 'Anton', sans-serif;
+            color: #d4a121;
+            margin-bottom: 15px;
+        }
+        .diretoria-rake-section .rake-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .diretoria-rake-section .rake-row label {
+            font-family: 'Anton', sans-serif;
+            color: #aaa;
+        }
+        .diretoria-rake-section .rake-row input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #d4a121;
+            background: #1a3d1a;
+            color: #fff;
+            font-size: 1em;
+            width: 100px;
+            text-align: center;
+        }
+        .diretoria-rake-section .rake-row .btn {
+            padding: 8px 20px;
+        }
+        .diretoria-rake-info {
+            margin-top: 10px;
+            font-family: 'Anton', sans-serif;
+            color: #aaa;
+            font-size: 0.9em;
+        }
+        .diretoria-rake-info .destaque {
+            color: #d4a121;
+        }
     </style>
 </head>
 <body>
@@ -1482,6 +1513,8 @@
         <div class="selecao-container">
             <div class="selecao-logo" id="logoAdmin">
                 <img src="logo pdq.png" alt="Poker de Quinta" onerror="this.style.display='none'">
+                <!-- Área de clique oculta para acessar a diretoria -->
+                <div class="logo-click-area" id="logoClickArea" title="Clique duas vezes para acessar a diretoria"></div>
             </div>
             <h1 class="selecao-titulo">🃏 SELECIONE A MESA 🃏</h1>
             
@@ -1492,7 +1525,6 @@
             
             <button class="btn-mesa-final-topo" id="btnMesaFinalTopo" style="display: none;">🃏 IR PARA MESA FINAL 🃏</button>
             <button class="btn-mesa-final-topo" id="btnVerificarClassificacao" style="margin-top: 10px; background: #2196F3;">📊 VERIFICAR CLASSIFICAÇÃO</button>
-            <button class="btn-diretoria" id="btnAbrirDiretoria">📊 DIRETORIA</button>
         </div>
     </div>
 
@@ -1503,6 +1535,23 @@
                 <h1>📊 PAINEL DA DIRETORIA</h1>
                 <div>
                     <button class="voltar-btn" id="btnVoltarDiretoria">← VOLTAR</button>
+                </div>
+            </div>
+            
+            <!-- Seção de Configuração do Rake -->
+            <div class="diretoria-rake-section">
+                <h4>💰 CONFIGURAÇÃO DO RAKE</h4>
+                <div class="rake-row">
+                    <label>Porcentagem do Rake:</label>
+                    <input type="number" id="rakePorcentagem" min="0" max="100" step="0.5" value="10">
+                    <label>%</label>
+                    <button class="btn btn-primary" id="btnSalvarRake">💾 SALVAR</button>
+                </div>
+                <div class="diretoria-rake-info" id="rakeInfo">
+                    Rake atual: <span class="destaque" id="rakeAtualDisplay">10%</span> | 
+                    Valor arrecadado: <span class="destaque" id="rakeBrutoDisplay">R$ 0,00</span> | 
+                    Rake: <span class="destaque" id="rakeValorDisplay">R$ 0,00</span> | 
+                    <strong style="color:#d4a121;">Total Líquido: <span id="rakeLiquidoDisplay">R$ 0,00</span></strong>
                 </div>
             </div>
             
@@ -1519,9 +1568,9 @@
                     <div class="valor" id="diretoriaTotalAddons">0</div>
                     <div class="label">Total de Addons</div>
                 </div>
-                <div class="diretoria-card">
-                    <div class="valor" id="diretoriaTotalFinanceiro">R$ 0</div>
-                    <div class="label">Total Financeiro</div>
+                <div class="diretoria-card" style="border-color: #FFD700;">
+                    <div class="valor" id="diretoriaTotalLiquido">R$ 0</div>
+                    <div class="label">💰 Total Líquido (após Rake)</div>
                 </div>
             </div>
             
@@ -1531,14 +1580,16 @@
                     <div class="stat-row"><span>Jogadores</span><span id="diretoriaPretaJogadores">0</span></div>
                     <div class="stat-row"><span>Rebuys</span><span id="diretoriaPretaRebuys">0</span></div>
                     <div class="stat-row"><span>Addons</span><span id="diretoriaPretaAddons">0</span></div>
-                    <div class="stat-row"><span>Financeiro</span><span id="diretoriaPretaFinanceiro">R$ 0</span></div>
+                    <div class="stat-row"><span>Financeiro Bruto</span><span id="diretoriaPretaFinanceiro">R$ 0</span></div>
+                    <div class="stat-row" style="border-bottom: none; color: #d4a121;"><span>Líquido</span><span id="diretoriaPretaLiquido">R$ 0</span></div>
                 </div>
                 <div class="diretoria-mesa-card amarela">
                     <h4>♦️ MESA AMARELA</h4>
                     <div class="stat-row"><span>Jogadores</span><span id="diretoriaAmarelaJogadores">0</span></div>
                     <div class="stat-row"><span>Rebuys</span><span id="diretoriaAmarelaRebuys">0</span></div>
                     <div class="stat-row"><span>Addons</span><span id="diretoriaAmarelaAddons">0</span></div>
-                    <div class="stat-row"><span>Financeiro</span><span id="diretoriaAmarelaFinanceiro">R$ 0</span></div>
+                    <div class="stat-row"><span>Financeiro Bruto</span><span id="diretoriaAmarelaFinanceiro">R$ 0</span></div>
+                    <div class="stat-row" style="border-bottom: none; color: #d4a121;"><span>Líquido</span><span id="diretoriaAmarelaLiquido">R$ 0</span></div>
                 </div>
             </div>
             
@@ -1910,6 +1961,8 @@
         let processandoFinalizacao = false;
         // Flag para indicar se um jogador foi transferido
         let jogadorTransferido = {};
+        // Rake
+        let rakePorcentagem = 10;
 
         const posicoesRef = db.ref('controlePosicoes');
 
@@ -2747,6 +2800,18 @@
                 atualizarAdminEstatisticas();
             });
 
+            // Carregar rake salvo
+            db.ref('rake').on('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    rakePorcentagem = snapshot.val();
+                } else {
+                    rakePorcentagem = 10;
+                    db.ref('rake').set(rakePorcentagem);
+                }
+                document.getElementById('rakePorcentagem').value = rakePorcentagem;
+                atualizarDiretoria();
+            });
+
             inicializarEventos();
         });
 
@@ -3054,7 +3119,8 @@
 
             // Ordenação: primeiro os vivos (por posição), depois os eliminados (por posição final)
             const vivos = jogadores.filter(j => !j.eliminado).sort((a, b) => (a.posicao || 999) - (b.posicao || 999));
-            const eliminados = jogadores.filter(j => j.eliminado).sort((a, b) => (a.posicaoFinal || 999) - (b.posicaoFinal || 999));
+            const eliminados = jogadores.filter(j => j.eliminado).sort((a, b) => (a.posicaoFinal || 999) - (b.posicaoFinal ||
+                999));
             const ordenados = [...vivos, ...eliminados];
 
             const temOutraMesaComVivos = mesaAtual === 'preta' ?
@@ -3067,7 +3133,8 @@
                 const addonTexto = j.addon ? (addonGratis ? 'GRÁTIS' : '') : '';
                 const mostrarTransferir = !j.eliminado && !torneioFinalizado && temOutraMesaComVivos;
                 const foiTransferido = jogadorTransferido[j.nome] || false;
-                const cardClass = `jogador-card ${j.eliminado ? 'eliminado' : ''} ${isMelhorMao ? 'melhor-mao' : ''} ${foiTransferido ? 'transferido' : ''}`;
+                // Remove a classe transferido para não ter borda roxa, só o badge
+                const cardClass = `jogador-card ${j.eliminado ? 'eliminado' : ''} ${isMelhorMao ? 'melhor-mao' : ''}`;
 
                 return `<div class="${cardClass}">
                     <div class="jogador-posicao-numero">${j.eliminado ? '💀' : (j.posicao || '?')}</div>
@@ -3108,6 +3175,15 @@
             document.getElementById('telaSelecao').classList.remove('hidden');
         }
 
+        function calcularFinanceiroComRake(valorBruto) {
+            const rake = (valorBruto * rakePorcentagem) / 100;
+            return {
+                bruto: valorBruto,
+                rake: rake,
+                liquido: valorBruto - rake
+            };
+        }
+
         function atualizarDiretoria() {
             const preta = mesasData.preta || [];
             const amarela = mesasData.amarela || [];
@@ -3117,40 +3193,46 @@
             const totalJogadores = todos.length;
             const totalRebuys = todos.reduce((s, j) => s + (j.rebuys || 0), 0);
             const totalAddons = todos.filter(j => j.addon).length;
-            const totalFinanceiro = todos.reduce((s, j) => {
-                const valorAddon = getAddonValor(j.nome, j.addon);
-                return s + VALOR_BUYIN + (j.rebuys || 0) * VALOR_REBUY + valorAddon;
-            }, 0);
+
+            // Calcular financeiro bruto
+            const calcularBruto = (mesa) => {
+                return mesa.reduce((s, j) => {
+                    const valorAddon = getAddonValor(j.nome, j.addon);
+                    return s + VALOR_BUYIN + (j.rebuys || 0) * VALOR_REBUY + valorAddon;
+                }, 0);
+            };
+
+            const brutoTotal = calcularBruto(preta) + calcularBruto(amarela);
+            const financeiro = calcularFinanceiroComRake(brutoTotal);
 
             document.getElementById('diretoriaTotalJogadores').textContent = totalJogadores;
             document.getElementById('diretoriaTotalRebuys').textContent = totalRebuys;
             document.getElementById('diretoriaTotalAddons').textContent = totalAddons;
-            document.getElementById('diretoriaTotalFinanceiro').textContent = `R$ ${totalFinanceiro},00`;
+            document.getElementById('diretoriaTotalLiquido').textContent = `R$ ${financeiro.liquido.toFixed(2)}`;
+
+            // Atualizar informações do rake
+            document.getElementById('rakeAtualDisplay').textContent = `${rakePorcentagem}%`;
+            document.getElementById('rakeBrutoDisplay').textContent = `R$ ${financeiro.bruto.toFixed(2)}`;
+            document.getElementById('rakeValorDisplay').textContent = `R$ ${financeiro.rake.toFixed(2)}`;
+            document.getElementById('rakeLiquidoDisplay').textContent = `R$ ${financeiro.liquido.toFixed(2)}`;
 
             // Por mesa
-            const calcMesa = (mesa, nome) => {
-                const jogadores = mesa.length;
-                const rebuys = mesa.reduce((s, j) => s + (j.rebuys || 0), 0);
-                const addons = mesa.filter(j => j.addon).length;
-                const financeiro = mesa.reduce((s, j) => {
-                    const valorAddon = getAddonValor(j.nome, j.addon);
-                    return s + VALOR_BUYIN + (j.rebuys || 0) * VALOR_REBUY + valorAddon;
-                }, 0);
-                return { jogadores, rebuys, addons, financeiro };
-            };
+            const pretaBruto = calcularBruto(preta);
+            const amarelaBruto = calcularBruto(amarela);
+            const pretaFin = calcularFinanceiroComRake(pretaBruto);
+            const amarelaFin = calcularFinanceiroComRake(amarelaBruto);
 
-            const pretaStats = calcMesa(preta, 'preta');
-            const amarelaStats = calcMesa(amarela, 'amarela');
+            document.getElementById('diretoriaPretaJogadores').textContent = preta.length;
+            document.getElementById('diretoriaPretaRebuys').textContent = preta.reduce((s, j) => s + (j.rebuys || 0), 0);
+            document.getElementById('diretoriaPretaAddons').textContent = preta.filter(j => j.addon).length;
+            document.getElementById('diretoriaPretaFinanceiro').textContent = `R$ ${pretaBruto.toFixed(2)}`;
+            document.getElementById('diretoriaPretaLiquido').textContent = `R$ ${pretaFin.liquido.toFixed(2)}`;
 
-            document.getElementById('diretoriaPretaJogadores').textContent = pretaStats.jogadores;
-            document.getElementById('diretoriaPretaRebuys').textContent = pretaStats.rebuys;
-            document.getElementById('diretoriaPretaAddons').textContent = pretaStats.addons;
-            document.getElementById('diretoriaPretaFinanceiro').textContent = `R$ ${pretaStats.financeiro},00`;
-
-            document.getElementById('diretoriaAmarelaJogadores').textContent = amarelaStats.jogadores;
-            document.getElementById('diretoriaAmarelaRebuys').textContent = amarelaStats.rebuys;
-            document.getElementById('diretoriaAmarelaAddons').textContent = amarelaStats.addons;
-            document.getElementById('diretoriaAmarelaFinanceiro').textContent = `R$ ${amarelaStats.financeiro},00`;
+            document.getElementById('diretoriaAmarelaJogadores').textContent = amarela.length;
+            document.getElementById('diretoriaAmarelaRebuys').textContent = amarela.reduce((s, j) => s + (j.rebuys || 0), 0);
+            document.getElementById('diretoriaAmarelaAddons').textContent = amarela.filter(j => j.addon).length;
+            document.getElementById('diretoriaAmarelaFinanceiro').textContent = `R$ ${amarelaBruto.toFixed(2)}`;
+            document.getElementById('diretoriaAmarelaLiquido').textContent = `R$ ${amarelaFin.liquido.toFixed(2)}`;
 
             // Ranking de rebuys
             const ranking = [...todos].filter(j => (j.rebuys || 0) > 0).sort((a, b) => (b.rebuys || 0) - (a.rebuys || 0))
@@ -3163,6 +3245,18 @@
                         `<tr><td>${i+1}</td><td>${j.nome}</td><td>${mesasData.preta?.includes(j) ? 'Preta' : 'Amarela'}</td><td><strong>${j.rebuys}</strong></td></tr>`
                         ).join('');
             }
+        }
+
+        function salvarRake() {
+            const valor = parseFloat(document.getElementById('rakePorcentagem').value);
+            if (isNaN(valor) || valor < 0) {
+                mostrarToast('❌ Digite um valor válido para o rake!');
+                return;
+            }
+            rakePorcentagem = valor;
+            db.ref('rake').set(rakePorcentagem);
+            mostrarToast(`✅ Rake definido para ${rakePorcentagem}%`);
+            atualizarDiretoria();
         }
 
         // ==================== ADMIN ====================
@@ -3619,7 +3713,22 @@
         function inicializarEventos() {
             const on = (id, ev, fn) => { const el = document.getElementById(id); if (el) el.addEventListener(ev, fn); };
             const logoAdmin = document.getElementById('logoAdmin');
-            if (logoAdmin) logoAdmin.onclick = abrirModalAdmin;
+            if (logoAdmin) {
+                // Clique duplo na logo para abrir a diretoria
+                let clickCount = 0;
+                let clickTimer = null;
+                logoAdmin.addEventListener('click', (e) => {
+                    // Não fazer nada no clique simples para não atrapalhar
+                });
+                // Usar a área de clique oculta com duplo clique
+                const clickArea = document.getElementById('logoClickArea');
+                if (clickArea) {
+                    clickArea.addEventListener('dblclick', (e) => {
+                        e.stopPropagation();
+                        abrirDiretoria();
+                    });
+                }
+            }
 
             on('btnSelecionarPreta', 'click', () => { if (!mesaFinalAtiva && !torneioFinalizado) { mesaAtual =
                         'preta';
@@ -3686,9 +3795,9 @@
                 }
                 reverterEliminacao(nome);
             });
-            // Botão da Diretoria
-            on('btnAbrirDiretoria', 'click', abrirDiretoria);
+            // Botões da Diretoria
             on('btnVoltarDiretoria', 'click', voltarDiretoria);
+            on('btnSalvarRake', 'click', salvarRake);
 
             const senhaInput = document.getElementById('senhaAdminInput');
             if (senhaInput) senhaInput.addEventListener('keypress', e => { if (e.key === 'Enter')
