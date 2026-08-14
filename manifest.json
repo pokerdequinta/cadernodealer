@@ -1,6 +1,6 @@
 {
   "name": "Caderno do Dealer - Poker de Quinta",
-  "short_name": "Caderno do Dealer - Poker de Quinta",
+  "short_name": "Caderno do Dealer",
   "description": "Sistema de controle de rebuy e addon para Poker de Quinta",
   "start_url": "/",
   "display": "standalone",
